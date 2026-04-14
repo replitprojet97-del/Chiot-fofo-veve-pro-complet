@@ -131,6 +131,7 @@ export default function Chiots() {
   const [filterStatus, setFilterStatus] = useState<"Tous" | "available" | "reserved" | "sold">("Tous");
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);
   const [reservingPuppy, setReservingPuppy] = useState<Puppy | null>(null);
+  const [selectedImageIdx, setSelectedImageIdx] = useState(0);
 
   const { data: puppies = [], isLoading } = usePuppies();
 
@@ -138,6 +139,10 @@ export default function Chiots() {
     document.body.style.overflow = (selectedPuppy || reservingPuppy) ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [selectedPuppy, reservingPuppy]);
+
+  useEffect(() => {
+    setSelectedImageIdx(0);
+  }, [selectedPuppy]);
 
   const filtered = puppies.filter((p) => {
     if (filterColor !== "Tous" && p.color !== filterColor) return false;
@@ -148,8 +153,6 @@ export default function Chiots() {
 
   const featuredPuppies = filtered.filter((p) => p.isPremium);
   const regularPuppies = filtered.filter((p) => !p.isPremium);
-  const primaryImage = (p: Puppy) => p.images[0] ?? "/images/puppy-bleu-merle.png";
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -311,18 +314,30 @@ export default function Chiots() {
             <div className="overflow-y-auto">
               <div className="grid md:grid-cols-2">
                 <div className="flex flex-col gap-2 p-3 pt-4">
-                  <div className={`aspect-[4/3] rounded-2xl overflow-hidden ${selectedPuppy.isPremium ? "mt-8" : ""}`}>
-                    <img src={primaryImage(selectedPuppy)} alt={selectedPuppy.name} className="w-full h-full object-cover" />
-                  </div>
-                  {selectedPuppy.images.length > 1 && (
-                    <div className="grid grid-cols-3 gap-2">
-                      {selectedPuppy.images.slice(1, 4).map((img, i) => (
-                        <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden">
-                          <img src={img} alt="" className="w-full h-full object-cover" />
+                  {(() => {
+                    const allImages = selectedPuppy.images.length > 0 ? selectedPuppy.images : ["/images/puppy-bleu-merle.png"];
+                    const mainImg = allImages[selectedImageIdx] ?? allImages[0];
+                    return (
+                      <>
+                        <div className={`aspect-[4/3] rounded-2xl overflow-hidden ${selectedPuppy.isPremium ? "mt-8" : ""}`}>
+                          <img src={mainImg} alt={selectedPuppy.name} className="w-full h-full object-cover transition-all duration-300" />
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        {allImages.length > 1 && (
+                          <div className="grid grid-cols-4 gap-2">
+                            {allImages.map((img, i) => (
+                              <button
+                                key={i}
+                                onClick={() => setSelectedImageIdx(i)}
+                                className={`aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all duration-200 ${i === selectedImageIdx ? "border-amber-500 shadow-md scale-105" : "border-transparent opacity-60 hover:opacity-90 hover:scale-[1.02]"}`}
+                              >
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
                 <div className="p-8 flex flex-col">
                   <div className="flex items-center gap-3 mb-2">
