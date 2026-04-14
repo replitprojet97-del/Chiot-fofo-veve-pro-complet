@@ -218,7 +218,7 @@ function InfoTicker() {
         <div
           className="flex gap-0 whitespace-nowrap"
           style={{
-            animation: "ticker-scroll 80s linear infinite",
+            animation: "ticker-scroll 160s linear infinite",
           }}
         >
           {doubled.map((item, i) => (
