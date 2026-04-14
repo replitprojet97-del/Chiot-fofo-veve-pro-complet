@@ -182,6 +182,20 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   }, []);
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); handleImageUpload(e.dataTransfer.files); }, [handleImageUpload]);
   const removeImage = (idx: number) => setForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }));
+  const setMainImage = (idx: number) => setForm((prev) => {
+    const imgs = [...prev.images];
+    const [moved] = imgs.splice(idx, 1);
+    imgs.unshift(moved);
+    return { ...prev, images: imgs };
+  });
+  const moveImageUp = (idx: number) => {
+    if (idx === 0) return;
+    setForm((prev) => {
+      const imgs = [...prev.images];
+      [imgs[idx - 1], imgs[idx]] = [imgs[idx], imgs[idx - 1]];
+      return { ...prev, images: imgs };
+    });
+  };
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
@@ -563,14 +577,72 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                   )}
                 </div>
                 {form.images.length > 0 && (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                    {form.images.map((url, i) => (
-                      <div key={url} className="relative group aspect-[4/3] rounded-xl overflow-hidden border border-border bg-secondary">
-                        <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                        {i === 0 && <div className="absolute top-1.5 left-1.5 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">Principale</div>}
-                        <button type="button" onClick={() => removeImage(i)} className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full items-center justify-center hidden group-hover:flex"><X className="w-3 h-3" /></button>
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      {form.images.length} photo{form.images.length > 1 ? "s" : ""} — la 1ère est affichée en couverture. Cliquez sur une photo pour la définir en principale.
+                    </p>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                      {form.images.map((url, i) => (
+                        <div
+                          key={i}
+                          className={`relative group aspect-[4/3] rounded-xl overflow-hidden bg-secondary transition-all ${i === 0 ? "ring-2 ring-primary border-2 border-primary" : "border border-border hover:border-primary/50 cursor-pointer"}`}
+                          onClick={i !== 0 ? () => setMainImage(i) : undefined}
+                          title={i !== 0 ? "Cliquer pour définir en principale" : undefined}
+                        >
+                          <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+
+                          {/* Badge principale / numéro */}
+                          {i === 0 ? (
+                            <div className="absolute top-1.5 left-1.5 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                              ★ Principale
+                            </div>
+                          ) : (
+                            <div className="absolute top-1.5 left-1.5 bg-black/50 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                              {i + 1}
+                            </div>
+                          )}
+
+                          {/* Overlay "Définir en principale" au hover (non-main) */}
+                          {i !== 0 && (
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="text-white text-[11px] font-semibold text-center px-2">Définir en<br />principale</span>
+                            </div>
+                          )}
+
+                          {/* Bouton supprimer */}
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); removeImage(i); }}
+                            className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full items-center justify-center hidden group-hover:flex shadow"
+                            title="Supprimer cette photo"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+
+                          {/* Bouton monter (← vers la gauche) */}
+                          {i > 0 && (
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); moveImageUp(i); }}
+                              className="absolute bottom-1.5 left-1.5 w-6 h-6 bg-black/60 text-white rounded-full items-center justify-center hidden group-hover:flex shadow text-[10px] font-bold"
+                              title="Déplacer vers la gauche"
+                            >
+                              ←
+                            </button>
+                          )}
+                        </div>
+                      ))}
+
+                      {/* Zone d'ajout rapide supplémentaire en fin de grille */}
+                      <div
+                        className="aspect-[4/3] rounded-xl border-2 border-dashed border-border bg-secondary/30 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary/50 hover:bg-accent/30 transition-colors"
+                        onClick={() => document.getElementById("image-upload-input")?.click()}
+                        title="Ajouter d'autres photos"
+                      >
+                        <UploadCloud className="w-5 h-5 text-muted-foreground/60" />
+                        <span className="text-[10px] text-muted-foreground font-medium">Ajouter</span>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 )}
               </div>

@@ -48,3 +48,51 @@ id = "V7bQfon0ZOedF-I6bGn6-"
 uri = "file://artifacts/aussie-farm/public/images/farm-pastoral.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "oO7qJkFxa6vKdlZtcIx6W"
+uri = "file://artifacts/aussie-farm/public/images/puppy-bleu-merle.png"
+type = "image"
+title = "Blue Merle Aussie puppy"
+
+[[generated]]
+id = "Xqb9R8-ukg3HennRkE7an"
+uri = "file://artifacts/aussie-farm/public/images/puppy-rouge-merle.png"
+type = "image"
+title = "Red Merle Aussie puppy"
+
+[[generated]]
+id = "EQZNcs4xN7SDAOauNtRBl"
+uri = "file://artifacts/aussie-farm/public/images/puppy-noir-tricolore.png"
+type = "image"
+title = "Black Tri Aussie puppy"
+
+[[generated]]
+id = "2Y3Id4_QVe1VOzfLS5InC"
+uri = "file://artifacts/aussie-farm/public/images/puppy-rouge-tricolore.png"
+type = "image"
+title = "Red Tri Aussie puppy"
+
+[[generated]]
+id = "WPf-il9nXTrumoXlYmOcc"
+uri = "file://artifacts/aussie-farm/public/images/puppy-bleu-merle-femelle.png"
+type = "image"
+title = "Blue Merle female Aussie puppy"
+
+[[generated]]
+id = "7rNc3UrSWW-Xu_4jJmysh"
+uri = "file://artifacts/aussie-farm/public/images/puppy-rouge-merle-femelle.png"
+type = "image"
+title = "Red Merle female Aussie puppy"
+
+[[generated]]
+id = "GqezdqMWWOhCmYZp1vKDu"
+uri = "file://artifacts/aussie-farm/public/images/puppy-noir-tricolore-femelle.png"
+type = "image"
+title = "Black Tri female Aussie puppy"
+
+[[generated]]
+id = "AznXVtmXDd5iYa0mSBoJA"
+uri = "file://artifacts/aussie-farm/public/images/puppy-rouge-tricolore-femelle.png"
+type = "image"
+title = "Red Tri female Aussie puppy"
