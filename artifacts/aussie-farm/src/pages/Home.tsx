@@ -361,9 +361,11 @@ export default function Home() {
                     </div>
                     <span className="text-xs text-amber-700/60 dark:text-amber-500/60 hidden sm:block italic">Sélectionnées par l'élevage</span>
                   </div>
-                  <div className="p-5 grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="px-5 py-4 flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-3 scrollbar-hide">
                     {featuredPuppies.map((p) => (
-                      <HomeFeaturedCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
+                      <div key={p.id} className="snap-start flex-shrink-0 w-[200px] sm:w-[220px]">
+                        <HomeFeaturedCard puppy={p} onClick={() => setSelectedPuppy(p)} />
+                      </div>
                     ))}
                   </div>
                 </div>
