@@ -28,8 +28,8 @@ function HomeFeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => voi
       onClick={onClick}
       className="group bg-card rounded-2xl overflow-hidden border-2 border-amber-400/70 dark:border-amber-500/50 shadow-md hover:shadow-xl hover:border-amber-500 transition-all duration-300 cursor-pointer hover:-translate-y-1"
     >
-      {/* Image carrée */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* Image */}
+      <div className="relative h-40 overflow-hidden">
         <img
           src={img}
           alt={puppy.name}
