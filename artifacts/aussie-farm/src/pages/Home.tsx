@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import {
   Star, Shield, Award, Heart, CheckCircle2, Plane, Truck,
   ArrowRight, PawPrint as Paw, Info, Sparkles,
+  FileText, Cpu, Stethoscope, BookOpen, ClipboardList, ScrollText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
@@ -367,8 +368,97 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA final */}
+      {/* Documents fournis après l'adoption */}
       <section className="py-24 bg-secondary/30">
+        <div className="container px-4 mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 font-medium text-sm">
+              <ScrollText className="w-4 h-4" />
+              <span>Transparence & sérieux</span>
+            </div>
+            <h2 className="font-serif text-4xl font-bold mb-4">
+              Documents fournis<br />après l'adoption
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              À la remise de votre chiot, vous recevez un dossier complet. Chaque document est officiel, à jour, et conforme à la réglementation française en vigueur.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                icon: <FileText className="w-6 h-6" />,
+                title: "Certificat de cession",
+                desc: "Contrat de vente officiel signé par les deux parties, attestant légalement le transfert de propriété de l'animal (Code rural L214-8).",
+                tag: "Obligatoire",
+              },
+              {
+                icon: <Cpu className="w-6 h-6" />,
+                title: "Attestation I-CAD",
+                desc: "Confirmation de l'identification par puce électronique, enregistrée auprès de l'organisme officiel I-CAD. Permet de retrouver votre chien en cas de perte.",
+                tag: "Obligatoire",
+              },
+              {
+                icon: <Stethoscope className="w-6 h-6" />,
+                title: "Certificat vétérinaire",
+                desc: "Délivré par notre vétérinaire avant la cession, il confirme le bon état de santé du chiot, ses vaccinations et ses traitements antiparasitaires.",
+                tag: "Obligatoire",
+              },
+              {
+                icon: <BookOpen className="w-6 h-6" />,
+                title: "Passeport européen",
+                desc: "Document officiel contenant le carnet de santé complet, les rappels vaccinaux effectués, et obligatoire pour tout séjour en Suisse ou en Belgique.",
+                tag: "Obligatoire",
+              },
+              {
+                icon: <ClipboardList className="w-6 h-6" />,
+                title: "CEC + Guide pratique",
+                desc: "L'acheteur signe le Certificat d'Engagement et de Connaissance (loi 2021). Nous remettons aussi un guide personnalisé alimentation, éducation et bien-être.",
+                tag: "Loi nov. 2021",
+              },
+              {
+                icon: <Award className="w-6 h-6" />,
+                title: "Certificat de naissance LOF",
+                desc: "Pour nos chiots de race pure inscrits au Livre des Origines Français, ce document permet d'obtenir le pedigree officiel auprès de la SCC.",
+                tag: "Race pure",
+              },
+            ].map((doc) => (
+              <div
+                key={doc.title}
+                className="bg-card rounded-2xl p-6 border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col gap-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                    {doc.icon}
+                  </div>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/8 text-primary border border-primary/15 whitespace-nowrap">
+                    {doc.tag}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-lg mb-2">{doc.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{doc.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 max-w-5xl mx-auto bg-primary/5 border border-primary/15 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+            <div className="text-3xl flex-shrink-0">📦</div>
+            <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+              <strong className="text-foreground">Tout est prêt le jour J.</strong> Le dossier complet vous est remis lors de la récupération ou accompagne le chiot lors de la livraison. Aucune démarche supplémentaire n'est à votre charge.
+            </p>
+            <Link href="/contact" className="flex-shrink-0">
+              <Button className="rounded-full gap-2 whitespace-nowrap">
+                Des questions ? <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA final */}
+      <section className="py-24">
         <div className="container px-4 mx-auto text-center max-w-3xl">
           <div className="text-6xl mb-6">🐾</div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">Prêt à accueillir votre Berger Australien ?</h2>
