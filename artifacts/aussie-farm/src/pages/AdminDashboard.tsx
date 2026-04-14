@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus, LogOut, Pencil, Trash2, UploadCloud, X, Loader2,
   CheckCircle2, AlertCircle, PawPrint as Paw, Image as ImageIcon,
-  ChevronDown, Crown, ExternalLink, Star, ShieldCheck, Clock, MessageSquare,
+  ChevronDown, Sparkles, ExternalLink, Star, ShieldCheck, Clock, MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -290,9 +290,9 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                           <div className="w-full h-full bg-secondary flex items-center justify-center"><ImageIcon className="w-12 h-12 text-muted-foreground/30" /></div>
                         )}
                         {p.isPremium && (
-                          <div className="absolute top-0 left-0 right-0 flex justify-center pt-2.5">
-                            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-amber-400 text-white text-xs font-bold shadow">
-                              <Crown className="w-3 h-3" /> Premium
+                          <div className="absolute top-0 left-0 right-0 flex justify-start px-3 pt-2.5">
+                            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs font-bold shadow">
+                              <Sparkles className="w-3 h-3" /> À la Une
                             </div>
                           </div>
                         )}
@@ -310,12 +310,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                           disabled={premiumMut.isPending}
                           className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold mb-3 transition-all border ${
                             p.isPremium
-                              ? "bg-gradient-to-r from-yellow-500 to-amber-400 text-white border-transparent shadow-md hover:opacity-90"
-                              : "bg-secondary border-border hover:border-yellow-400/50 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 text-foreground"
+                              ? "bg-gradient-to-r from-amber-500 to-amber-400 text-white border-transparent shadow-md hover:opacity-90"
+                              : "bg-secondary border-border hover:border-amber-400/50 hover:bg-amber-50 dark:hover:bg-amber-900/20 text-foreground"
                           }`}
                         >
-                          <Crown className={`w-4 h-4 ${p.isPremium ? "fill-white" : ""}`} />
-                          {p.isPremium ? "Retirer le badge Premium" : "Passer en Premium"}
+                          <Sparkles className="w-4 h-4" />
+                          {p.isPremium ? "Retirer de la Une" : "Mettre À la Une"}
                         </button>
 
                         <div className="relative mb-3">
@@ -523,15 +523,15 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
               </div>
               <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-secondary/30">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${form.isPremium ? "bg-gradient-to-br from-yellow-500 to-amber-400 text-white" : "bg-secondary text-muted-foreground"}`}>
-                    <Crown className="w-5 h-5" />
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${form.isPremium ? "bg-gradient-to-br from-amber-500 to-amber-400 text-white" : "bg-secondary text-muted-foreground"}`}>
+                    <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Annonce Premium</p>
-                    <p className="text-xs text-muted-foreground">Mise en avant en tête de liste avec badge doré</p>
+                    <p className="font-semibold text-sm">Mettre À la Une</p>
+                    <p className="text-xs text-muted-foreground">Mise en avant en tête de liste dans un encadré dédié</p>
                   </div>
                 </div>
-                <button type="button" onClick={() => setForm((f) => ({ ...f, isPremium: !f.isPremium }))} className={`relative w-12 h-6 rounded-full transition-colors ${form.isPremium ? "bg-yellow-500" : "bg-border"}`}>
+                <button type="button" onClick={() => setForm((f) => ({ ...f, isPremium: !f.isPremium }))} className={`relative w-12 h-6 rounded-full transition-colors ${form.isPremium ? "bg-amber-500" : "bg-border"}`}>
                   <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${form.isPremium ? "translate-x-6" : "translate-x-1"}`} />
                 </button>
               </div>

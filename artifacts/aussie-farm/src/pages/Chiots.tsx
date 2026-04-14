@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Star, X, CheckCircle2, Info, Loader2, PawPrint as Paw, Crown,
+  Star, X, CheckCircle2, Info, Loader2, PawPrint as Paw, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
@@ -19,23 +19,87 @@ const STATUS_COLORS: Record<string, string> = {
   sold: "bg-red-500/10 text-red-700 dark:text-red-400",
 };
 
+function FeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
+  const img = puppy.images[0] ?? "/images/puppy-bleu-merle.png";
+  return (
+    <div
+      onClick={onClick}
+      className="group flex bg-card rounded-2xl overflow-hidden border border-amber-300/60 dark:border-amber-600/40 shadow-sm hover:shadow-lg hover:border-amber-400/80 dark:hover:border-amber-500/60 transition-all duration-300 cursor-pointer"
+    >
+      {/* Left accent bar */}
+      <div className="w-1 flex-shrink-0 bg-gradient-to-b from-amber-400 to-amber-500" />
+
+      {/* Image */}
+      <div className="relative w-44 sm:w-56 flex-shrink-0 overflow-hidden">
+        <img
+          src={img}
+          alt={puppy.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className={`absolute top-2 left-2 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${STATUS_COLORS[puppy.status]}`}>
+          {STATUS_LABELS[puppy.status]}
+        </div>
+      </div>
+
+      {/* Details */}
+      <div className="flex flex-col justify-between p-5 flex-grow min-w-0">
+        <div>
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <h3 className="font-serif text-xl font-bold group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors leading-tight">
+                {puppy.name}
+              </h3>
+              <p className="text-muted-foreground text-sm capitalize mt-0.5">{puppy.color} · {puppy.sex} · {puppy.ageWeeks} sem.</p>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <p className="font-bold text-xl text-foreground">{puppy.price.toLocaleString("fr-FR")} €</p>
+              <div className="flex items-center justify-end gap-1 mt-1">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${puppy.sex === "Mâle" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" : "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300"}`}>
+                  {puppy.sex === "Mâle" ? "M" : "F"}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {puppy.traits.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {puppy.traits.slice(0, 3).map((t) => (
+                <span key={t} className="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-700/40 text-xs rounded-md font-medium">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between pt-3 border-t border-amber-100 dark:border-amber-800/30">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+            Pucé · Vacciné · Certifié
+          </div>
+          <Button
+            size="sm"
+            className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-none text-xs h-8 px-4 shadow-sm"
+          >
+            Voir l'annonce
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
   const img = puppy.images[0] ?? "/images/puppy-bleu-merle.png";
   return (
     <div
-      className={`group bg-card rounded-2xl overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer ${puppy.isPremium ? "border-yellow-400/50 shadow-yellow-400/10" : "border-border/50"}`}
+      className="group bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
       onClick={onClick}
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img src={img} alt={puppy.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-        {puppy.isPremium && (
-          <div className="absolute top-0 left-0 right-0 flex justify-center pt-3">
-            <div className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-500 to-amber-400 text-white text-xs font-bold shadow-lg">
-              <Crown className="w-3.5 h-3.5" /> Annonce Premium
-            </div>
-          </div>
-        )}
-        <div className={`absolute ${puppy.isPremium ? "top-14" : "top-3"} left-3`}>
+        <div className="absolute top-3 left-3">
           <span className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${STATUS_COLORS[puppy.status]}`}>{STATUS_LABELS[puppy.status]}</span>
         </div>
         <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
@@ -82,9 +146,8 @@ export default function Chiots() {
     return true;
   });
 
-  const premiumPuppies = filtered.filter((p) => p.isPremium);
+  const featuredPuppies = filtered.filter((p) => p.isPremium);
   const regularPuppies = filtered.filter((p) => !p.isPremium);
-
   const primaryImage = (p: Puppy) => p.images[0] ?? "/images/puppy-bleu-merle.png";
 
   return (
@@ -154,27 +217,44 @@ export default function Chiots() {
               </div>
             ) : (
               <>
-                {/* Premium section */}
-                {premiumPuppies.length > 0 && (
+                {/* ─── À LA UNE section ─── */}
+                {featuredPuppies.length > 0 && (
                   <div className="mb-14">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500 to-amber-400 text-white text-sm font-bold shadow-md">
-                        <Crown className="w-4 h-4" /> Annonces Premium
+                    {/* Section container with amber tinted frame */}
+                    <div className="rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm">
+                      {/* Section header */}
+                      <div className="flex items-center justify-between px-6 py-4 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-sm font-bold shadow-sm">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            À la Une
+                          </div>
+                          <span className="text-sm text-amber-800 dark:text-amber-400 font-medium">
+                            {featuredPuppies.length} annonce{featuredPuppies.length > 1 ? "s" : ""} mise{featuredPuppies.length > 1 ? "s" : ""} en avant
+                          </span>
+                        </div>
+                        <span className="text-xs text-amber-700/60 dark:text-amber-500/60 hidden sm:block">Annonces sélectionnées par l'élevage</span>
                       </div>
-                      <div className="flex-1 h-px bg-gradient-to-r from-yellow-400/30 to-transparent" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {premiumPuppies.map((p) => <PuppyCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />)}
+
+                      {/* Featured cards */}
+                      <div className="p-5 flex flex-col gap-4">
+                        {featuredPuppies.map((p) => (
+                          <FeaturedCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
 
-                {/* Regular section */}
+                {/* ─── Regular listings ─── */}
                 {regularPuppies.length > 0 && (
                   <div>
-                    {premiumPuppies.length > 0 && (
-                      <div className="flex items-center gap-3 mb-6">
-                        <span className="text-sm font-medium text-muted-foreground">Toutes les annonces</span>
+                    {featuredPuppies.length > 0 && (
+                      <div className="flex items-center gap-3 mb-8">
+                        <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                          Toutes les annonces
+                          <span className="ml-2 text-xs font-normal">({regularPuppies.length})</span>
+                        </span>
                         <div className="flex-1 h-px bg-border" />
                       </div>
                     )}
@@ -195,7 +275,7 @@ export default function Chiots() {
               </>
             )}
 
-            {/* Info livraison inline */}
+            {/* Info livraison */}
             <div className="mt-16 grid grid-cols-3 gap-4 p-6 bg-primary/5 rounded-2xl border border-primary/20 text-center">
               {[
                 { flag: "🇫🇷", label: "France" },
@@ -219,13 +299,13 @@ export default function Chiots() {
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSelectedPuppy(null)} />
           <div className="relative bg-card text-card-foreground w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
             {selectedPuppy.isPremium && (
-              <div className="absolute top-0 left-0 right-0 z-10 flex justify-center pt-4">
-                <div className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-500 to-amber-400 text-white text-xs font-bold shadow-lg">
-                  <Crown className="w-3.5 h-3.5" /> Annonce Premium
+              <div className="absolute top-0 left-0 right-0 z-10 flex justify-start px-4 pt-4">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs font-bold shadow">
+                  <Sparkles className="w-3 h-3" /> À la Une
                 </div>
               </div>
             )}
-            <button onClick={() => setSelectedPuppy(null)} className={`absolute right-4 z-20 w-10 h-10 bg-background/60 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-background transition-colors ${selectedPuppy.isPremium ? "top-12" : "top-4"}`}>
+            <button onClick={() => setSelectedPuppy(null)} className={`absolute right-4 z-20 w-10 h-10 bg-background/60 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-background transition-colors ${selectedPuppy.isPremium ? "top-10" : "top-4"}`}>
               <X className="w-5 h-5" />
             </button>
             <div className="overflow-y-auto">
