@@ -1,0 +1,44 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "LJu6ZFL347d2XHyg4FfjU"
+uri = "file://artifacts/mockup-sandbox/public/images/aussie-hero.png"
+type = "image"
+title = "Aussie in a green meadow"
+
+[[generated]]
+id = "BvvR-wmfpPkuRU4DSoSlF"
+uri = "file://artifacts/mockup-sandbox/public/images/puppy-bleu-merle.png"
+type = "image"
+title = "Blue merle puppy"
+
+[[generated]]
+id = "zbIcT55oYHP9fdDlanVIY"
+uri = "file://artifacts/mockup-sandbox/public/images/puppy-rouge-merle.png"
+type = "image"
+title = "Red merle puppy"
+
+[[generated]]
+id = "n9zR_gHsCGPb9-salVoji"
+uri = "file://artifacts/mockup-sandbox/public/images/puppy-noir-tricolore.png"
+type = "image"
+title = "Black tricolor puppy"
+
+[[generated]]
+id = "dCaMV4iE0myaVdu3KiQ5f"
+uri = "file://artifacts/mockup-sandbox/public/images/puppy-rouge-tricolore.png"
+type = "image"
+title = "Red tricolor puppy"
+
+[[generated]]
+id = "H2cFqkWENl5gio-HDJsct"
+uri = "file://artifacts/mockup-sandbox/public/images/farm-pastoral.png"
+type = "image"
+title = "Countryside farm at golden hour"
+
+[[generated]]
+id = "vJdH3rVmwqsdNpkGtMru_"
+uri = "file://artifacts/mockup-sandbox/public/images/aussie-modal-extra.png"
+type = "image"
+title = "Puppies sleeping on blanket"

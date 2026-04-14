@@ -1,0 +1,83 @@
+Crée un site web moderne, professionnel et responsive pour une ferme d’élevage spécialisée dans les chiens de race Berger australien.
+
+🎯 Objectif :
+Présenter l’élevage, mettre en avant les chiots disponibles et permettre aux visiteurs de contacter facilement l’éleveur.
+
+🎨 Design :
+
+Design moderne, propre et élégant
+Compatible mode clair et sombre
+Couleurs naturelles (vert, beige, blanc, touches marron)
+Typographie lisible et professionnelle
+Interface fluide avec animations légères
+
+📄 Pages à créer :
+
+Page d’accueil
+Grande bannière avec image de berger australien
+Slogan (ex : “Des compagnons fidèles, élevés avec passion”)
+Présentation rapide de la ferme
+Bouton “Voir nos chiots”
+Section avantages (santé, pedigree, suivi)
+Nos chiots
+Galerie de chiots disponibles
+Filtres :
+couleur (bleu merle, rouge merle, noir tricolore, rouge tricolore)
+sexe
+Carte pour chaque chiot avec :
+photo
+nom
+âge
+prix
+bouton “Réserver” ou “Voir détails”
+Détail du chiot
+Plusieurs photos
+Description complète
+Informations :
+vaccins
+parents
+caractère
+Bouton de contact
+À propos (la ferme)
+Présentation de l’élevage
+Valeurs (bien-être animal, qualité, passion)
+Photos du lieu
+Contact
+Formulaire (nom, email, message)
+WhatsApp (lien cliquable)
+Localisation (carte simple)
+
+🧠 Fonctionnalités :
+
+Responsive mobile / tablette / desktop
+Navigation fluide
+Animations légères (hover, transitions)
+Formulaire fonctionnel (simulation backend ou API simple)
+Données des chiots en JSON ou base simple
+
+⚙️ Tech stack :
+
+Frontend : HTML, CSS, JavaScript (ou React si possible)
+Backend léger : Node.js + Express (optionnel)
+Stockage : JSON ou petite base de données
+Code bien structuré et commenté
+
+🧩 Bonus (si possible) :
+
+Système de réservation simple
+Mode sombre automatique
+Lazy loading des images
+SEO optimisé (balises meta)
+
+🐶 Contenu spécifique :
+Inclure différents types de berger australien :
+
+Standard
+Miniature
+Couleurs : bleu merle, rouge merle, noir tricolore, rouge tricolore
+
+💬 Ton :
+Professionnel, rassurant, orienté confiance et passion animale
+
+🎯 Résultat attendu :
+Un site complet, prêt à être lancé, visuellement attractif et crédible pour vendre des chiots berger australien.
