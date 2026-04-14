@@ -26,23 +26,33 @@ function HomeFeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => voi
   return (
     <div
       onClick={onClick}
-      className="group flex bg-card rounded-2xl overflow-hidden border border-amber-300/60 dark:border-amber-600/40 shadow-sm hover:shadow-lg hover:border-amber-400/80 transition-all duration-300 cursor-pointer"
+      className="group flex flex-col sm:flex-row bg-card rounded-2xl overflow-hidden border border-amber-300/60 dark:border-amber-600/40 shadow-sm hover:shadow-lg hover:border-amber-400/80 transition-all duration-300 cursor-pointer"
     >
-      <div className="w-1 flex-shrink-0 bg-gradient-to-b from-amber-400 to-amber-500" />
-      <div className="relative w-44 sm:w-64 flex-shrink-0 overflow-hidden">
+      {/* Bande décorative — uniquement en horizontal */}
+      <div className="hidden sm:block w-1 flex-shrink-0 bg-gradient-to-b from-amber-400 to-amber-500" />
+
+      {/* Image */}
+      <div className="relative w-full sm:w-64 flex-shrink-0 overflow-hidden h-52 sm:h-auto">
         <img src={img} alt={puppy.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
         <div className={`absolute top-2 left-2 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${STATUS_COLORS[puppy.status]}`}>
           {STATUS_LABELS[puppy.status]}
         </div>
+        {/* Prix en overlay sur mobile */}
+        <div className="absolute top-2 right-2 sm:hidden bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-sm font-bold shadow-sm">
+          {puppy.price.toLocaleString("fr-FR")} €
+        </div>
       </div>
-      <div className="flex flex-col justify-between p-5 flex-grow min-w-0">
+
+      {/* Contenu */}
+      <div className="flex flex-col justify-between p-4 sm:p-5 flex-grow min-w-0">
         <div>
           <div className="flex items-start justify-between gap-3 mb-2">
             <div>
               <h3 className="font-serif text-xl font-bold group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors leading-tight">{puppy.name}</h3>
               <p className="text-muted-foreground text-sm capitalize mt-0.5">{puppy.color} · {puppy.sex} · {puppy.ageWeeks} sem.</p>
             </div>
-            <div className="text-right flex-shrink-0">
+            {/* Prix visible uniquement en mode desktop (caché sur mobile car affiché en overlay) */}
+            <div className="hidden sm:block text-right flex-shrink-0">
               <p className="font-bold text-xl text-foreground">{puppy.price.toLocaleString("fr-FR")} €</p>
               <div className={`mt-1 inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold ${puppy.sex === "Mâle" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" : "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300"}`}>
                 {puppy.sex === "Mâle" ? "M" : "F"}
@@ -62,7 +72,7 @@ function HomeFeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => voi
             <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
             Pucé · Vacciné · Certifié
           </div>
-          <Button size="sm" className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-none text-xs h-8 px-4 shadow-sm">
+          <Button size="sm" className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-none text-xs h-8 px-4 shadow-sm flex-shrink-0">
             Voir l'annonce
           </Button>
         </div>
