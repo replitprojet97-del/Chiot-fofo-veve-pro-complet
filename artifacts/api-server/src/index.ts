@@ -22,4 +22,18 @@ app.listen(port, (err) => {
   }
 
   logger.info({ port }, "Server listening");
+
+  const selfUrl = process.env["RENDER_EXTERNAL_URL"];
+  if (selfUrl) {
+    const INTERVAL_MS = 14 * 60 * 1000;
+    setInterval(async () => {
+      try {
+        const res = await fetch(`${selfUrl}/healthz`);
+        logger.info({ status: res.status }, "Keepalive ping sent");
+      } catch (err) {
+        logger.warn({ err }, "Keepalive ping failed");
+      }
+    }, INTERVAL_MS);
+    logger.info({ selfUrl, intervalMin: 14 }, "Keepalive cron started");
+  }
 });
