@@ -252,8 +252,10 @@ export default function Home() {
   const [reservingPuppy, setReservingPuppy] = useState<Puppy | null>(null);
 
   const featuredPuppies = puppies.filter((p) => p.isPremium);
-  const regularPuppies = puppies.filter((p) => !p.isPremium && p.status !== "sold").slice(0, 3);
-  const hasPuppies = featuredPuppies.length > 0 || regularPuppies.length > 0;
+  const featuredOnHome = featuredPuppies.slice(0, 6);
+  const regularSlots = Math.max(0, 6 - featuredOnHome.length);
+  const regularPuppies = puppies.filter((p) => !p.isPremium && p.status !== "sold").slice(0, regularSlots);
+  const hasPuppies = featuredOnHome.length > 0 || regularPuppies.length > 0;
 
   // Mobile : index courant du carousel (1 carte à la fois)
   const [featuredIndex, setFeaturedIndex] = useState(0);
@@ -426,7 +428,7 @@ export default function Home() {
                 )}
                 {/* Desktop : grille unifiée — featured d'abord, puis réguliers */}
                 <div className="hidden sm:grid grid-cols-3 gap-8">
-                  {[...featuredPuppies, ...regularPuppies].map((p) => (
+                  {[...featuredOnHome, ...regularPuppies].map((p) => (
                     <HomePuppyCard
                       key={p.id}
                       puppy={p}
