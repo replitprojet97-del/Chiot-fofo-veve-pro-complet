@@ -1,141 +1,52 @@
 import React, { useState, useEffect } from "react";
 import {
-  Phone,
-  Mail,
-  MapPin,
-  Heart,
-  Star,
-  Shield,
-  Award,
-  X,
-  Moon,
-  Sun,
-  PawPrint as Paw,
-  CheckCircle2,
-  Info,
+  Phone, Mail, MapPin, Heart, Star, Shield, Award, X,
+  Moon, Sun, PawPrint as Paw, CheckCircle2, Info, Loader2, AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { usePuppies } from "@/hooks/usePuppies";
+import { contactApi, type Puppy } from "@/lib/api";
+import ReservationModal from "@/components/ReservationModal";
 
-type PuppyColor = "bleu merle" | "rouge merle" | "noir tricolore" | "rouge tricolore";
-type Sex = "Mâle" | "Femelle";
+type PuppyColor = "bleu merle" | "rouge merle" | "noir tricolore" | "rouge tricolore" | "Tous";
+type SexFilter = "Mâle" | "Femelle" | "Tous";
 
-interface Puppy {
-  id: string;
-  name: string;
-  age: number;
-  color: PuppyColor;
-  sex: Sex;
-  price: number;
-  image: string;
-  description: string;
-  traits: string[];
-  parents: string;
-}
-
-const PUPPIES: Puppy[] = [
-  {
-    id: "p1",
-    name: "Milo",
-    age: 8,
-    color: "bleu merle",
-    sex: "Mâle",
-    price: 1800,
-    image: "/images/puppy-bleu-merle.png",
-    description: "Milo est un chiot très joueur et affectueux. Il adore explorer et a une belle robe bleue bien marquée.",
-    traits: ["Joueur", "Curieux", "Très affectueux"],
-    parents: "Luna (Bleu Merle) x Orion (Noir Tricolore)",
-  },
-  {
-    id: "p2",
-    name: "Ruby",
-    age: 9,
-    color: "rouge merle",
-    sex: "Femelle",
-    price: 2000,
-    image: "/images/puppy-rouge-merle.png",
-    description: "Ruby est une petite femelle douce et calme. Elle est très attentive et sera parfaite pour une famille avec enfants.",
-    traits: ["Calme", "Attentive", "Douce"],
-    parents: "Stella (Rouge Merle) x Orion (Noir Tricolore)",
-  },
-  {
-    id: "p3",
-    name: "Buster",
-    age: 8,
-    color: "noir tricolore",
-    sex: "Mâle",
-    price: 1500,
-    image: "/images/puppy-noir-tricolore.png",
-    description: "Buster est plein d'énergie et très intelligent. Il apprend vite et ferait un excellent chien de sport.",
-    traits: ["Énergique", "Intelligent", "Sportif"],
-    parents: "Luna (Bleu Merle) x Orion (Noir Tricolore)",
-  },
-  {
-    id: "p4",
-    name: "Hazel",
-    age: 10,
-    color: "rouge tricolore",
-    sex: "Femelle",
-    price: 1600,
-    image: "/images/puppy-rouge-tricolore.png",
-    description: "Hazel a un magnifique pelage rouge et un regard très expressif. Elle est câline et toujours prête pour une promenade.",
-    traits: ["Câline", "Expressive", "Sociable"],
-    parents: "Stella (Rouge Merle) x Jasper (Rouge Tricolore)",
-  },
-  {
-    id: "p5",
-    name: "Oscar",
-    age: 7,
-    color: "bleu merle",
-    sex: "Mâle",
-    price: 1900,
-    image: "/images/puppy-bleu-merle.png",
-    description: "Oscar est le petit clown de la portée. Il est toujours prêt à faire des bêtises pour attirer l'attention.",
-    traits: ["Rigolo", "Sociable", "Actif"],
-    parents: "Luna (Bleu Merle) x Orion (Noir Tricolore)",
-  },
-  {
-    id: "p6",
-    name: "Bella",
-    age: 8,
-    color: "rouge merle",
-    sex: "Femelle",
-    price: 2200,
-    image: "/images/puppy-rouge-merle.png",
-    description: "Bella a des yeux vairons magnifiques. Elle est très proche de l'homme et demande beaucoup de tendresse.",
-    traits: ["Proche de l'homme", "Tendre", "Observatrice"],
-    parents: "Stella (Rouge Merle) x Orion (Noir Tricolore)",
-  },
-];
+const STATUS_LABELS: Record<string, string> = {
+  available: "Disponible",
+  reserved: "Réservé",
+  sold: "Vendu",
+};
+const STATUS_COLORS: Record<string, string> = {
+  available: "bg-green-500/10 text-green-700 dark:text-green-400",
+  reserved: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  sold: "bg-red-500/10 text-red-700 dark:text-red-400",
+};
 
 export default function Home() {
   const [isDark, setIsDark] = useState(false);
-  const [filterColor, setFilterColor] = useState<PuppyColor | "Tous">("Tous");
-  const [filterSex, setFilterSex] = useState<Sex | "Tous">("Tous");
+  const [filterColor, setFilterColor] = useState<PuppyColor>("Tous");
+  const [filterSex, setFilterSex] = useState<SexFilter>("Tous");
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);
+  const [reservingPuppy, setReservingPuppy] = useState<Puppy | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({ prenom: "", nom: "", email: "", message: "" });
-  const [formSent, setFormSent] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [formError, setFormError] = useState("");
+
+  const { data: puppies = [], isLoading: puppiesLoading } = usePuppies();
 
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
   useEffect(() => {
-    if (selectedPuppy) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = (selectedPuppy || reservingPuppy) ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [selectedPuppy]);
+  }, [selectedPuppy, reservingPuppy]);
 
-  const filteredPuppies = PUPPIES.filter((p) => {
+  const filteredPuppies = puppies.filter((p) => {
     if (filterColor !== "Tous" && p.color !== filterColor) return false;
     if (filterSex !== "Tous" && p.sex !== filterSex) return false;
     return true;
@@ -146,42 +57,45 @@ export default function Home() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSent(true);
-    setTimeout(() => setFormSent(false), 4000);
-    setFormData({ prenom: "", nom: "", email: "", message: "" });
+    setFormStatus("loading");
+    setFormError("");
+    try {
+      await contactApi.sendContact({
+        firstName: formData.prenom,
+        lastName: formData.nom,
+        email: formData.email,
+        message: formData.message,
+      });
+      setFormStatus("success");
+      setFormData({ prenom: "", nom: "", email: "", message: "" });
+      setTimeout(() => setFormStatus("idle"), 5000);
+    } catch (err) {
+      setFormStatus("error");
+      setFormError(err instanceof Error ? err.message : "Erreur lors de l'envoi du message");
+    }
   };
+
+  const primaryImage = (p: Puppy) => p.images[0] ?? "/images/puppy-bleu-merle.png";
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans transition-colors duration-300">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-          <button
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => scrollToSection("home")}
-          >
+          <button className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection("home")}>
             <Paw className="w-7 h-7 text-primary" />
             <span className="font-serif text-xl font-bold tracking-wide">Élevage du Berger Bleu</span>
           </button>
 
           <div className="hidden md:flex items-center gap-8 font-medium">
             {["home", "chiots", "apropos", "contact"].map((s) => (
-              <button
-                key={s}
-                onClick={() => scrollToSection(s)}
-                className="hover:text-primary transition-colors text-sm capitalize"
-              >
+              <button key={s} onClick={() => scrollToSection(s)} className="hover:text-primary transition-colors text-sm">
                 {s === "home" ? "Accueil" : s === "chiots" ? "Nos Chiots" : s === "apropos" ? "À Propos" : "Contact"}
               </button>
             ))}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsDark(!isDark)}
-              className="rounded-full w-10 h-10"
-            >
+            <Button variant="ghost" size="icon" onClick={() => setIsDark(!isDark)} className="rounded-full w-10 h-10">
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
           </div>
@@ -190,13 +104,10 @@ export default function Home() {
             <Button variant="ghost" size="icon" onClick={() => setIsDark(!isDark)} className="rounded-full">
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-accent transition-colors"
-            >
-              <div className="w-5 h-0.5 bg-foreground mb-1 transition-all" />
-              <div className="w-5 h-0.5 bg-foreground mb-1 transition-all" />
-              <div className="w-5 h-0.5 bg-foreground transition-all" />
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-lg hover:bg-accent transition-colors">
+              <div className="w-5 h-0.5 bg-foreground mb-1" />
+              <div className="w-5 h-0.5 bg-foreground mb-1" />
+              <div className="w-5 h-0.5 bg-foreground" />
             </button>
           </div>
         </div>
@@ -204,11 +115,7 @@ export default function Home() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md px-4 py-4 flex flex-col gap-4 font-medium">
             {["home", "chiots", "apropos", "contact"].map((s) => (
-              <button
-                key={s}
-                onClick={() => scrollToSection(s)}
-                className="text-left hover:text-primary transition-colors py-2 border-b border-border/50 last:border-0"
-              >
+              <button key={s} onClick={() => scrollToSection(s)} className="text-left hover:text-primary transition-colors py-2 border-b border-border/50 last:border-0">
                 {s === "home" ? "Accueil" : s === "chiots" ? "Nos Chiots" : s === "apropos" ? "À Propos" : "Contact"}
               </button>
             ))}
@@ -216,54 +123,34 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section id="home" className="relative pt-20 min-h-[92vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <img
-            src="/images/aussie-hero.png"
-            alt="Magnifique Berger Australien dans la nature"
-            className="w-full h-full object-cover"
-          />
+          <img src="/images/aussie-hero.png" alt="Berger Australien" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/92 via-background/65 to-background/10 dark:from-background/97 dark:via-background/80" />
         </div>
-
         <div className="container relative z-10 px-4 py-20">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 font-medium text-sm">
               <Star className="w-4 h-4" />
               <span>Élevage familial en plein cœur de la France</span>
             </div>
-
             <h1 className="font-serif text-5xl md:text-7xl font-bold leading-tight mb-6">
-              Des compagnons fidèles,{" "}
-              <br className="hidden md:block" />
-              élevés avec{" "}
-              <span className="text-primary italic">passion</span>.
+              Des compagnons fidèles,<br className="hidden md:block" />
+              élevés avec <span className="text-primary italic">passion</span>.
             </h1>
-
             <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl leading-relaxed">
-              Nous élevons des Bergers Australiens Standard et Miniatures dans un environnement
-              familial. Nos chiots grandissent entourés d'amour, prêts à partager votre vie.
+              Nous élevons des Bergers Australiens Standard et Miniatures dans un environnement familial.
+              Nos chiots grandissent entourés d'amour, prêts à partager votre vie.
             </p>
-
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="text-lg px-8 h-14 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-                onClick={() => scrollToSection("chiots")}
-              >
+              <Button size="lg" className="text-lg px-8 h-14 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:-translate-y-1" onClick={() => scrollToSection("chiots")}>
                 Voir nos chiots
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 h-14 rounded-full bg-background/50 backdrop-blur-sm border-2 hover:bg-accent transition-all"
-                onClick={() => scrollToSection("apropos")}
-              >
+              <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-full bg-background/50 backdrop-blur-sm border-2 hover:bg-accent" onClick={() => scrollToSection("apropos")}>
                 Découvrir l'élevage
               </Button>
             </div>
-
             <div className="mt-16 flex flex-wrap items-center gap-6 md:gap-10">
               {[
                 { icon: <Shield className="w-5 h-5" />, label: "Santé Certifiée" },
@@ -271,9 +158,7 @@ export default function Home() {
                 { icon: <Heart className="w-5 h-5" />, label: "Suivi Éleveur à vie" },
               ].map((badge) => (
                 <div key={badge.label} className="flex items-center gap-3 text-sm font-medium">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    {badge.icon}
-                  </div>
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">{badge.icon}</div>
                   <span>{badge.label}</span>
                 </div>
               ))}
@@ -282,35 +167,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Nos Chiots Section */}
+      {/* Puppies Section */}
       <section id="chiots" className="py-24 bg-secondary/30">
         <div className="container px-4 mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">Nos Chiots Disponibles</h2>
             <p className="text-lg text-muted-foreground">
-              Découvrez nos petites merveilles. Chaque chiot partira pucé, vacciné, vermifugé, avec
-              un certificat de bonne santé vétérinaire.
+              Découvrez nos petites merveilles. Chaque chiot partira pucé, vacciné, vermifugé, avec un certificat vétérinaire.
             </p>
           </div>
 
           {/* Filters */}
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-12">
             <div className="flex flex-wrap justify-center gap-2">
-              {(["Tous", "bleu merle", "rouge merle", "noir tricolore", "rouge tricolore"] as const).map(
-                (color) => (
-                  <button
-                    key={color}
-                    onClick={() => setFilterColor(color)}
-                    className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                      filterColor === color
-                        ? "bg-primary text-primary-foreground shadow-md scale-105"
-                        : "bg-background border border-border hover:bg-accent hover:border-primary/50 text-foreground"
-                    }`}
-                  >
-                    <span className="capitalize">{color}</span>
-                  </button>
-                )
-              )}
+              {(["Tous", "bleu merle", "rouge merle", "noir tricolore", "rouge tricolore"] as const).map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setFilterColor(color)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${filterColor === color ? "bg-primary text-primary-foreground shadow-md scale-105" : "bg-background border border-border hover:bg-accent hover:border-primary/50"}`}
+                >
+                  <span className="capitalize">{color}</span>
+                </button>
+              ))}
             </div>
             <div className="h-8 w-px bg-border hidden md:block" />
             <div className="flex justify-center gap-2">
@@ -318,11 +196,7 @@ export default function Home() {
                 <button
                   key={sex}
                   onClick={() => setFilterSex(sex)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                    filterSex === sex
-                      ? "bg-foreground text-background shadow-md scale-105"
-                      : "bg-background border border-border hover:bg-accent text-foreground"
-                  }`}
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${filterSex === sex ? "bg-foreground text-background shadow-md scale-105" : "bg-background border border-border hover:bg-accent"}`}
                 >
                   {sex}
                 </button>
@@ -331,7 +205,11 @@ export default function Home() {
           </div>
 
           {/* Grid */}
-          {filteredPuppies.length > 0 ? (
+          {puppiesLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : filteredPuppies.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPuppies.map((puppy, i) => (
                 <div
@@ -341,46 +219,37 @@ export default function Home() {
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
-                      src={puppy.image}
+                      src={primaryImage(puppy)}
                       alt={`Chiot ${puppy.name}`}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                     />
-                    <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
+                    <div className="absolute top-3 left-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[puppy.status]}`}>
+                        {STATUS_LABELS[puppy.status]}
+                      </span>
+                    </div>
+                    <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
                       {puppy.price.toLocaleString("fr-FR")} €
                     </div>
                   </div>
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="font-serif text-2xl font-bold mb-1 group-hover:text-primary transition-colors">
-                          {puppy.name}
-                        </h3>
-                        <p className="text-muted-foreground text-sm capitalize">
-                          {puppy.color} • {puppy.age} semaines
-                        </p>
+                        <h3 className="font-serif text-2xl font-bold mb-1 group-hover:text-primary transition-colors">{puppy.name}</h3>
+                        <p className="text-muted-foreground text-sm capitalize">{puppy.color} • {puppy.ageWeeks} semaines</p>
                       </div>
                       <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-sm font-medium text-primary">
                         {puppy.sex === "Mâle" ? "M" : "F"}
                       </div>
                     </div>
-
                     <div className="flex flex-wrap gap-2 mb-6">
                       {puppy.traits.slice(0, 2).map((trait) => (
-                        <span
-                          key={trait}
-                          className="px-2.5 py-1 bg-secondary text-secondary-foreground text-xs rounded-md font-medium"
-                        >
-                          {trait}
-                        </span>
+                        <span key={trait} className="px-2.5 py-1 bg-secondary text-secondary-foreground text-xs rounded-md font-medium">{trait}</span>
                       ))}
                     </div>
-
-                    <Button
-                      className="w-full rounded-xl h-12 font-medium"
-                      onClick={() => setSelectedPuppy(puppy)}
-                    >
-                      Voir détails & Réserver
+                    <Button className="w-full rounded-xl h-12 font-medium" onClick={() => setSelectedPuppy(puppy)}>
+                      Voir les détails
                     </Button>
                   </div>
                 </div>
@@ -390,15 +259,8 @@ export default function Home() {
             <div className="text-center py-20 bg-background rounded-3xl border border-dashed border-border">
               <Paw className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
               <h3 className="text-xl font-medium mb-2">Aucun chiot ne correspond</h3>
-              <p className="text-muted-foreground">Essayez de modifier vos filtres de recherche.</p>
-              <Button
-                variant="link"
-                onClick={() => {
-                  setFilterColor("Tous");
-                  setFilterSex("Tous");
-                }}
-                className="mt-4 text-primary"
-              >
+              <p className="text-muted-foreground">Essayez de modifier vos filtres.</p>
+              <Button variant="link" onClick={() => { setFilterColor("Tous"); setFilterSex("Tous"); }} className="mt-4 text-primary">
                 Réinitialiser les filtres
               </Button>
             </div>
@@ -406,27 +268,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* À Propos Section */}
+      {/* À Propos */}
       <section id="apropos" className="py-24">
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/10 rounded-[3rem] transform -rotate-3 scale-105" />
-              <img
-                src="/images/farm-pastoral.png"
-                alt="Notre domaine"
-                className="relative rounded-3xl shadow-2xl object-cover aspect-[4/3] w-full"
-                loading="lazy"
-              />
+              <img src="/images/farm-pastoral.png" alt="Notre domaine" className="relative rounded-3xl shadow-2xl object-cover aspect-[4/3] w-full" loading="lazy" />
               <div className="absolute -bottom-8 -right-8 bg-card p-6 rounded-2xl shadow-xl border border-border max-w-[240px] hidden md:block">
                 <div className="flex gap-1 text-yellow-500 mb-2">
-                  {[...Array(5)].map((_, k) => (
-                    <Star key={k} className="w-5 h-5 fill-current" />
-                  ))}
+                  {[...Array(5)].map((_, k) => <Star key={k} className="w-5 h-5 fill-current" />)}
                 </div>
-                <p className="text-sm italic font-serif">
-                  "Un élevage exceptionnel, des chiens équilibrés et un suivi parfait."
-                </p>
+                <p className="text-sm italic font-serif">"Un élevage exceptionnel, des chiens équilibrés et un suivi parfait."</p>
                 <p className="text-xs text-muted-foreground mt-2 font-medium">— Famille Dubois</p>
               </div>
             </div>
@@ -436,40 +289,17 @@ export default function Home() {
                 <Heart className="w-4 h-4 text-primary" />
                 <span>Notre Histoire</span>
               </div>
-              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                Une passion née au cœur de la nature.
-              </h2>
+              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 leading-tight">Une passion née au cœur de la nature.</h2>
               <div className="space-y-5 text-lg text-muted-foreground leading-relaxed">
-                <p>
-                  Situé sur un domaine de 5 hectares de prairies, l'Élevage du Berger Bleu est avant
-                  tout l'histoire d'une famille passionnée par le Berger Australien depuis plus de 15
-                  ans.
-                </p>
-                <p>
-                  Nos chiens vivent avec nous, partagent notre quotidien et nos activités. Pas de
-                  chenils fermés : ici, c'est la vie au grand air, les balades en forêt et les soirées
-                  au coin du feu.
-                </p>
+                <p>Situé sur un domaine de 5 hectares de prairies, l'Élevage du Berger Bleu est avant tout l'histoire d'une famille passionnée par le Berger Australien depuis plus de 15 ans.</p>
+                <p>Nos chiens vivent avec nous, partagent notre quotidien et nos activités. Pas de chenils fermés : ici, c'est la vie au grand air, les balades en forêt et les soirées au coin du feu.</p>
               </div>
-
               <div className="grid sm:grid-cols-2 gap-6 mt-10">
                 {[
-                  {
-                    title: "Bien-être animal",
-                    desc: "Socialisation précoce et environnement stimulant.",
-                  },
-                  {
-                    title: "Qualité des lignées",
-                    desc: "Tests de santé complets (MDR1, AOC, APR-prcd, dysplasie).",
-                  },
-                  {
-                    title: "Passion & Éthique",
-                    desc: "Sélection rigoureuse des reproducteurs pour la santé et le caractère.",
-                  },
-                  {
-                    title: "Suivi Personnalisé",
-                    desc: "Accompagnement de l'éleveur disponible à vie pour chaque famille.",
-                  },
+                  { title: "Bien-être animal", desc: "Socialisation précoce et environnement stimulant." },
+                  { title: "Qualité des lignées", desc: "Tests de santé complets (MDR1, AOC, APR-prcd, dysplasie)." },
+                  { title: "Passion & Éthique", desc: "Sélection rigoureuse des reproducteurs pour la santé et le caractère." },
+                  { title: "Suivi Personnalisé", desc: "Accompagnement de l'éleveur disponible à vie pour chaque famille." },
                 ].map((v) => (
                   <div key={v.title} className="flex gap-4 items-start">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary mt-1">
@@ -487,131 +317,77 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section
-        id="contact"
-        className="py-24 bg-primary text-primary-foreground relative overflow-hidden"
-      >
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
-            backgroundSize: "32px 32px",
-          }}
-        />
-
+      {/* Contact */}
+      <section id="contact" className="py-24 bg-primary text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         <div className="container px-4 mx-auto relative z-10">
           <div className="max-w-5xl mx-auto bg-card text-card-foreground rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
-            {/* Form Side */}
             <div className="p-8 md:p-12 md:w-3/5">
               <h2 className="font-serif text-3xl font-bold mb-2">Discutons de votre projet</h2>
-              <p className="text-muted-foreground mb-8">
-                Adopter un chiot est un engagement. Écrivez-nous pour faire connaissance et parler de
-                vos attentes.
-              </p>
+              <p className="text-muted-foreground mb-8">Adopter un chiot est un engagement. Écrivez-nous pour faire connaissance et parler de vos attentes.</p>
 
-              {formSent ? (
+              {formStatus === "success" ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <h3 className="font-serif text-2xl font-bold">Message envoyé !</h3>
-                  <p className="text-muted-foreground">
-                    Nous vous répondrons dans les meilleurs délais.
-                  </p>
+                  <p className="text-muted-foreground">Nous vous répondrons dans les meilleurs délais.</p>
                 </div>
               ) : (
-                <form className="space-y-6" onSubmit={handleSubmit}>
+                <form className="space-y-6" onSubmit={handleContactSubmit}>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Prénom</label>
-                      <Input
-                        placeholder="Jean"
-                        className="bg-background"
-                        value={formData.prenom}
-                        onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-                        required
-                      />
+                      <Input placeholder="Jean" className="bg-background" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} required />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Nom</label>
-                      <Input
-                        placeholder="Dupont"
-                        className="bg-background"
-                        value={formData.nom}
-                        onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                        required
-                      />
+                      <Input placeholder="Dupont" className="bg-background" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} required />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Email</label>
-                    <Input
-                      type="email"
-                      placeholder="jean.dupont@email.com"
-                      className="bg-background"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
-                    />
+                    <Input type="email" placeholder="jean.dupont@email.com" className="bg-background" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">
-                      Votre projet (Mode de vie, temps disponible...)
-                    </label>
-                    <Textarea
-                      placeholder="Bonjour, nous sommes une famille avec deux enfants et un jardin..."
-                      className="h-32 bg-background"
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      required
-                    />
+                    <label className="text-sm font-medium">Votre projet</label>
+                    <Textarea placeholder="Bonjour, nous sommes une famille avec deux enfants et un jardin..." className="h-32 bg-background" value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} required />
                   </div>
-                  <Button
-                    type="submit"
-                    className="w-full h-12 text-lg rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform hover:-translate-y-1"
-                  >
-                    Envoyer le message
+                  {formStatus === "error" && (
+                    <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-600 rounded-xl text-sm">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      {formError || "Une erreur est survenue."}
+                    </div>
+                  )}
+                  <Button type="submit" disabled={formStatus === "loading"} className="w-full h-12 text-lg rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform hover:-translate-y-1">
+                    {formStatus === "loading" ? <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Envoi...</span> : "Envoyer le message"}
                   </Button>
                 </form>
               )}
             </div>
 
-            {/* Info Side */}
             <div className="bg-secondary/50 p-8 md:p-12 md:w-2/5 flex flex-col justify-between border-l border-border/50">
               <div>
                 <h3 className="font-serif text-2xl font-bold mb-8">Contact Direct</h3>
-
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-background shadow-sm flex items-center justify-center text-primary flex-shrink-0">
-                      <Phone className="w-5 h-5" />
-                    </div>
+                    <div className="w-10 h-10 rounded-full bg-background shadow-sm flex items-center justify-center text-primary flex-shrink-0"><Phone className="w-5 h-5" /></div>
                     <div>
                       <p className="font-medium text-sm text-muted-foreground">Téléphone</p>
-                      <a href="tel:+33612345678" className="font-bold text-lg hover:text-primary transition-colors">
-                        06 12 34 56 78
-                      </a>
+                      <a href="tel:+33612345678" className="font-bold text-lg hover:text-primary transition-colors">06 12 34 56 78</a>
                       <p className="text-xs text-muted-foreground">Lun - Sam, 9h à 18h</p>
                     </div>
                   </div>
-
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-background shadow-sm flex items-center justify-center text-primary flex-shrink-0">
-                      <Mail className="w-5 h-5" />
-                    </div>
+                    <div className="w-10 h-10 rounded-full bg-background shadow-sm flex items-center justify-center text-primary flex-shrink-0"><Mail className="w-5 h-5" /></div>
                     <div>
                       <p className="font-medium text-sm text-muted-foreground">Email</p>
-                      <a href="mailto:contact@berger-bleu.fr" className="font-bold hover:text-primary transition-colors">
-                        contact@berger-bleu.fr
-                      </a>
+                      <a href="mailto:contact@berger-bleu.fr" className="font-bold hover:text-primary transition-colors">contact@berger-bleu.fr</a>
                     </div>
                   </div>
-
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-background shadow-sm flex items-center justify-center text-primary flex-shrink-0">
-                      <MapPin className="w-5 h-5" />
-                    </div>
+                    <div className="w-10 h-10 rounded-full bg-background shadow-sm flex items-center justify-center text-primary flex-shrink-0"><MapPin className="w-5 h-5" /></div>
                     <div>
                       <p className="font-medium text-sm text-muted-foreground">Domaine</p>
                       <p className="font-bold">Domaine des Trois Chênes</p>
@@ -621,13 +397,8 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
               <div className="mt-12">
-                <a
-                  href="https://wa.me/33612345678?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20vos%20chiots%20berger%20australien."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href="https://wa.me/33612345678?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20vos%20chiots%20berger%20australien." target="_blank" rel="noopener noreferrer">
                   <Button className="w-full h-12 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold shadow-lg transition-transform hover:-translate-y-1 gap-2 border-none">
                     <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.422-.272.347-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
@@ -648,123 +419,100 @@ export default function Home() {
             <Paw className="w-5 h-5 text-primary" />
             <span className="font-serif font-bold">Élevage du Berger Bleu</span>
           </div>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Élevage du Berger Bleu. Tous droits réservés.
-          </p>
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Élevage du Berger Bleu. Tous droits réservés.</p>
         </div>
       </footer>
 
       {/* Puppy Detail Modal */}
       {selectedPuppy && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-          <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={() => setSelectedPuppy(null)}
-          />
-
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSelectedPuppy(null)} />
           <div className="relative bg-card text-card-foreground w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-            <button
-              onClick={() => setSelectedPuppy(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/50 backdrop-blur-md rounded-full flex items-center justify-center text-foreground hover:bg-background transition-colors"
-            >
+            <button onClick={() => setSelectedPuppy(null)} className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/50 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-background transition-colors">
               <X className="w-5 h-5" />
             </button>
-
             <div className="overflow-y-auto">
               <div className="grid md:grid-cols-2">
-                {/* Images side */}
                 <div className="flex flex-col gap-2 p-2">
                   <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                    <img
-                      src={selectedPuppy.image}
-                      alt={selectedPuppy.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={primaryImage(selectedPuppy)} alt={selectedPuppy.name} className="w-full h-full object-cover" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                      <img
-                        src="/images/aussie-modal-extra.png"
-                        alt="Chiots"
-                        className="w-full h-full object-cover"
-                      />
+                  {selectedPuppy.images.length > 1 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {selectedPuppy.images.slice(1, 4).map((img, i) => (
+                        <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden">
+                          <img src={img} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
                     </div>
-                    <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-secondary flex items-center justify-center">
-                      <Paw className="w-12 h-12 text-primary/20" />
+                  )}
+                  {selectedPuppy.images.length <= 1 && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                        <img src="/images/aussie-modal-extra.png" alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-secondary flex items-center justify-center">
+                        <Paw className="w-12 h-12 text-primary/20" />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                {/* Details side */}
                 <div className="p-8 flex flex-col">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
-                      Disponible
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[selectedPuppy.status]}`}>
+                      {STATUS_LABELS[selectedPuppy.status]}
                     </span>
-                    <span className="text-muted-foreground text-sm font-medium">
-                      {selectedPuppy.price.toLocaleString("fr-FR")} €
-                    </span>
+                    <span className="text-muted-foreground text-sm font-medium">{selectedPuppy.price.toLocaleString("fr-FR")} €</span>
                   </div>
 
                   <h2 className="font-serif text-4xl font-bold mb-2">{selectedPuppy.name}</h2>
                   <p className="text-lg text-muted-foreground mb-6 capitalize">
-                    {selectedPuppy.color} • {selectedPuppy.sex} • {selectedPuppy.age} semaines
+                    {selectedPuppy.color} • {selectedPuppy.sex} • {selectedPuppy.ageWeeks} semaines
                   </p>
 
                   <div className="space-y-6 flex-grow">
-                    <div>
-                      <h4 className="font-bold mb-2 flex items-center gap-2">
-                        <Info className="w-4 h-4 text-primary" /> À propos
-                      </h4>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {selectedPuppy.description}
-                      </p>
-                    </div>
-
-                    <div>
-                      <h4 className="font-bold mb-2 flex items-center gap-2">
-                        <Star className="w-4 h-4 text-primary" /> Caractère
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedPuppy.traits.map((trait) => (
-                          <span
-                            key={trait}
-                            className="px-3 py-1.5 bg-secondary rounded-lg text-sm font-medium"
-                          >
-                            {trait}
-                          </span>
-                        ))}
+                    {selectedPuppy.description && (
+                      <div>
+                        <h4 className="font-bold mb-2 flex items-center gap-2"><Info className="w-4 h-4 text-primary" /> À propos</h4>
+                        <p className="text-muted-foreground leading-relaxed">{selectedPuppy.description}</p>
                       </div>
-                    </div>
-
-                    <div className="bg-accent/50 rounded-xl p-4 border border-border/50">
-                      <h4 className="text-sm font-bold text-muted-foreground mb-1 uppercase tracking-wider">
-                        Parents
-                      </h4>
-                      <p className="font-medium">{selectedPuppy.parents}</p>
-                    </div>
-
+                    )}
+                    {selectedPuppy.traits.length > 0 && (
+                      <div>
+                        <h4 className="font-bold mb-2 flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Caractère</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedPuppy.traits.map((trait) => (
+                            <span key={trait} className="px-3 py-1.5 bg-secondary rounded-lg text-sm font-medium">{trait}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {selectedPuppy.parents && (
+                      <div className="bg-accent/50 rounded-xl p-4 border border-border/50">
+                        <h4 className="text-sm font-bold text-muted-foreground mb-1 uppercase tracking-wider">Parents</h4>
+                        <p className="font-medium">{selectedPuppy.parents}</p>
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-4 text-sm">
-                      {["Pucé & Vacciné", "Vermifugé", "Certificat Santé", "Kit Chiot Inclus"].map(
-                        (item) => (
-                          <div key={item} className="flex items-center gap-2 text-muted-foreground">
-                            <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                            {item}
-                          </div>
-                        )
-                      )}
+                      {["Pucé & Vacciné", "Vermifugé", "Certificat Santé", "Kit Chiot Inclus"].map((item) => (
+                        <div key={item} className="flex items-center gap-2 text-muted-foreground">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />{item}
+                        </div>
+                      ))}
                     </div>
                   </div>
 
                   <div className="mt-8 pt-6 border-t border-border">
                     <Button
                       className="w-full h-14 text-lg rounded-xl shadow-lg hover:-translate-y-1 transition-all"
+                      disabled={selectedPuppy.status === "sold"}
                       onClick={() => {
+                        setReservingPuppy(selectedPuppy);
                         setSelectedPuppy(null);
-                        scrollToSection("contact");
                       }}
                     >
-                      Me contacter pour {selectedPuppy.name}
+                      {selectedPuppy.status === "sold" ? "Ce chiot a trouvé son foyer" : `Réserver ${selectedPuppy.name}`}
                     </Button>
                   </div>
                 </div>
@@ -772,6 +520,11 @@ export default function Home() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Reservation Modal */}
+      {reservingPuppy && (
+        <ReservationModal puppy={reservingPuppy} onClose={() => setReservingPuppy(null)} />
       )}
     </div>
   );
