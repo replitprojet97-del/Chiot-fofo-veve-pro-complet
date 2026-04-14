@@ -56,6 +56,8 @@ export const adminApi = {
     apiFetch<Puppy>(`/api/admin/puppies/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   setStatus: (id: number, status: PuppyStatus) =>
     apiFetch<Puppy>(`/api/admin/puppies/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
+  setPremium: (id: number, isPremium: boolean) =>
+    apiFetch<Puppy>(`/api/admin/puppies/${id}/premium`, { method: "PATCH", body: JSON.stringify({ isPremium }) }),
   deletePuppy: (id: number) =>
     apiFetch<{ success: boolean }>(`/api/admin/puppies/${id}`, { method: "DELETE" }),
   uploadImage: (file: File) => {
@@ -81,6 +83,7 @@ export interface Puppy {
   parents: string;
   images: string[];
   status: PuppyStatus;
+  isPremium: boolean;
   createdAt: string;
 }
 
@@ -95,6 +98,7 @@ export interface PuppyPayload {
   parents: string;
   images: string[];
   status: PuppyStatus;
+  isPremium: boolean;
 }
 
 export interface ContactPayload {

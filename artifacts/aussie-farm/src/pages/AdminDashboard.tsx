@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus, LogOut, Pencil, Trash2, UploadCloud, X, Loader2,
   CheckCircle2, AlertCircle, PawPrint as Paw, Image as ImageIcon,
-  ChevronDown,
+  ChevronDown, Crown, ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ const STATUSES: { value: PuppyStatus; label: string; color: string }[] = [
 
 const EMPTY_FORM: PuppyPayload = {
   name: "", ageWeeks: 8, color: "bleu merle", sex: "Mâle",
-  price: 1500, description: "", traits: [], parents: "", images: [], status: "available",
+  price: 1500, description: "", traits: [], parents: "", images: [], status: "available", isPremium: false,
 };
 
 interface AdminDashboardProps {
@@ -74,6 +74,14 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     },
   });
 
+  const premiumMut = useMutation({
+    mutationFn: ({ id, isPremium }: { id: number; isPremium: boolean }) => adminApi.setPremium(id, isPremium),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-puppies"] });
+      qc.invalidateQueries({ queryKey: ["puppies"] });
+    },
+  });
+
   const deleteMut = useMutation({
     mutationFn: adminApi.deletePuppy,
     onSuccess: () => {
@@ -96,7 +104,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     setForm({
       name: p.name, ageWeeks: p.ageWeeks, color: p.color, sex: p.sex,
       price: p.price, description: p.description, traits: p.traits,
-      parents: p.parents, images: p.images, status: p.status,
+      parents: p.parents, images: p.images, status: p.status, isPremium: p.isPremium,
     });
     setTraitsInput(p.traits.join(", "));
     setFormError("");
@@ -146,6 +154,11 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground hidden md:block">{adminEmail}</span>
+          <a href="/" target="_blank" rel="noopener noreferrer">
+            <Button variant="ghost" size="sm" className="rounded-xl gap-1.5 text-muted-foreground">
+              <ExternalLink className="w-4 h-4" /> Voir le site
+            </Button>
+          </a>
           <Button variant="outline" size="sm" className="rounded-xl gap-2" onClick={() => logoutMut.mutate()}>
             <LogOut className="w-4 h-4" />
             Déconnexion
@@ -191,7 +204,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
             {puppies.map((p) => {
               const st = STATUSES.find((s) => s.value === p.status)!;
               return (
-                <div key={p.id} className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                <div key={p.id} className={`bg-card rounded-2xl overflow-hidden shadow-sm transition-all ${p.isPremium ? "border-2 border-yellow-400/60 shadow-yellow-400/10" : "border border-border"}`}>
                   <div className="relative aspect-[4/3]">
                     {p.images[0] ? (
                       <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
@@ -200,7 +213,14 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                         <ImageIcon className="w-12 h-12 text-muted-foreground/30" />
                       </div>
                     )}
-                    <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold ${st.color}`}>
+                    {p.isPremium && (
+                      <div className="absolute top-0 left-0 right-0 flex justify-center pt-2.5">
+                        <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-amber-400 text-white text-xs font-bold shadow">
+                          <Crown className="w-3 h-3" /> Premium
+                        </div>
+                      </div>
+                    )}
+                    <div className={`absolute ${p.isPremium ? "top-12" : "top-3"} left-3 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${st.color}`}>
                       {st.label}
                     </div>
                   </div>
@@ -214,8 +234,22 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                       {p.color} • {p.sex} • {p.ageWeeks} semaines
                     </p>
 
+                    {/* Premium toggle */}
+                    <button
+                      onClick={() => premiumMut.mutate({ id: p.id, isPremium: !p.isPremium })}
+                      disabled={premiumMut.isPending}
+                      className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold mb-3 transition-all border ${
+                        p.isPremium
+                          ? "bg-gradient-to-r from-yellow-500 to-amber-400 text-white border-transparent shadow-md hover:opacity-90"
+                          : "bg-secondary border-border hover:border-yellow-400/50 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 text-foreground"
+                      }`}
+                    >
+                      <Crown className={`w-4 h-4 ${p.isPremium ? "fill-white" : ""}`} />
+                      {p.isPremium ? "Retirer le badge Premium" : "Passer en Premium"}
+                    </button>
+
                     {/* Status selector */}
-                    <div className="relative mb-4">
+                    <div className="relative mb-3">
                       <select
                         value={p.status}
                         onChange={(e) => statusMut.mutate({ id: p.id, status: e.target.value as PuppyStatus })}
@@ -331,6 +365,26 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   </div>
                 </div>
+              </div>
+
+              {/* Premium toggle in form */}
+              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-secondary/30">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${form.isPremium ? "bg-gradient-to-br from-yellow-500 to-amber-400 text-white" : "bg-secondary text-muted-foreground"}`}>
+                    <Crown className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Annonce Premium</p>
+                    <p className="text-xs text-muted-foreground">Mise en avant en tête de liste avec badge doré</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, isPremium: !f.isPremium }))}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${form.isPremium ? "bg-yellow-500" : "bg-border"}`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${form.isPremium ? "translate-x-6" : "translate-x-1"}`} />
+                </button>
               </div>
 
               <div className="space-y-1.5">

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { puppiesTable } from "@workspace/db/schema";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, desc } from "drizzle-orm";
 
 const router = Router();
 
@@ -10,7 +10,7 @@ router.get("/puppies", async (_req, res) => {
     const puppies = await db
       .select()
       .from(puppiesTable)
-      .orderBy(asc(puppiesTable.createdAt));
+      .orderBy(desc(puppiesTable.isPremium), asc(puppiesTable.createdAt));
     res.json(puppies);
   } catch (err) {
     res.status(500).json({ error: "Erreur serveur" });
