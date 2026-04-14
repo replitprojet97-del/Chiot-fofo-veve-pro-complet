@@ -1,13 +1,8 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="180" height="180" rx="40" fill="#1e3a2f"/>
-  <!-- Coussinet central (grand pad) -->
   <ellipse cx="90" cy="118" rx="30" ry="26" fill="#d97706"/>
-  <!-- Petit doigt gauche extérieur -->
   <ellipse cx="44" cy="90" rx="15" ry="20" fill="#d97706" transform="rotate(-25 44 90)"/>
-  <!-- Petit doigt gauche intérieur -->
   <ellipse cx="68" cy="70" rx="15" ry="20" fill="#d97706" transform="rotate(-10 68 70)"/>
-  <!-- Petit doigt droit intérieur -->
   <ellipse cx="112" cy="70" rx="15" ry="20" fill="#d97706" transform="rotate(10 112 70)"/>
-  <!-- Petit doigt droit extérieur -->
   <ellipse cx="136" cy="90" rx="15" ry="20" fill="#d97706" transform="rotate(25 136 90)"/>
 </svg>
