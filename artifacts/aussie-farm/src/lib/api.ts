@@ -34,6 +34,12 @@ export const puppiesApi = {
   get: (id: number) => apiFetch<Puppy>(`/api/puppies/${id}`),
 };
 
+export const reviewsApi = {
+  listApproved: () => apiFetch<ReviewFromDB[]>("/api/reviews"),
+  submit: (data: ReviewSubmitPayload) =>
+    apiFetch<{ success: boolean; id: number }>("/api/reviews", { method: "POST", body: JSON.stringify(data) }),
+};
+
 export const contactApi = {
   sendContact: (data: ContactPayload) =>
     apiFetch<{ success: boolean }>("/api/contact", { method: "POST", body: JSON.stringify(data) }),
@@ -65,11 +71,19 @@ export const adminApi = {
     fd.append("image", file);
     return apiFetchForm<{ url: string; publicId: string }>("/api/admin/upload", fd);
   },
+  listReviews: () => apiFetch<ReviewFromDB[]>("/api/admin/reviews"),
+  createReview: (data: ReviewSubmitPayload) =>
+    apiFetch<ReviewFromDB>("/api/admin/reviews", { method: "POST", body: JSON.stringify(data) }),
+  approveReview: (id: number) =>
+    apiFetch<ReviewFromDB>(`/api/admin/reviews/${id}/approve`, { method: "PATCH" }),
+  deleteReview: (id: number) =>
+    apiFetch<{ success: boolean }>(`/api/admin/reviews/${id}`, { method: "DELETE" }),
 };
 
 export type PuppyStatus = "available" | "reserved" | "sold";
 export type PuppyColor = "bleu merle" | "rouge merle" | "noir tricolore" | "rouge tricolore";
 export type PuppySex = "Mâle" | "Femelle";
+export type ReviewStatus = "pending" | "approved";
 
 export interface Puppy {
   id: number;
@@ -99,6 +113,25 @@ export interface PuppyPayload {
   images: string[];
   status: PuppyStatus;
   isPremium: boolean;
+}
+
+export interface ReviewFromDB {
+  id: number;
+  name: string;
+  location: string;
+  puppyName: string;
+  rating: number;
+  text: string;
+  status: ReviewStatus;
+  createdAt: string;
+}
+
+export interface ReviewSubmitPayload {
+  name: string;
+  location: string;
+  puppyName: string;
+  rating: number;
+  text: string;
 }
 
 export interface ContactPayload {
