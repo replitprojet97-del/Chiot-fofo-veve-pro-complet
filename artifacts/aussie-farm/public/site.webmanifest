@@ -1,0 +1,18 @@
+{
+  "name": "Élevage du Berger Bleu",
+  "short_name": "Berger Bleu",
+  "description": "Chiots Berger Australien LOF élevés avec passion. Bleu merle, rouge merle, tricolore.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3a2f",
+  "theme_color": "#1e3a2f",
+  "lang": "fr-FR",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSEO } from "@/hooks/useSEO";
 import { Phone, Mail, MapPin, CheckCircle2, Loader2, AlertCircle, Plane, Truck, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,11 @@ const DELIVERY_ZONES = [
 ];
 
 export default function Contact() {
+  useSEO({
+    title: "Contactez-Nous — Réserver un Chiot Berger Australien | Élevage du Berger Bleu",
+    description: "Contactez l'Élevage du Berger Bleu pour réserver votre chiot Berger Australien LOF. Livraison partout en France. Répondons à toutes vos questions sur la race et nos disponibilités.",
+    canonical: "https://www.elevagedubergerbleu.fr/contact",
+  });
   const [formData, setFormData] = useState({ prenom: "", nom: "", email: "", phone: "", message: "" });
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formError, setFormError] = useState("");

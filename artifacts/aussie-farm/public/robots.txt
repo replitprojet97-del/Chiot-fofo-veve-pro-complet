@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Bloquer les pages d'administration
+Disallow: /admin
+Disallow: /admin/
+
+# Autoriser les bots de réseaux sociaux
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Sitemap
+Sitemap: https://www.elevagedubergerbleu.fr/sitemap.xml

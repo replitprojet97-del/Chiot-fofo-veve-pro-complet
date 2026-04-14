@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
+import { useSEO } from "@/hooks/useSEO";
 import { type Puppy } from "@/lib/api";
 import ReservationModal from "@/components/ReservationModal";
 import ImageGallery from "@/components/ImageGallery";
@@ -221,6 +222,11 @@ function InfoTicker() {
 }
 
 export default function Home() {
+  useSEO({
+    title: "Élevage du Berger Bleu — Chiots Berger Australien LOF | Bleu Merle, Rouge Merle",
+    description: "Élevage familial de Bergers Australiens Standard et Miniature. Chiots LOF bleu merle, rouge merle, noir tricolore. Pedigree officiel, suivi éleveur à vie. Bourges, France.",
+    canonical: "https://www.elevagedubergerbleu.fr/",
+  });
   const { data: puppies = [] } = usePuppies();
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);
   const [reservingPuppy, setReservingPuppy] = useState<Puppy | null>(null);

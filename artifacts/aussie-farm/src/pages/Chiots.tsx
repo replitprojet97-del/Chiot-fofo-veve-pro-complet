@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSEO } from "@/hooks/useSEO";
 import {
   Star, X, CheckCircle2, Info, Loader2, PawPrint as Paw, Sparkles,
 } from "lucide-react";
@@ -124,6 +125,11 @@ function PuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
 }
 
 export default function Chiots() {
+  useSEO({
+    title: "Nos Chiots Berger Australien à Vendre — LOF, Bleu Merle, Rouge Merle | Élevage du Berger Bleu",
+    description: "Découvrez nos chiots Berger Australien disponibles : bleu merle, rouge merle, noir tricolore, rouge tricolore. Tous LOF avec pedigree, vaccinés et vérifiés par vétérinaire. Réservez votre chiot Aussie.",
+    canonical: "https://www.elevagedubergerbleu.fr/chiots",
+  });
   const [filterColor, setFilterColor] = useState<ColorFilter>("Tous");
   const [filterSex, setFilterSex] = useState<SexFilter>("Tous");
   const [filterStatus, setFilterStatus] = useState<"Tous" | "available" | "reserved" | "sold">("Tous");

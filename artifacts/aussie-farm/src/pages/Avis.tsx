@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSEO } from "@/hooks/useSEO";
 import { Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -132,6 +133,11 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
 const PER_PAGE = 9;
 
 export default function Avis() {
+  useSEO({
+    title: "Avis Clients — Témoignages Acheteurs de Chiots Berger Australien | Élevage du Berger Bleu",
+    description: "Lisez les témoignages de nos familles heureuses. Des dizaines d'avis vérifiés sur nos chiots Berger Australien LOF. Partagez votre expérience avec l'Élevage du Berger Bleu.",
+    canonical: "https://www.elevagedubergerbleu.fr/avis",
+  });
   const [staticPage, setStaticPage] = useState(0);
   const [formData, setFormData] = useState({ name: "", location: "", puppyName: "", rating: 5, text: "" });
   const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");

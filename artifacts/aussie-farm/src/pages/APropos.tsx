@@ -1,4 +1,5 @@
 import React from "react";
+import { useSEO } from "@/hooks/useSEO";
 import { Link } from "wouter";
 import { CheckCircle2, Heart, Shield, Award, Star, ArrowRight, PawPrint as Paw, Users, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,11 @@ const WHATS_INCLUDED = [
 ];
 
 export default function APropos() {
+  useSEO({
+    title: "À Propos de Notre Élevage — Berger Australien Passion | Élevage du Berger Bleu",
+    description: "Élevage familial passionné de Bergers Australiens depuis des années. Découvrez notre histoire, nos valeurs, notre engagement envers le bien-être animal et nos certifications officielles.",
+    canonical: "https://www.elevagedubergerbleu.fr/a-propos",
+  });
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
