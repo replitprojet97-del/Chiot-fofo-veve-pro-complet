@@ -83,13 +83,21 @@ function HomeFeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => voi
   );
 }
 
-function HomePuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
+function HomePuppyCard({ puppy, onClick, isFeatured = false }: { puppy: Puppy; onClick: () => void; isFeatured?: boolean }) {
   const img = puppy.images[0] ?? "/images/puppy-bleu-merle.png";
   return (
-    <div className="group bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer" onClick={onClick}>
+    <div
+      className={`group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer ${isFeatured ? "border-2 border-amber-400/70 dark:border-amber-500/50" : "border border-border/50"}`}
+      onClick={onClick}
+    >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img src={img} alt={puppy.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          {isFeatured && (
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-[11px] font-bold shadow-md">
+              <Sparkles className="w-2.5 h-2.5" />À la Une
+            </span>
+          )}
           <span className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${STATUS_COLORS[puppy.status]}`}>{STATUS_LABELS[puppy.status]}</span>
         </div>
         <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
@@ -109,7 +117,7 @@ function HomePuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }
         <div className="flex flex-wrap gap-1.5 mb-5 mt-3">
           {puppy.traits.slice(0, 2).map((t) => <span key={t} className="px-2.5 py-1 bg-secondary text-secondary-foreground text-xs rounded-md font-medium">{t}</span>)}
         </div>
-        <Button className="w-full rounded-xl h-11 font-medium">Voir les détails</Button>
+        <Button className={`w-full rounded-xl h-11 font-medium ${isFeatured ? "bg-amber-500 hover:bg-amber-600 text-white" : ""}`}>Voir les détails</Button>
       </div>
     </div>
   );
@@ -400,36 +408,17 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* ── DESKTOP : cartes côte à côte, largeur ajustée au contenu ── */}
-                <div className="hidden sm:block">
-                  <div className="inline-flex flex-col rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm max-w-full">
-                    <div className="flex items-center gap-3 px-5 py-3.5 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-sm font-bold shadow-sm whitespace-nowrap">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        À la Une
-                      </div>
-                      <span className="text-sm text-amber-800 dark:text-amber-400 font-medium whitespace-nowrap">
-                        {featuredPuppies.length} annonce{featuredPuppies.length > 1 ? "s" : ""} mise{featuredPuppies.length > 1 ? "s" : ""} en avant
-                      </span>
-                    </div>
-                    <div className="flex gap-4 p-5">
-                      {featuredPuppies.map((p) => (
-                        <div key={p.id} className="w-[210px] flex-shrink-0">
-                          <HomeFeaturedCard puppy={p} onClick={() => setSelectedPuppy(p)} />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
               </div>
             )}
 
-            {/* Chiots réguliers */}
-            {regularPuppies.length > 0 && (
+            {/* Grille des chiots
+                - Mobile : uniquement les réguliers (les featured sont dans le carousel au-dessus)
+                - Desktop : featured en premier, puis réguliers, dans une seule grille */}
+            {(regularPuppies.length > 0 || featuredPuppies.length > 0) && (
               <div>
-                {featuredPuppies.length > 0 && (
-                  <div className="flex items-center gap-3 mb-7">
+                {/* Mobile : séparateur si carousel + réguliers */}
+                {featuredPuppies.length > 0 && regularPuppies.length > 0 && (
+                  <div className="flex sm:hidden items-center gap-3 mb-7">
                     <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
                       Toutes les annonces
                       <span className="ml-2 text-xs font-normal">({regularPuppies.length})</span>
@@ -437,9 +426,18 @@ export default function Home() {
                     <div className="flex-1 h-px bg-border" />
                   </div>
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {regularPuppies.map((p) => (
-                    <HomePuppyCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
+                {/* Mobile : grille réguliers seulement */}
+                {regularPuppies.length > 0 && (
+                  <div className="grid grid-cols-1 gap-8 sm:hidden">
+                    {regularPuppies.map((p) => (
+                      <HomePuppyCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
+                    ))}
+                  </div>
+                )}
+                {/* Desktop : featured + réguliers ensemble */}
+                <div className="hidden sm:grid grid-cols-3 gap-8">
+                  {[...featuredPuppies, ...regularPuppies].map((p) => (
+                    <HomePuppyCard key={p.id} puppy={p} isFeatured={p.isPremium} onClick={() => setSelectedPuppy(p)} />
                   ))}
                 </div>
               </div>
