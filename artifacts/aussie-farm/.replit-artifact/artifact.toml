@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Élevage du Berger Bleu"
+version = "1.0.0"
+id = "artifacts/aussie-farm"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21570
+
+[services.development]
+run = "pnpm --filter @workspace/aussie-farm run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/aussie-farm", "run", "build" ]
+publicDir = "artifacts/aussie-farm/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21570"
+BASE_PATH = "/"
