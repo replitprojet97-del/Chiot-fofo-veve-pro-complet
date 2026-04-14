@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
 import { type Puppy } from "@/lib/api";
 import ReservationModal from "@/components/ReservationModal";
+import ImageGallery from "@/components/ImageGallery";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -232,8 +233,6 @@ export default function Home() {
     document.body.style.overflow = (selectedPuppy || reservingPuppy) ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [selectedPuppy, reservingPuppy]);
-
-  const primaryImage = (p: Puppy) => p.images[0] ?? "/images/puppy-bleu-merle.png";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -612,20 +611,12 @@ export default function Home() {
             </button>
             <div className="overflow-y-auto">
               <div className="grid md:grid-cols-2">
-                <div className="flex flex-col gap-2 p-3 pt-4">
-                  <div className={`aspect-[4/3] rounded-2xl overflow-hidden ${selectedPuppy.isPremium ? "mt-8" : ""}`}>
-                    <img src={primaryImage(selectedPuppy)} alt={selectedPuppy.name} className="w-full h-full object-cover" />
-                  </div>
-                  {selectedPuppy.images.length > 1 && (
-                    <div className="grid grid-cols-3 gap-2">
-                      {selectedPuppy.images.slice(1, 4).map((img, i) => (
-                        <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden">
-                          <img src={img} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <ImageGallery
+                  key={selectedPuppy.id}
+                  images={selectedPuppy.images}
+                  puppyName={selectedPuppy.name}
+                  isPremium={selectedPuppy.isPremium}
+                />
                 <div className="p-8 flex flex-col">
                   <div className="flex items-center gap-3 mb-2">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[selectedPuppy.status]}`}>{STATUS_LABELS[selectedPuppy.status]}</span>
