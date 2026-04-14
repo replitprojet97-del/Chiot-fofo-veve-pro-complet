@@ -247,10 +247,20 @@ export default function Home() {
   const regularPuppies = puppies.filter((p) => !p.isPremium && p.status !== "sold").slice(0, 3);
   const hasPuppies = featuredPuppies.length > 0 || regularPuppies.length > 0;
 
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+
   useEffect(() => {
     document.body.style.overflow = (selectedPuppy || reservingPuppy) ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [selectedPuppy, reservingPuppy]);
+
+  useEffect(() => {
+    if (featuredPuppies.length <= 1) return;
+    const timer = setInterval(() => {
+      setFeaturedIndex((i) => (i + 1) % featuredPuppies.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [featuredPuppies.length]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -348,27 +358,70 @@ export default function Home() {
             {/* À la Une */}
             {featuredPuppies.length > 0 && (
               <div className="mb-10">
-                <div className="rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm">
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-sm font-bold shadow-sm">
+
+                {/* ── MOBILE : carousel auto (1 carte à la fois) ── */}
+                <div className="sm:hidden rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm">
+                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs font-bold shadow-sm">
+                        <Sparkles className="w-3 h-3" />
+                        À la Une
+                      </div>
+                      <span className="text-xs text-amber-800 dark:text-amber-400 font-medium">
+                        {featuredIndex + 1}/{featuredPuppies.length}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-amber-700/60 italic">Sélectionnées par l'élevage</span>
+                  </div>
+                  {/* Slide container */}
+                  <div className="overflow-hidden">
+                    <div
+                      className="flex transition-transform duration-500 ease-in-out"
+                      style={{ transform: `translateX(-${featuredIndex * 100}%)` }}
+                    >
+                      {featuredPuppies.map((p) => (
+                        <div key={p.id} className="w-full flex-shrink-0 p-4">
+                          <HomeFeaturedCard puppy={p} onClick={() => setSelectedPuppy(p)} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Dots */}
+                  {featuredPuppies.length > 1 && (
+                    <div className="flex justify-center gap-1.5 pb-3">
+                      {featuredPuppies.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setFeaturedIndex(i)}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${i === featuredIndex ? "w-5 bg-amber-500" : "w-1.5 bg-amber-300 dark:bg-amber-700"}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* ── DESKTOP : cartes côte à côte, largeur ajustée au contenu ── */}
+                <div className="hidden sm:block">
+                  <div className="inline-flex flex-col rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm max-w-full">
+                    <div className="flex items-center gap-3 px-5 py-3.5 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-sm font-bold shadow-sm whitespace-nowrap">
                         <Sparkles className="w-3.5 h-3.5" />
                         À la Une
                       </div>
-                      <span className="text-sm text-amber-800 dark:text-amber-400 font-medium">
+                      <span className="text-sm text-amber-800 dark:text-amber-400 font-medium whitespace-nowrap">
                         {featuredPuppies.length} annonce{featuredPuppies.length > 1 ? "s" : ""} mise{featuredPuppies.length > 1 ? "s" : ""} en avant
                       </span>
                     </div>
-                    <span className="text-xs text-amber-700/60 dark:text-amber-500/60 hidden sm:block italic">Sélectionnées par l'élevage</span>
-                  </div>
-                  <div className="px-5 py-4 flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-3 scrollbar-hide">
-                    {featuredPuppies.map((p) => (
-                      <div key={p.id} className="snap-start flex-shrink-0 w-[200px] sm:w-[220px]">
-                        <HomeFeaturedCard puppy={p} onClick={() => setSelectedPuppy(p)} />
-                      </div>
-                    ))}
+                    <div className="flex gap-4 p-5">
+                      {featuredPuppies.map((p) => (
+                        <div key={p.id} className="w-[210px] flex-shrink-0">
+                          <HomeFeaturedCard puppy={p} onClick={() => setSelectedPuppy(p)} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
+
               </div>
             )}
 
