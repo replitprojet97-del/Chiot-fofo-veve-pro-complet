@@ -16,7 +16,10 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       if (CORS_ORIGIN.includes(origin)) return callback(null, true);
-      if (origin.endsWith(".replit.dev") || origin.endsWith(".janeway.replit.dev")) return callback(null, true);
+      try {
+        const hostname = new URL(origin).hostname;
+        if (hostname.endsWith(".replit.dev") || hostname.endsWith(".janeway.replit.dev")) return callback(null, true);
+      } catch {}
       return callback(new Error(`CORS not allowed for origin: ${origin}`), false);
     },
     credentials: true,
