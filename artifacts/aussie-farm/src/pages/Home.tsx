@@ -1,16 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { Star, Shield, Award, Heart, CheckCircle2, Plane, Truck, MapPin, ArrowRight, PawPrint as Paw } from "lucide-react";
+import {
+  Star, Shield, Award, Heart, CheckCircle2, Plane, Truck,
+  ArrowRight, PawPrint as Paw, Info, Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const STATS = [
-  { value: "15+", label: "Années d'élevage" },
+  { value: "19", label: "Ans d'élevage" },
   { value: "48", label: "Portées réussies" },
-  { value: "320+", label: "Familles heureuses" },
+  { value: "185+", label: "Familles heureuses" },
   { value: "100%", label: "Tests de santé" },
+];
+
+const HERO_SLIDES = [
+  {
+    img: "/images/aussie-hero.png",
+    alt: "Berger Australien adulte dans la prairie",
+  },
+  {
+    img: "/images/puppy-bleu-merle.png",
+    alt: "Chiot Berger Australien Bleu Merle",
+  },
+  {
+    img: "/images/farm-pastoral.png",
+    alt: "Notre domaine d'élevage",
+  },
+];
+
+const TICKER_ITEMS = [
+  { icon: "⚖️", text: "Loi du 30 nov. 2021 : tout éleveur réalisant plus d'une portée par an doit être déclaré à la DDPP — notre élevage est en règle et contrôlé." },
+  { icon: "📋", text: "Depuis le 1er janv. 2024, la vente d'un chiot est conditionnée à la remise d'un Certificat d'Engagement et de Connaissance (CEC) signé par l'acheteur." },
+  { icon: "🏆", text: "Le Berger Australien figure dans le top 10 des races les plus intelligentes au monde selon le Dr Stanley Coren, professeur de psychologie canine." },
+  { icon: "🧬", text: "Nos reproducteurs sont systématiquement testés : MDR1, dysplasie des hanches (OFA), APR-prcd et tares oculaires DOMS — résultats disponibles sur demande." },
+  { icon: "🌍", text: "Le passeport européen pour animaux de compagnie est obligatoire pour tout transport vers la Suisse ou la Belgique — nous le fournissons avec chaque chiot." },
+  { icon: "📦", text: "En France, tout annonceur professionnel doit mentionner son numéro SIREN sur ses annonces en ligne — le nôtre figure sur toutes nos publications." },
+  { icon: "🐾", text: "Un chiot bien socialisé entre 3 et 12 semaines devient un adulte équilibré : c'est pourquoi nos chiots grandissent avec nos enfants, nos autres animaux et du bruit quotidien." },
+  { icon: "🩺", text: "Chaque chiot quitte notre élevage avec : puce électronique, vaccins à jour, carnet de santé, vermifugations, bilan vétérinaire complet et kit de bienvenue." },
+  { icon: "📜", text: "Le LOF (Livre des Origines Français) est tenu par la SCC — nos chiots inscrits ont un pedigree officiel garantissant la traçabilité sur 3 générations minimum." },
 ];
 
 const STATUS_LABELS: Record<string, string> = { available: "Disponible", reserved: "Réservé", sold: "Vendu" };
@@ -25,6 +55,84 @@ const DELIVERY_ZONES = [
   { flag: "🇨🇭", country: "Suisse", desc: "Livraison sécurisée avec tous les documents vétérinaires requis" },
   { flag: "🇧🇪", country: "Belgique", desc: "Transport organisé par nos soins, en toute sérénité" },
 ];
+
+function HeroSlideshow() {
+  const [current, setCurrent] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setCurrent((prev) => (prev + 1) % HERO_SLIDES.length);
+        setFading(false);
+      }, 800);
+    }, 5500);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden">
+      {HERO_SLIDES.map((slide, i) => (
+        <div
+          key={slide.img}
+          className="absolute inset-0 transition-opacity duration-[1200ms] ease-in-out"
+          style={{ opacity: i === current ? (fading ? 0 : 1) : 0 }}
+        >
+          <img
+            src={slide.img}
+            alt={slide.alt}
+            className="w-full h-full object-cover"
+            style={{ transform: i === current ? "scale(1.04)" : "scale(1)", transition: "transform 6s ease-out" }}
+          />
+        </div>
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/10 dark:from-background/98 dark:via-background/85" />
+
+      {/* Slide dots */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {HERO_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`h-1.5 rounded-full transition-all duration-500 ${i === current ? "w-8 bg-primary" : "w-2 bg-white/40 hover:bg-white/60"}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoTicker() {
+  const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS];
+  return (
+    <div className="bg-primary/5 border-y border-primary/15 py-3 overflow-hidden relative">
+      <div className="flex">
+        <div
+          className="flex gap-0 whitespace-nowrap"
+          style={{
+            animation: "ticker-scroll 80s linear infinite",
+          }}
+        >
+          {doubled.map((item, i) => (
+            <div key={i} className="inline-flex items-center gap-2 px-8 text-sm">
+              <span className="text-lg flex-shrink-0">{item.icon}</span>
+              <span className="text-muted-foreground">{item.text}</span>
+              <span className="mx-6 text-primary/30">•</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes ticker-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 export default function Home() {
   const { data: puppies = [] } = usePuppies();
@@ -46,17 +154,14 @@ export default function Home() {
         </svg>
       </a>
 
-      {/* Hero */}
+      {/* Hero avec slideshow */}
       <section className="relative min-h-screen flex items-center">
-        <div className="absolute inset-0 z-0">
-          <img src="/images/aussie-hero.png" alt="Berger Australien" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/10 dark:from-background/98 dark:via-background/85" />
-        </div>
+        <HeroSlideshow />
         <div className="container relative z-10 px-4 py-32">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 font-medium text-sm border border-primary/20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 font-medium text-sm border border-primary/20 backdrop-blur-sm">
               <Star className="w-4 h-4 fill-current" />
-              <span>Élevage familial certifié LOF · Bourges, France</span>
+              <span>Élevage familial certifié LOF · 19 ans d'expérience</span>
             </div>
             <h1 className="font-serif text-5xl md:text-7xl font-bold leading-[1.1] mb-6">
               Des compagnons fidèles,<br />
@@ -73,7 +178,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/contact">
-                <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-full border-2 hover:bg-accent">
+                <Button size="lg" variant="outline" className="text-lg px-8 h-14 rounded-full border-2 hover:bg-accent backdrop-blur-sm">
                   Nous contacter
                 </Button>
               </Link>
@@ -85,7 +190,7 @@ export default function Home() {
                 { icon: <Heart className="w-5 h-5" />, label: "Suivi à vie" },
               ].map((b) => (
                 <div key={b.label} className="flex items-center gap-3 text-sm font-medium">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">{b.icon}</div>
+                  <div className="w-10 h-10 rounded-full bg-primary/10 backdrop-blur-sm flex items-center justify-center text-primary border border-primary/20">{b.icon}</div>
                   <span>{b.label}</span>
                 </div>
               ))}
@@ -93,6 +198,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Barre d'infos défilante */}
+      <InfoTicker />
 
       {/* Stats */}
       <div className="bg-primary text-primary-foreground py-12">
@@ -127,17 +235,12 @@ export default function Home() {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img src={puppy.images[0] ?? "/images/puppy-bleu-merle.png"} alt={puppy.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                     {puppy.isPremium && (
-                      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-yellow-500 to-amber-400 text-white text-xs font-bold shadow-lg">
-                        <Star className="w-3.5 h-3.5 fill-current" /> Premium
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs font-bold shadow-lg">
+                        <Sparkles className="w-3.5 h-3.5" /> À la Une
                       </div>
                     )}
                     <div className={`absolute ${puppy.isPremium ? "top-3 right-3" : "top-3 left-3"}`}>
-                      {!puppy.isPremium && (
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[puppy.status]}`}>{STATUS_LABELS[puppy.status]}</span>
-                      )}
-                      {puppy.isPremium && (
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[puppy.status]}`}>{STATUS_LABELS[puppy.status]}</span>
-                      )}
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[puppy.status]}`}>{STATUS_LABELS[puppy.status]}</span>
                     </div>
                     <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
                       {puppy.price.toLocaleString("fr-FR")} €
@@ -233,7 +336,31 @@ export default function Home() {
                   {[...Array(5)].map((_, k) => <Star key={k} className="w-4 h-4 fill-current" />)}
                 </div>
                 <p className="text-sm italic font-serif">"Un élevage exceptionnel, des chiens équilibrés."</p>
-                <p className="text-xs text-muted-foreground mt-2">— 320+ familles satisfaites</p>
+                <p className="text-xs text-muted-foreground mt-2">— 185+ familles satisfaites</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Encart réglementaire */}
+      <section className="py-16">
+        <div className="container px-4 mx-auto max-w-4xl">
+          <div className="bg-primary/5 rounded-3xl border border-primary/15 p-8 flex flex-col sm:flex-row gap-6 items-start">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+              <Info className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-serif text-xl font-bold mb-3">Élevage déclaré et conforme à la réglementation française</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                Notre élevage est officiellement enregistré auprès de la DDPP (Direction Départementale de la Protection des Populations). Nous sommes soumis à des contrôles réguliers et respectons scrupuleusement la réglementation en vigueur, notamment la loi du 30 novembre 2021 sur la protection animale.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {["Déclaré DDPP", "LOF certifié", "N° SIREN visible", "CEC fourni", "Passeport EU inclus"].map((tag) => (
+                  <span key={tag} className="px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full border border-primary/20">
+                    ✓ {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -241,7 +368,7 @@ export default function Home() {
       </section>
 
       {/* CTA final */}
-      <section className="py-24">
+      <section className="py-24 bg-secondary/30">
         <div className="container px-4 mx-auto text-center max-w-3xl">
           <div className="text-6xl mb-6">🐾</div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">Prêt à accueillir votre Berger Australien ?</h2>
