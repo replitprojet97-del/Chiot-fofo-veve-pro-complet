@@ -255,13 +255,18 @@ export default function Home() {
   const regularPuppies = puppies.filter((p) => !p.isPremium && p.status !== "sold").slice(0, 3);
   const hasPuppies = featuredPuppies.length > 0 || regularPuppies.length > 0;
 
+  // Mobile : index courant du carousel (1 carte à la fois)
   const [featuredIndex, setFeaturedIndex] = useState(0);
+  // Desktop : index de la paire courante (2 cartes à la fois)
+  const [desktopPage, setDesktopPage] = useState(0);
+  const desktopTotalPages = Math.ceil(featuredPuppies.length / 2);
 
   useEffect(() => {
     document.body.style.overflow = (selectedPuppy || reservingPuppy) ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [selectedPuppy, reservingPuppy]);
 
+  // Auto-avance mobile (1 carte)
   useEffect(() => {
     if (featuredPuppies.length <= 1) return;
     const timer = setInterval(() => {
@@ -269,6 +274,15 @@ export default function Home() {
     }, 3500);
     return () => clearInterval(timer);
   }, [featuredPuppies.length]);
+
+  // Auto-avance desktop (paires de 2)
+  useEffect(() => {
+    if (featuredPuppies.length <= 2) return;
+    const timer = setInterval(() => {
+      setDesktopPage((p) => (p + 1) % desktopTotalPages);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [featuredPuppies.length, desktopTotalPages]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -363,11 +377,13 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* À la Une */}
+            {/* ══════════════════════════════════════════════
+                À la Une
+            ══════════════════════════════════════════════ */}
             {featuredPuppies.length > 0 && (
               <div className="mb-10">
 
-                {/* ── MOBILE : carousel auto (1 carte à la fois) ── */}
+                {/* ── MOBILE : carousel auto (1 carte à la fois) — NE PAS MODIFIER ── */}
                 <div className="sm:hidden rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm">
                   <div className="flex items-center justify-between px-5 py-3.5 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
                     <div className="flex items-center gap-2">
@@ -381,7 +397,6 @@ export default function Home() {
                     </div>
                     <span className="text-[11px] text-amber-700/60 italic">Sélectionnées par l'élevage</span>
                   </div>
-                  {/* Slide container */}
                   <div className="overflow-hidden">
                     <div
                       className="flex transition-transform duration-500 ease-in-out"
@@ -394,7 +409,6 @@ export default function Home() {
                       ))}
                     </div>
                   </div>
-                  {/* Dots */}
                   {featuredPuppies.length > 1 && (
                     <div className="flex justify-center gap-1.5 pb-3">
                       {featuredPuppies.map((_, i) => (
@@ -408,17 +422,59 @@ export default function Home() {
                   )}
                 </div>
 
+                {/* ── DESKTOP : 2 cartes côte à côte, avance par paires ── */}
+                <div className="hidden sm:block rounded-3xl border border-amber-300/50 dark:border-amber-700/40 bg-amber-50/60 dark:bg-amber-950/20 overflow-hidden shadow-sm">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-amber-200/60 dark:border-amber-700/30 bg-gradient-to-r from-amber-500/10 to-transparent">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white text-sm font-bold shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        À la Une
+                      </div>
+                      <span className="text-sm text-amber-800 dark:text-amber-400 font-medium">
+                        {featuredPuppies.length} annonce{featuredPuppies.length > 1 ? "s" : ""} mise{featuredPuppies.length > 1 ? "s" : ""} en avant
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {desktopTotalPages > 1 && (
+                        <div className="flex gap-1.5">
+                          {Array.from({ length: desktopTotalPages }).map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setDesktopPage(i)}
+                              className={`h-1.5 rounded-full transition-all duration-300 ${i === desktopPage ? "w-5 bg-amber-500" : "w-1.5 bg-amber-300 dark:bg-amber-600"}`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      <span className="text-xs text-amber-700/60 dark:text-amber-500/60 italic">Sélectionnées par l'élevage</span>
+                    </div>
+                  </div>
+                  {/* 2 cartes avec animation fade à chaque changement de paire */}
+                  <div
+                    key={desktopPage}
+                    className="grid grid-cols-2 gap-5 p-5 animate-fade-slide-in"
+                  >
+                    {featuredPuppies
+                      .slice(desktopPage * 2, desktopPage * 2 + 2)
+                      .map((p) => (
+                        <HomeFeaturedCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
+                      ))}
+                  </div>
+                </div>
+
               </div>
             )}
 
-            {/* Grille des chiots
-                - Mobile : uniquement les réguliers (les featured sont dans le carousel au-dessus)
-                - Desktop : featured en premier, puis réguliers, dans une seule grille */}
-            {(regularPuppies.length > 0 || featuredPuppies.length > 0) && (
+            {/* ══════════════════════════════════════════════
+                Grille des annonces
+                Mobile  : réguliers seulement (featured = carousel ci-dessus)
+                Desktop : réguliers seulement (featured = boîte À la Une ci-dessus)
+                Max 3 annonces visibles sur la page d'accueil
+            ══════════════════════════════════════════════ */}
+            {regularPuppies.length > 0 && (
               <div>
-                {/* Mobile : séparateur si carousel + réguliers */}
-                {featuredPuppies.length > 0 && regularPuppies.length > 0 && (
-                  <div className="flex sm:hidden items-center gap-3 mb-7">
+                {featuredPuppies.length > 0 && (
+                  <div className="flex items-center gap-3 mb-7">
                     <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">
                       Toutes les annonces
                       <span className="ml-2 text-xs font-normal">({regularPuppies.length})</span>
@@ -426,18 +482,16 @@ export default function Home() {
                     <div className="flex-1 h-px bg-border" />
                   </div>
                 )}
-                {/* Mobile : grille réguliers seulement */}
-                {regularPuppies.length > 0 && (
-                  <div className="grid grid-cols-1 gap-8 sm:hidden">
-                    {regularPuppies.map((p) => (
-                      <HomePuppyCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
-                    ))}
-                  </div>
-                )}
-                {/* Desktop : featured + réguliers ensemble */}
+                {/* Mobile : 1 colonne */}
+                <div className="grid grid-cols-1 gap-8 sm:hidden">
+                  {regularPuppies.map((p) => (
+                    <HomePuppyCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
+                  ))}
+                </div>
+                {/* Desktop : 3 colonnes */}
                 <div className="hidden sm:grid grid-cols-3 gap-8">
-                  {[...featuredPuppies, ...regularPuppies].map((p) => (
-                    <HomePuppyCard key={p.id} puppy={p} isFeatured={p.isPremium} onClick={() => setSelectedPuppy(p)} />
+                  {regularPuppies.map((p) => (
+                    <HomePuppyCard key={p.id} puppy={p} onClick={() => setSelectedPuppy(p)} />
                   ))}
                 </div>
               </div>
