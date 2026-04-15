@@ -1,5 +1,14 @@
 import nodemailer from "nodemailer";
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function createTransporter() {
   const host = process.env.SENDPULSE_SMTP_HOST ?? "smtp.sendpulse.com";
   const port = parseInt(process.env.SENDPULSE_SMTP_PORT ?? "465", 10);
@@ -40,11 +49,11 @@ export async function sendContactEmail(data: {
     html: `
       <h2>Nouveau message de contact</h2>
       <table cellpadding="8" style="border-collapse:collapse;width:100%;max-width:600px">
-        <tr><td><strong>Prénom :</strong></td><td>${data.firstName}</td></tr>
-        <tr><td><strong>Nom :</strong></td><td>${data.lastName}</td></tr>
-        <tr><td><strong>Email :</strong></td><td><a href="mailto:${data.email}">${data.email}</a></td></tr>
-        ${data.phone ? `<tr><td><strong>Téléphone :</strong></td><td>${data.phone}</td></tr>` : ""}
-        <tr><td><strong>Message :</strong></td><td style="white-space:pre-wrap">${data.message}</td></tr>
+        <tr><td><strong>Prénom :</strong></td><td>${escapeHtml(data.firstName)}</td></tr>
+        <tr><td><strong>Nom :</strong></td><td>${escapeHtml(data.lastName)}</td></tr>
+        <tr><td><strong>Email :</strong></td><td><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></td></tr>
+        ${data.phone ? `<tr><td><strong>Téléphone :</strong></td><td>${escapeHtml(data.phone)}</td></tr>` : ""}
+        <tr><td><strong>Message :</strong></td><td style="white-space:pre-wrap">${escapeHtml(data.message)}</td></tr>
       </table>
       <p style="color:#888;font-size:12px">Élevage du Berger Bleu — message reçu le ${new Date().toLocaleString("fr-FR")}</p>
     `,
@@ -78,18 +87,18 @@ export async function sendReservationEmail(data: {
     html: `
       <h2>Demande de réservation</h2>
       <div style="background:#f0f7f0;border-left:4px solid #2d6a4f;padding:12px 16px;margin-bottom:20px;border-radius:4px">
-        <strong>Chiot concerné :</strong> ${data.puppyName}<br>
-        <strong>Couleur :</strong> ${data.puppyColor}<br>
-        <strong>Sexe :</strong> ${data.puppySex}<br>
+        <strong>Chiot concerné :</strong> ${escapeHtml(data.puppyName)}<br>
+        <strong>Couleur :</strong> ${escapeHtml(data.puppyColor)}<br>
+        <strong>Sexe :</strong> ${escapeHtml(data.puppySex)}<br>
         <strong>Prix :</strong> ${data.puppyPrice.toLocaleString("fr-FR")} €<br>
         <strong>ID :</strong> #${data.puppyId}
       </div>
       <table cellpadding="8" style="border-collapse:collapse;width:100%;max-width:600px">
-        <tr><td><strong>Prénom :</strong></td><td>${data.firstName}</td></tr>
-        <tr><td><strong>Nom :</strong></td><td>${data.lastName}</td></tr>
-        <tr><td><strong>Email :</strong></td><td><a href="mailto:${data.email}">${data.email}</a></td></tr>
-        ${data.phone ? `<tr><td><strong>Téléphone :</strong></td><td>${data.phone}</td></tr>` : ""}
-        <tr><td><strong>Message :</strong></td><td style="white-space:pre-wrap">${data.message}</td></tr>
+        <tr><td><strong>Prénom :</strong></td><td>${escapeHtml(data.firstName)}</td></tr>
+        <tr><td><strong>Nom :</strong></td><td>${escapeHtml(data.lastName)}</td></tr>
+        <tr><td><strong>Email :</strong></td><td><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></td></tr>
+        ${data.phone ? `<tr><td><strong>Téléphone :</strong></td><td>${escapeHtml(data.phone)}</td></tr>` : ""}
+        <tr><td><strong>Message :</strong></td><td style="white-space:pre-wrap">${escapeHtml(data.message)}</td></tr>
       </table>
       <p style="color:#888;font-size:12px">Élevage du Berger Bleu — demande reçue le ${new Date().toLocaleString("fr-FR")}</p>
     `,
