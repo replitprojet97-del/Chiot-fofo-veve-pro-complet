@@ -78,6 +78,9 @@ export const adminApi = {
     apiFetch<ReviewFromDB>(`/api/admin/reviews/${id}/approve`, { method: "PATCH" }),
   deleteReview: (id: number) =>
     apiFetch<{ success: boolean }>(`/api/admin/reviews/${id}`, { method: "DELETE" }),
+  listMessages: () => apiFetch<ContactMessage[]>("/api/admin/messages"),
+  deleteMessage: (id: number) =>
+    apiFetch<{ success: boolean }>(`/api/admin/messages/${id}`, { method: "DELETE" }),
 };
 
 export type PuppyStatus = "available" | "reserved" | "sold";
@@ -148,4 +151,17 @@ export interface ReservationPayload extends ContactPayload {
   puppyColor: string;
   puppySex: string;
   puppyPrice: number;
+}
+
+export interface ContactMessage {
+  id: number;
+  puppyId: number | null;
+  puppyName: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  message: string;
+  type: "contact" | "reservation";
+  createdAt: string;
 }

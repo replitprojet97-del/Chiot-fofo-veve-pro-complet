@@ -4,6 +4,7 @@ import {
   Plus, LogOut, Pencil, Trash2, UploadCloud, X, Loader2,
   CheckCircle2, AlertCircle, PawPrint as Paw, Image as ImageIcon,
   ChevronDown, Sparkles, ExternalLink, Star, ShieldCheck, Clock, MessageSquare,
+  Mail, FileText, Phone, AtSign, CalendarDays,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   adminApi, reviewsApi,
   type Puppy, type PuppyPayload, type PuppyStatus, type PuppyColor, type PuppySex,
-  type ReviewFromDB, type ReviewSubmitPayload,
+  type ReviewFromDB, type ReviewSubmitPayload, type ContactMessage,
 } from "@/lib/api";
 
 const COLORS: PuppyColor[] = ["bleu merle", "rouge merle", "noir tricolore", "rouge tricolore"];
@@ -70,7 +71,16 @@ function formatDate(iso: string) {
 
 export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardProps) {
   const qc = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"chiots" | "avis">("chiots");
+  const [activeTab, setActiveTab] = useState<"chiots" | "avis" | "messages">("chiots");
+
+  // Contract state
+  const [contractPuppy, setContractPuppy] = useState<Puppy | null>(null);
+  const [contractBuyer, setContractBuyer] = useState({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
+  const [contractDeposit, setContractDeposit] = useState(300);
+  const [contractDate, setContractDate] = useState(() => new Date().toISOString().split("T")[0]);
+
+  // Messages state
+  const [deleteMessageConfirm, setDeleteMessageConfirm] = useState<number | null>(null);
 
   // Puppy state
   const [showForm, setShowForm] = useState(false);
@@ -98,6 +108,13 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   const { data: allReviews = [], isLoading: reviewsLoading } = useQuery<ReviewFromDB[]>({
     queryKey: ["admin-reviews"],
     queryFn: adminApi.listReviews,
+  });
+
+  // Messages queries
+  const { data: messages = [], isLoading: messagesLoading } = useQuery<ContactMessage[]>({
+    queryKey: ["admin-messages"],
+    queryFn: adminApi.listMessages,
+    enabled: activeTab === "messages",
   });
 
   const pendingReviews = allReviews.filter((r) => r.status === "pending");
@@ -159,6 +176,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       setReviewFormError("");
     },
     onError: (err) => setReviewFormError(err instanceof Error ? err.message : "Erreur lors de l'ajout"),
+  });
+
+  // Message mutations
+  const deleteMessageMut = useMutation({
+    mutationFn: adminApi.deleteMessage,
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-messages"] }); setDeleteMessageConfirm(null); },
   });
 
   // Puppy helpers
@@ -269,6 +292,17 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
               <span className={`ml-1 text-xs px-2 py-0.5 rounded-full font-bold ${activeTab === "avis" ? "bg-primary/10" : "bg-secondary"}`}>{allReviews.length}</span>
             )}
           </button>
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
+              activeTab === "messages" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Mail className="w-4 h-4" /> Messages
+            {activeTab !== "messages" && messages.length > 0 && (
+              <span className="ml-1 text-xs px-2 py-0.5 rounded-full font-bold bg-secondary">{messages.length}</span>
+            )}
+          </button>
         </div>
 
         {/* ─── TAB: CHIOTS ─── */}
@@ -340,10 +374,25 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                         </div>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 mb-2">
                           <Button variant="outline" size="sm" className="flex-1 gap-1.5 rounded-xl" onClick={() => openEdit(p)}><Pencil className="w-4 h-4" /> Modifier</Button>
                           <Button variant="outline" size="sm" className="flex-1 gap-1.5 rounded-xl text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950" onClick={() => setDeleteConfirm(p.id)}><Trash2 className="w-4 h-4" /> Supprimer</Button>
                         </div>
+                        {p.status === "reserved" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full gap-1.5 rounded-xl text-amber-700 border-amber-200 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                            onClick={() => {
+                              setContractPuppy(p);
+                              setContractBuyer({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
+                              setContractDeposit(300);
+                              setContractDate(new Date().toISOString().split("T")[0]);
+                            }}
+                          >
+                            <FileText className="w-4 h-4" /> Générer le contrat
+                          </Button>
+                        )}
                       </div>
                     </div>
                   );
@@ -475,6 +524,75 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
               </div>
             )}
           </>
+        )}
+
+        {/* ─── TAB: MESSAGES ─── */}
+        {activeTab === "messages" && (
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="font-serif text-3xl font-bold">Messages reçus</h1>
+                <p className="text-muted-foreground mt-1">Contacts et demandes de réservation soumis via le site</p>
+              </div>
+              <Button variant="outline" size="sm" className="gap-1.5 rounded-xl" onClick={() => qc.invalidateQueries({ queryKey: ["admin-messages"] })}>
+                Actualiser
+              </Button>
+            </div>
+
+            {messagesLoading ? (
+              <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary/40" /></div>
+            ) : messages.length === 0 ? (
+              <div className="text-center py-20 text-muted-foreground">
+                <Mail className="w-12 h-12 mx-auto mb-4 text-muted-foreground/30" />
+                <p className="text-lg font-medium">Aucun message pour l'instant</p>
+                <p className="text-sm mt-1">Les contacts et demandes de réservation apparaîtront ici</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((msg) => (
+                  <div key={msg.id} className="bg-card border border-border rounded-2xl p-5 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-2">
+                          <span className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${
+                            msg.type === "reservation"
+                              ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                              : "bg-primary/10 text-primary"
+                          }`}>
+                            {msg.type === "reservation" ? <Paw className="w-3 h-3" /> : <Mail className="w-3 h-3" />}
+                            {msg.type === "reservation" ? "Réservation" : "Contact"}
+                          </span>
+                          {msg.puppyName && (
+                            <span className="text-xs bg-secondary px-2.5 py-1 rounded-full font-medium">
+                              Chiot : {msg.puppyName}
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground ml-auto">
+                            <CalendarDays className="w-3 h-3" />
+                            {formatDate(msg.createdAt)}
+                          </span>
+                        </div>
+                        <p className="font-semibold text-base">{msg.firstName} {msg.lastName}</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1"><AtSign className="w-3 h-3" />{msg.email}</span>
+                          {msg.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{msg.phone}</span>}
+                        </div>
+                        <p className="mt-3 text-sm leading-relaxed text-foreground/80 bg-secondary/40 rounded-xl px-4 py-3">{msg.message}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 rounded-xl text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950 flex-shrink-0"
+                        onClick={() => setDeleteMessageConfirm(msg.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </main>
 
@@ -738,6 +856,121 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
               <Button className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white border-none" disabled={deleteReviewMut.isPending} onClick={() => deleteReviewMut.mutate(deleteReviewConfirm)}>
                 {deleteReviewMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Supprimer"}
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── DELETE MESSAGE CONFIRMATION ─── */}
+      {deleteMessageConfirm !== null && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setDeleteMessageConfirm(null)} />
+          <div className="relative bg-card border border-border rounded-2xl p-8 shadow-2xl max-w-sm w-full text-center">
+            <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mx-auto mb-4"><Trash2 className="w-6 h-6" /></div>
+            <h3 className="font-serif text-xl font-bold mb-2">Supprimer ce message ?</h3>
+            <p className="text-muted-foreground text-sm mb-6">Le message sera définitivement supprimé.</p>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setDeleteMessageConfirm(null)}>Annuler</Button>
+              <Button className="flex-1 rounded-xl bg-red-600 hover:bg-red-700 text-white border-none" disabled={deleteMessageMut.isPending} onClick={() => deleteMessageMut.mutate(deleteMessageConfirm)}>
+                {deleteMessageMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Supprimer"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── CONTRACT MODAL ─── */}
+      {contractPuppy && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setContractPuppy(null)} />
+          <div className="relative bg-card text-card-foreground w-full max-w-2xl rounded-3xl shadow-2xl border border-border overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <div>
+                <h2 className="font-serif text-2xl font-bold">Contrat de réservation</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Remplissez les informations de l'acquéreur, puis imprimez</p>
+              </div>
+              <button onClick={() => setContractPuppy(null)} className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center hover:bg-accent transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-200/50 dark:border-amber-900/30">
+                <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">Chiot concerné</p>
+                <p className="font-semibold">{contractPuppy.name} — {contractPuppy.color} · {contractPuppy.sex}</p>
+                <p className="text-sm text-muted-foreground">{contractPuppy.ageWeeks} semaines · Prix de vente : {contractPuppy.price.toLocaleString("fr-FR")} €</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Prénom acquéreur *</label>
+                  <Input value={contractBuyer.firstName} onChange={(e) => setContractBuyer({ ...contractBuyer, firstName: e.target.value })} placeholder="Marie" className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Nom acquéreur *</label>
+                  <Input value={contractBuyer.lastName} onChange={(e) => setContractBuyer({ ...contractBuyer, lastName: e.target.value })} placeholder="Dupont" className="bg-background" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Adresse</label>
+                <Input value={contractBuyer.address} onChange={(e) => setContractBuyer({ ...contractBuyer, address: e.target.value })} placeholder="12 rue des Lilas" className="bg-background" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Code postal</label>
+                  <Input value={contractBuyer.zip} onChange={(e) => setContractBuyer({ ...contractBuyer, zip: e.target.value })} placeholder="69000" className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Ville</label>
+                  <Input value={contractBuyer.city} onChange={(e) => setContractBuyer({ ...contractBuyer, city: e.target.value })} placeholder="Lyon" className="bg-background" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Téléphone</label>
+                  <Input value={contractBuyer.phone} onChange={(e) => setContractBuyer({ ...contractBuyer, phone: e.target.value })} placeholder="06 12 34 56 78" className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Email</label>
+                  <Input value={contractBuyer.email} onChange={(e) => setContractBuyer({ ...contractBuyer, email: e.target.value })} placeholder="marie@example.com" className="bg-background" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Acompte (€)</label>
+                  <Input type="number" min={0} value={contractDeposit} onChange={(e) => setContractDeposit(parseInt(e.target.value, 10) || 0)} className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Date du contrat</label>
+                  <Input type="date" value={contractDate} onChange={(e) => setContractDate(e.target.value)} className="bg-background" />
+                </div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setContractPuppy(null)}>Annuler</Button>
+                <Button
+                  type="button"
+                  className="flex-1 rounded-xl h-12 gap-2"
+                  onClick={() => {
+                    const p = contractPuppy;
+                    const b = contractBuyer;
+                    const dateStr = new Date(contractDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+                    const solde = p.price - contractDeposit;
+                    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Contrat de réservation — ${p.name}</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Georgia',serif;font-size:12pt;color:#1a1a1a;background:#fff;padding:2cm}h1{font-size:20pt;text-align:center;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid #1a1a1a;padding-bottom:10px;margin-bottom:6px}.subtitle{text-align:center;font-size:10pt;color:#555;margin-bottom:24px}.section{margin-bottom:20px}.section-title{font-size:11pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #ccc;padding-bottom:4px;margin-bottom:12px;color:#444}.row{display:flex;gap:24px;margin-bottom:8px}.field{flex:1}.field label{font-size:9pt;color:#666;display:block;margin-bottom:2px}.field span{font-size:11pt;font-weight:bold;border-bottom:1px solid #999;display:block;padding-bottom:3px;min-height:22px}.box{border:1px solid #ccc;border-radius:4px;padding:12px 16px;background:#fafafa;margin-bottom:12px}.highlight{background:#fffbeb;border-color:#d97706}.clause{margin-bottom:10px;font-size:10pt;line-height:1.6;color:#333}.clause strong{color:#1a1a1a}.sign-row{display:flex;gap:40px;margin-top:32px}.sign-box{flex:1;border-top:1px solid #999;padding-top:8px}.sign-box p{font-size:9pt;color:#666;margin-bottom:40px}.footer{text-align:center;font-size:8pt;color:#999;margin-top:40px;border-top:1px solid #eee;padding-top:12px}@media print{body{padding:1.5cm}}</style></head><body>
+<h1>Contrat de Réservation</h1>
+<p class="subtitle">Élevage du Berger Bleu — Particulier déclaré DDPP · Bellevaux (74), Haute-Savoie</p>
+<div class="section"><div class="section-title">Vendeur</div><div class="box"><strong>Élevage du Berger Bleu</strong><br>Les Alpages du Berger Bleu, 74470 Bellevaux, Haute-Savoie<br>Tél. : 07 57 81 72 02 · Particulier déclaré DDPP</div></div>
+<div class="section"><div class="section-title">Acquéreur</div><div class="row"><div class="field"><label>Nom et prénom</label><span>${b.firstName || "…"} ${b.lastName || "…"}</span></div><div class="field"><label>Téléphone</label><span>${b.phone || "…"}</span></div></div><div class="row"><div class="field"><label>Adresse</label><span>${b.address || "…"}</span></div><div class="field"><label>Code postal · Ville</label><span>${b.zip || "…"} ${b.city || "…"}</span></div></div><div class="row"><div class="field"><label>Email</label><span>${b.email || "…"}</span></div></div></div>
+<div class="section"><div class="section-title">Animal cédé</div><div class="row"><div class="field"><label>Nom</label><span>${p.name}</span></div><div class="field"><label>Race</label><span>Berger Australien (Australian Shepherd)</span></div></div><div class="row"><div class="field"><label>Robe</label><span>${p.color}</span></div><div class="field"><label>Sexe</label><span>${p.sex}</span></div></div><div class="row"><div class="field"><label>Âge à la signature</label><span>${p.ageWeeks} semaines</span></div><div class="field"><label>Inscrit au LOF</label><span>Oui — Livre des Origines Français</span></div></div>${p.parents ? `<div class="row"><div class="field"><label>Parenté</label><span>${p.parents}</span></div></div>` : ""}</div>
+<div class="section"><div class="section-title">Conditions financières</div><div class="box highlight"><div class="row" style="margin-bottom:6px"><div class="field"><label>Prix de vente total</label><span>${p.price.toLocaleString("fr-FR")} €</span></div><div class="field"><label>Acompte versé à la signature</label><span>${contractDeposit.toLocaleString("fr-FR")} €</span></div></div><div class="row"><div class="field"><label>Solde à verser à la remise du chiot</label><span style="color:#b45309;font-size:13pt">${solde.toLocaleString("fr-FR")} €</span></div></div></div></div>
+<div class="section"><div class="section-title">Clauses contractuelles</div><p class="clause"><strong>Art. 1 — Acompte non remboursable.</strong> L'acompte versé est non remboursable en cas de désistement de l'acquéreur, sauf cas de force majeure dûment justifié. En cas de désistement du vendeur, l'acompte sera intégralement restitué.</p><p class="clause"><strong>Art. 2 — Visite vétérinaire.</strong> L'acquéreur s'engage à soumettre l'animal à un examen vétérinaire dans les <strong>5 jours ouvrables</strong> suivant la remise. Toute anomalie constatée devra être signalée par écrit dans ce délai.</p><p class="clause"><strong>Art. 3 — Garantie vices rédhibitoires.</strong> Conformément aux articles L. 213-1 et suivants du Code rural, le vendeur garantit l'animal contre les vices rédhibitoires pendant <strong>30 jours</strong> à compter de la remise, sur présentation d'un certificat vétérinaire.</p><p class="clause"><strong>Art. 4 — Droit de rétractation.</strong> L'acquéreur dispose d'un délai de <strong>14 jours</strong> pour exercer son droit de rétractation à compter de la remise du chiot, sauf si l'état de santé de l'animal l'exige autrement.</p><p class="clause"><strong>Art. 5 — Conditions de remise.</strong> Le chiot sera remis muni de son carnet de santé, de sa puce électronique, de son certificat de naissance LOF et d'un certificat vétérinaire de bonne santé. L'âge minimal de cession est de <strong>8 semaines</strong> révolues.</p><p class="clause"><strong>Art. 6 — Bien-être animal.</strong> L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins, conformément à l'article L. 214-1 du Code rural.</p></div>
+<div class="sign-row"><div class="sign-box"><p>Fait à Bellevaux, le ${dateStr}</p><p style="font-size:9pt;color:#666;margin-bottom:6px">Signature du vendeur<br><em>(précédée de « Lu et approuvé »)</em></p><div style="height:60px"></div></div><div class="sign-box"><p>Fait à _____________, le ${dateStr}</p><p style="font-size:9pt;color:#666;margin-bottom:6px">Signature de l'acquéreur<br><em>(précédée de « Lu et approuvé »)</em></p><div style="height:60px"></div></div></div>
+<p class="footer">Élevage du Berger Bleu · 74470 Bellevaux, Haute-Savoie · 07 57 81 72 02 · Particulier déclaré DDPP</p>
+</body></html>`;
+                    const win = window.open("", "_blank");
+                    if (win) { win.document.write(html); win.document.close(); setTimeout(() => win.print(), 600); }
+                  }}
+                >
+                  <FileText className="w-4 h-4" /> Ouvrir & Imprimer
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcryptjs";
 import { db } from "@workspace/db";
-import { puppiesTable, adminUsersTable } from "@workspace/db/schema";
+import { puppiesTable, adminUsersTable, contactMessagesTable } from "@workspace/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 import { requireAdmin, signToken, setAuthCookie, clearAuthCookie } from "../lib/auth.js";
 import { uploadImageBuffer } from "../lib/cloudinary.js";
@@ -189,6 +189,28 @@ router.delete("/admin/puppies/:id", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     await db.delete(puppiesTable).where(eq(puppiesTable.id, id));
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+router.get("/admin/messages", requireAdmin, async (_req, res) => {
+  try {
+    const messages = await db
+      .select()
+      .from(contactMessagesTable)
+      .orderBy(desc(contactMessagesTable.createdAt));
+    res.json(messages);
+  } catch {
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+router.delete("/admin/messages/:id", requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    await db.delete(contactMessagesTable).where(eq(contactMessagesTable.id, id));
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: "Erreur serveur" });
