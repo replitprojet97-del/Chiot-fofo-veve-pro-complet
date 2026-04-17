@@ -385,7 +385,7 @@ export default function Home() {
                   Tout a commencé en 2009, presque par hasard. Un regard croisé avec un Berger Australien bleu merle lors d'une promenade, et plus rien n'a été pareil. Nous sommes une famille ordinaire — pas une entreprise, pas un chenil industriel — juste des gens qui sont tombés éperdument amoureux de cette race extraordinaire.
                 </p>
                 <p>
-                  Depuis cette rencontre fondatrice, l'Aussie s'est installé dans chaque recoin de notre quotidien. Aujourd'hui, <strong className="text-foreground">Ulysse</strong>, notre magnifique mâle noir tricolore, partage le canapé avec <strong className="text-foreground">Alaska</strong>, notre douce bleu merle aux yeux vairons, et <strong className="text-foreground">Cassandra</strong>, notre pétillante rouge merle. Ils ne sont pas dans un chenil : ils dorment dans nos chambres, jouent avec nos enfants, et nous accompagnent partout.
+                  Depuis cette rencontre fondatrice, l'Aussie s'est installé dans chaque recoin de notre quotidien. Aujourd'hui, <strong className="text-foreground">Ulysse</strong> et <strong className="text-foreground">César</strong>, nos deux magnifiques mâles noirs tricolores, partagent le canapé avec <strong className="text-foreground">Alaska</strong>, notre douce bleu merle aux yeux vairons, et <strong className="text-foreground">Cassandra</strong>, notre pétillante rouge merle. Ils ne sont pas dans un chenil : ils dorment dans nos chambres, jouent avec nos enfants, et nous accompagnent partout.
                 </p>
                 <p>
                   C'est précisément parce que nous sommes des particuliers passionnés — et non des professionnels de la production — que chaque chiot reçoit une attention totale. Nous ne faisons que 2 à 3 portées par an. Pas davantage. Chaque chiot compte, chaque placement est réfléchi, chaque famille qui repart avec l'un de nos bébés devient pour nous une histoire qu'on suit avec le cœur.
@@ -653,11 +653,12 @@ export default function Home() {
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Tous nos reproducteurs sont LOF confirmés, testés génétiquement et sélectionnés pour leur beauté, leur caractère et leur santé.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-4 gap-6 mb-12">
             {[
-              { name: "Ulysse", color: "Noir tricolore", sex: "Mâle", photo: "/images/parent-noir-tricolore.jpg", icon: <Mars className="w-4 h-4" />, iconClass: "bg-blue-500 text-white" },
-              { name: "Alaska", color: "Bleu merle", sex: "Femelle", photo: "/images/parent-bleu-merle.jpg", icon: <Venus className="w-4 h-4" />, iconClass: "bg-pink-500 text-white" },
-              { name: "Cassandra", color: "Rouge merle", sex: "Femelle", photo: "/images/parent-rouge-merle.jpg", icon: <Venus className="w-4 h-4" />, iconClass: "bg-pink-500 text-white" },
+              { name: "Ulysse", color: "Noir tricolore", sex: "Mâle", photo: "/images/parent-ulysse.jpg", icon: <Mars className="w-4 h-4" />, iconClass: "bg-blue-500 text-white" },
+              { name: "César", color: "Noir tricolore", sex: "Mâle", photo: "/images/parent-cesar.jpg", icon: <Mars className="w-4 h-4" />, iconClass: "bg-blue-500 text-white" },
+              { name: "Alaska", color: "Bleu merle", sex: "Femelle", photo: "/images/parent-alaska.jpg", icon: <Venus className="w-4 h-4" />, iconClass: "bg-pink-500 text-white" },
+              { name: "Cassandra", color: "Rouge merle", sex: "Femelle", photo: "/images/parent-cassandra.jpg", icon: <Venus className="w-4 h-4" />, iconClass: "bg-pink-500 text-white" },
             ].map((p) => (
               <Link href="/reproducteurs" key={p.name} className="group block">
                 <div className="bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -690,7 +691,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-semibold text-lg mb-1">2 portées actives</p>
-                <p className="text-sm text-muted-foreground mb-3">Chiots issus d'Alaska × Ulysse (bleu merle / noir tricolore) et Cassandra × Ulysse (rouge merle / rouge tricolore).</p>
+                <p className="text-sm text-muted-foreground mb-3">Chiots issus d'Alaska × César (bleu merle / noir tricolore) et Cassandra × Ulysse (rouge merle / noir tricolore).</p>
                 <Link href="/reproducteurs">
                   <Button size="sm" className="rounded-full gap-2 h-9">Voir les portées <ArrowRight className="w-3.5 h-3.5" /></Button>
                 </Link>
