@@ -7,6 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 const LINKS = [
   { href: "/", label: "Accueil" },
   { href: "/chiots", label: "Nos Chiots" },
+  { href: "/reproducteurs", label: "Reproducteurs" },
   { href: "/a-propos", label: "À Propos" },
   { href: "/avis", label: "Avis Clients" },
   { href: "/contact", label: "Contact" },

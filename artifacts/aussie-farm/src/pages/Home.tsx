@@ -4,6 +4,7 @@ import {
   Star, Shield, Award, Heart, CheckCircle2, Plane, Truck,
   ArrowRight, PawPrint as Paw, Info, Sparkles, X,
   FileText, Cpu, Stethoscope, BookOpen, ClipboardList, ScrollText,
+  Mars, Venus, Baby,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
@@ -280,7 +281,7 @@ export default function Home() {
 
       {/* WhatsApp flottant */}
       <a
-        href="https://wa.me/33612345678?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20chiots."
+        href="https://wa.me/33757817202?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20chiots."
         target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110"
         title="WhatsApp"
@@ -520,6 +521,76 @@ export default function Home() {
                 </div>
                 <p className="text-sm italic font-serif">"Un élevage exceptionnel, des chiens équilibrés."</p>
                 <p className="text-xs text-muted-foreground mt-2">— 185+ familles satisfaites</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nos Reproducteurs & La Race */}
+      <section className="py-24 bg-secondary/20">
+        <div className="container px-4 mx-auto max-w-6xl">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 font-medium text-sm">
+              <Paw className="w-4 h-4" /> Nos parents reproducteurs
+            </div>
+            <h2 className="font-serif text-4xl font-bold mb-4">Des lignées d'exception</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Tous nos reproducteurs sont LOF confirmés, testés génétiquement et sélectionnés pour leur beauté, leur caractère et leur santé.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {[
+              { name: "Ulysse", color: "Noir tricolore", sex: "Mâle", photo: "/images/parent-noir-tricolore.jpg", icon: <Mars className="w-4 h-4" />, iconClass: "bg-blue-500 text-white" },
+              { name: "Alaska", color: "Bleu merle", sex: "Femelle", photo: "/images/parent-bleu-merle.jpg", icon: <Venus className="w-4 h-4" />, iconClass: "bg-pink-500 text-white" },
+              { name: "Cassandra", color: "Rouge merle", sex: "Femelle", photo: "/images/parent-rouge-merle.jpg", icon: <Venus className="w-4 h-4" />, iconClass: "bg-pink-500 text-white" },
+            ].map((p) => (
+              <Link href="/reproducteurs" key={p.name} className="group block">
+                <div className="bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <div className="relative h-52 overflow-hidden">
+                    <img src={p.photo} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold shadow ${p.iconClass}`}>
+                      {p.icon} {p.sex}
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                      <p className="text-white font-serif text-xl font-bold">{p.name}</p>
+                      <p className="text-white/80 text-xs">{p.color}</p>
+                    </div>
+                  </div>
+                  <div className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-xs text-muted-foreground">LOF · Tests ADN complets</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-card rounded-2xl p-7 border border-border/50 shadow-sm flex items-start gap-5">
+              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                <Baby className="w-7 h-7" />
+              </div>
+              <div>
+                <p className="font-semibold text-lg mb-1">2 portées actives</p>
+                <p className="text-sm text-muted-foreground mb-3">Chiots issus d'Alaska × Ulysse (bleu merle / noir tricolore) et Cassandra × Ulysse (rouge merle / rouge tricolore).</p>
+                <Link href="/reproducteurs">
+                  <Button size="sm" className="rounded-full gap-2 h-9">Voir les portées <ArrowRight className="w-3.5 h-3.5" /></Button>
+                </Link>
+              </div>
+            </div>
+            <div className="bg-card rounded-2xl p-7 border border-border/50 shadow-sm flex items-start gap-5">
+              <div className="w-14 h-14 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 flex-shrink-0">
+                <BookOpen className="w-7 h-7" />
+              </div>
+              <div>
+                <p className="font-semibold text-lg mb-1">Tout savoir sur le Berger Australien</p>
+                <p className="text-sm text-muted-foreground mb-3">Caractère, robes officielles, aptitudes, guide d'achat, coûts annuels… tout ce que vous devez savoir avant d'adopter.</p>
+                <Link href="/race">
+                  <Button size="sm" variant="outline" className="rounded-full gap-2 h-9">Découvrir la race <ArrowRight className="w-3.5 h-3.5" /></Button>
+                </Link>
               </div>
             </div>
           </div>

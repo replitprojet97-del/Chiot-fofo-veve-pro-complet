@@ -27,6 +27,8 @@ export default function Footer() {
               {[
                 { href: "/", label: "Accueil" },
                 { href: "/chiots", label: "Nos Chiots" },
+                { href: "/reproducteurs", label: "Nos Reproducteurs" },
+                { href: "/race", label: "Le Berger Australien" },
                 { href: "/a-propos", label: "À Propos" },
                 { href: "/avis", label: "Avis Clients" },
                 { href: "/contact", label: "Contact" },
@@ -43,7 +45,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                <a href="tel:+33612345678" className="hover:text-primary transition-colors">06 12 34 56 78</a>
+                <a href="tel:+33757817202" className="hover:text-primary transition-colors">07 57 81 72 02</a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary flex-shrink-0" />

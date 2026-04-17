@@ -8,6 +8,8 @@ import Chiots from "@/pages/Chiots";
 import APropos from "@/pages/APropos";
 import Avis from "@/pages/Avis";
 import Contact from "@/pages/Contact";
+import Reproducteurs from "@/pages/Reproducteurs";
+import Race from "@/pages/Race";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
@@ -18,6 +20,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/chiots" component={Chiots} />
+      <Route path="/reproducteurs" component={Reproducteurs} />
+      <Route path="/race" component={Race} />
       <Route path="/a-propos" component={APropos} />
       <Route path="/avis" component={Avis} />
       <Route path="/contact" component={Contact} />

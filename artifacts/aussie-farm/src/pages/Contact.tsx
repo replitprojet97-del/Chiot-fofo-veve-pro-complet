@@ -140,7 +140,7 @@ export default function Contact() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground font-medium">Téléphone</p>
-                        <a href="tel:+33612345678" className="font-bold text-lg hover:text-primary transition-colors">06 12 34 56 78</a>
+                        <a href="tel:+33757817202" className="font-bold text-lg hover:text-primary transition-colors">07 57 81 72 02</a>
                         <p className="text-xs text-muted-foreground mt-0.5">Lundi – Samedi · 9h à 18h</p>
                       </div>
                     </div>
@@ -169,7 +169,7 @@ export default function Contact() {
                 </div>
 
                 <a
-                  href="https://wa.me/33612345678?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20vos%20chiots."
+                  href="https://wa.me/33757817202?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20vos%20chiots."
                   target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 rounded-xl transition-colors group"
                 >
