@@ -125,7 +125,7 @@ export default function Chiots() {
   useSEO({
     title: "Nos Chiots Berger Australien à Vendre — LOF, Bleu Merle, Rouge Merle | Élevage du Berger Bleu",
     description: "Découvrez nos chiots Berger Australien disponibles : bleu merle, rouge merle, noir tricolore, rouge tricolore. Tous LOF avec pedigree, vaccinés et vérifiés par vétérinaire. Réservez votre chiot Aussie.",
-    canonical: "https://www.elevagedubergerbleu.fr/chiots",
+    canonical: "https://www.elevagedubergerbleu.com/chiots",
   });
   const [filterColor, setFilterColor] = useState<ColorFilter>("Tous");
   const [filterSex, setFilterSex] = useState<SexFilter>("Tous");

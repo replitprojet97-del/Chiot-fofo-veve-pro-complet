@@ -18,7 +18,7 @@ export default function Contact() {
   useSEO({
     title: "Contactez-Nous — Réserver un Chiot Berger Australien | Élevage du Berger Bleu",
     description: "Contactez l'Élevage du Berger Bleu pour réserver votre chiot Berger Australien LOF. Livraison partout en France. Répondons à toutes vos questions sur la race et nos disponibilités.",
-    canonical: "https://www.elevagedubergerbleu.fr/contact",
+    canonical: "https://www.elevagedubergerbleu.com/contact",
   });
   const [formData, setFormData] = useState({ prenom: "", nom: "", email: "", phone: "", message: "" });
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -150,7 +150,7 @@ export default function Contact() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground font-medium">Email</p>
-                        <a href="mailto:contact@berger-bleu.fr" className="font-bold hover:text-primary transition-colors">contact@berger-bleu.fr</a>
+                        <a href="mailto:contact@berger-bleu.com" className="font-bold hover:text-primary transition-colors">contact@berger-bleu.com</a>
                         <p className="text-xs text-muted-foreground mt-0.5">Réponse sous 24h</p>
                       </div>
                     </div>

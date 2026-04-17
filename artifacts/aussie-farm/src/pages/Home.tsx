@@ -246,7 +246,7 @@ export default function Home() {
   useSEO({
     title: "Élevage du Berger Bleu — Chiots Berger Australien LOF | Bleu Merle, Rouge Merle",
     description: "Élevage familial de Bergers Australiens. Chiots LOF bleu merle, rouge merle, noir tricolore. Pedigree officiel, suivi éleveur à vie. Depuis 2009, France.",
-    canonical: "https://www.elevagedubergerbleu.fr/",
+    canonical: "https://www.elevagedubergerbleu.com/",
   });
   const { data: puppies = [] } = usePuppies();
   const [selectedPuppy, setSelectedPuppy] = useState<Puppy | null>(null);

@@ -136,7 +136,7 @@ export default function Avis() {
   useSEO({
     title: "Avis Clients — Témoignages Acheteurs de Chiots Berger Australien | Élevage du Berger Bleu",
     description: "Lisez les témoignages de nos familles heureuses. Des dizaines d'avis vérifiés sur nos chiots Berger Australien LOF. Partagez votre expérience avec l'Élevage du Berger Bleu.",
-    canonical: "https://www.elevagedubergerbleu.fr/avis",
+    canonical: "https://www.elevagedubergerbleu.com/avis",
   });
   const [staticPage, setStaticPage] = useState(0);
   const [formData, setFormData] = useState({ name: "", location: "", puppyName: "", rating: 5, text: "" });

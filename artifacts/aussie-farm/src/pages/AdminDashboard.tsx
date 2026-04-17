@@ -4,7 +4,8 @@ import {
   Plus, LogOut, Pencil, Trash2, UploadCloud, X, Loader2,
   CheckCircle2, AlertCircle, PawPrint as Paw, Image as ImageIcon,
   ChevronDown, Sparkles, ExternalLink, Star, ShieldCheck, Clock, MessageSquare,
-  Mail, FileText, Phone, AtSign, CalendarDays,
+  Mail, FileText, Phone, AtSign, CalendarDays, BookOpen, Info, Download,
+  Eye, EyeOff, ArrowRight, HelpCircle, Lightbulb,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,7 +72,7 @@ function formatDate(iso: string) {
 
 export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardProps) {
   const qc = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"chiots" | "avis" | "messages">("chiots");
+  const [activeTab, setActiveTab] = useState<"guide" | "chiots" | "avis" | "messages">("guide");
 
   // Contract state
   const [contractPuppy, setContractPuppy] = useState<Puppy | null>(null);
@@ -387,7 +388,15 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         )}
 
         {/* Tab bar */}
-        <div className="flex gap-2 mb-8 border-b border-border">
+        <div className="flex gap-2 mb-8 border-b border-border overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("guide")}
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px whitespace-nowrap ${
+              activeTab === "guide" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <BookOpen className="w-4 h-4" /> Guide d'utilisation
+          </button>
           <button
             onClick={() => setActiveTab("chiots")}
             className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
@@ -425,6 +434,207 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
             )}
           </button>
         </div>
+
+        {/* ─── TAB: GUIDE ─── */}
+        {activeTab === "guide" && (
+          <div className="max-w-3xl mx-auto space-y-6 pb-12">
+            <div className="flex items-start gap-4 p-5 bg-primary/5 border border-primary/20 rounded-2xl">
+              <BookOpen className="w-8 h-8 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <h1 className="font-serif text-2xl font-bold mb-1">Guide d'utilisation — Espace Admin</h1>
+                <p className="text-muted-foreground text-sm leading-relaxed">Bienvenue dans votre tableau de bord. Ce guide vous explique comment gérer votre site pas à pas. Vous pouvez y revenir à tout moment en cliquant sur l'onglet <strong>Guide d'utilisation</strong>.</p>
+              </div>
+            </div>
+
+            {/* Section Chiots */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 bg-muted/40 border-b border-border">
+                <Paw className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-base">Onglet « Nos Chiots » — Gérer vos annonces</h2>
+              </div>
+              <div className="px-6 py-5 space-y-4 text-sm leading-relaxed text-foreground/90">
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Ajouter un nouveau chiot</p>
+                    <p className="text-muted-foreground">Cliquez sur le bouton <strong>+ Ajouter un chiot</strong> en haut à droite. Remplissez le nom, la robe, le sexe, l'âge, le prix, la description et les traits de caractère (séparés par des virgules). Cliquez ensuite sur <strong>Ajouter le chiot</strong> pour publier l'annonce.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Ajouter des photos</p>
+                    <p className="text-muted-foreground">Une fois le chiot créé, cliquez sur l'icône <strong>crayon (modifier)</strong> sur sa carte, puis sur la zone d'upload <strong>Ajouter des photos</strong>. Vous pouvez téléverser plusieurs images. La première image affichée sera la photo principale de l'annonce.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">3</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Changer le statut d'un chiot</p>
+                    <p className="text-muted-foreground">Dans le formulaire de modification, le champ <strong>Statut</strong> vous permet de passer un chiot de <em>Disponible</em> → <em>Réservé</em> → <em>Vendu</em>. Ce statut s'affiche directement sur l'annonce publique. Un chiot « Vendu » reste visible mais clairement marqué comme indisponible.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold flex items-center justify-center mt-0.5">
+                    <Sparkles className="w-3 h-3" />
+                  </span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Badge « Coup de cœur »</p>
+                    <p className="text-muted-foreground">Cochez la case <strong>Coup de cœur</strong> dans le formulaire pour mettre en avant un chiot avec un badge doré sur son annonce. À utiliser avec parcimonie pour les chiots les plus exceptionnels.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 text-red-600 text-xs font-bold flex items-center justify-center mt-0.5">
+                    <Trash2 className="w-3 h-3" />
+                  </span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Supprimer un chiot</p>
+                    <p className="text-muted-foreground">Cliquez sur l'icône <strong>poubelle</strong> sur la carte du chiot. Une confirmation vous sera demandée avant suppression définitive. Cette action est irréversible.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section Contrat */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 bg-muted/40 border-b border-border">
+                <FileText className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-base">Générer un contrat de réservation PDF</h2>
+              </div>
+              <div className="px-6 py-5 space-y-4 text-sm leading-relaxed text-foreground/90">
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Quand l'utiliser ?</p>
+                    <p className="text-muted-foreground">Le bouton <strong>Générer le contrat</strong> n'apparaît que sur les chiots ayant le statut <em>Réservé</em>. Passez d'abord le statut du chiot en « Réservé », puis cliquez sur le bouton vert <strong>Générer le contrat</strong> sur sa carte.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Remplir les informations de l'acquéreur</p>
+                    <p className="text-muted-foreground">Un panneau s'ouvre sur la droite. Saisissez le <strong>prénom, nom, adresse complète, code postal, ville, téléphone et email</strong> de l'acheteur. Indiquez aussi le montant de l'acompte versé et la date de signature.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">3</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Télécharger le PDF</p>
+                    <p className="text-muted-foreground">Cliquez sur <strong>Télécharger le PDF</strong>. Le contrat se génère en quelques secondes et se télécharge automatiquement avec votre signature. Le fichier est nommé <em>Contrat_reservation_[NomChiot]_[date].pdf</em>. Envoyez-le ensuite par email à l'acquéreur pour signature.</p>
+                  </div>
+                </div>
+                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-2">
+                  <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-amber-800 dark:text-amber-300 text-xs">Le contrat inclut automatiquement les informations du chiot (robe, sexe, âge, LOF), les clauses légales françaises, et votre signature. L'acquéreur doit signer et écrire « Lu et approuvé » à la main avant de vous retourner le document.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Section Avis */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 bg-muted/40 border-b border-border">
+                <MessageSquare className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-base">Onglet « Avis Clients » — Gérer les témoignages</h2>
+              </div>
+              <div className="px-6 py-5 space-y-4 text-sm leading-relaxed text-foreground/90">
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Avis en attente de validation</p>
+                    <p className="text-muted-foreground">Lorsqu'un client soumet un avis sur le site, il apparaît ici avec un badge orange <strong>« en attente »</strong>. Il est invisible sur le site public jusqu'à votre validation. Lisez-le et supprimez-le s'il est inapproprié, ou attendez — il sera publié automatiquement à la prochaine validation.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Ajouter un avis manuellement</p>
+                    <p className="text-muted-foreground">Vous pouvez ajouter un témoignage d'un client satisfait en cliquant sur <strong>+ Ajouter un avis</strong>. Renseignez le nom, la ville, le nom du chiot adopté, la note et le témoignage. Cet avis sera publié immédiatement.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 text-red-600 text-xs font-bold flex items-center justify-center mt-0.5">
+                    <Trash2 className="w-3 h-3" />
+                  </span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Supprimer un avis</p>
+                    <p className="text-muted-foreground">Cliquez sur le bouton <strong>Supprimer</strong> sur l'avis concerné. Une confirmation vous sera demandée. La suppression est définitive.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section Messages */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 bg-muted/40 border-b border-border">
+                <Mail className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-base">Onglet « Messages » — Demandes de contact et réservations</h2>
+              </div>
+              <div className="px-6 py-5 space-y-4 text-sm leading-relaxed text-foreground/90">
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Comprendre les messages reçus</p>
+                    <p className="text-muted-foreground">Chaque fois qu'un visiteur remplit le formulaire de contact ou de réservation sur le site, un message apparaît ici. Les messages de type <strong>Réservation</strong> (badge bleu) indiquent qu'un client souhaite réserver un chiot spécifique. Les messages <strong>Contact</strong> (badge gris) sont des demandes générales.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Répondre à un message</p>
+                    <p className="text-muted-foreground">Cliquez directement sur l'adresse email ou le numéro de téléphone affichés pour contacter le client. Vous recevez aussi une copie de chaque message par email (notification automatique). Il n'y a pas de réponse intégrée — utilisez votre messagerie habituelle.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-500/10 text-red-600 text-xs font-bold flex items-center justify-center mt-0.5">
+                    <Trash2 className="w-3 h-3" />
+                  </span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Archiver / supprimer un message</p>
+                    <p className="text-muted-foreground">Une fois que vous avez traité un message, supprimez-le avec l'icône <strong>poubelle</strong> pour garder votre boîte propre. Une confirmation est demandée avant suppression définitive.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section Sécurité */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 bg-muted/40 border-b border-border">
+                <ShieldCheck className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-base">Sécurité & Déconnexion</h2>
+              </div>
+              <div className="px-6 py-5 space-y-4 text-sm leading-relaxed text-foreground/90">
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    <LogOut className="w-3 h-3" />
+                  </span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Se déconnecter</p>
+                    <p className="text-muted-foreground">Cliquez sur le bouton <strong>Déconnexion</strong> en haut à droite de l'écran. Il est important de se déconnecter si vous utilisez un ordinateur partagé ou public. La session expire automatiquement après une période d'inactivité.</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                    <ExternalLink className="w-3 h-3" />
+                  </span>
+                  <div>
+                    <p className="font-semibold mb-0.5">Voir le site public</p>
+                    <p className="text-muted-foreground">Cliquez sur <strong>Voir le site</strong> en haut à droite pour visualiser le site tel qu'il apparaît à vos visiteurs dans un nouvel onglet. Utile pour vérifier vos modifications avant de les partager.</p>
+                  </div>
+                </div>
+                <div className="p-3 bg-primary/5 border border-primary/20 rounded-xl flex gap-2">
+                  <Lightbulb className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                  <p className="text-foreground/70 text-xs">Vos identifiants de connexion ne doivent être partagés avec personne. En cas de doute sur la sécurité, contactez votre développeur pour changer le mot de passe.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center pt-2">
+              <Button onClick={() => setActiveTab("chiots")} className="gap-2 rounded-xl">
+                <Paw className="w-4 h-4" /> Aller gérer mes chiots <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* ─── TAB: CHIOTS ─── */}
         {activeTab === "chiots" && (

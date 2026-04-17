@@ -167,7 +167,7 @@ export default function Reproducteurs() {
   useSEO({
     title: "Nos Reproducteurs — Mâles & Femelles LOF | Élevage du Berger Bleu",
     description: "Découvrez nos reproducteurs Berger Australien : Ulysse (noir tricolore), Alaska (bleu merle) et Cassandra (rouge merle). Tous testés génétiquement, LOF confirmés. Deux portées disponibles.",
-    canonical: "https://www.elevagedubergerbleu.fr/reproducteurs",
+    canonical: "https://www.elevagedubergerbleu.com/reproducteurs",
   });
 
   return (

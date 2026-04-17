@@ -101,7 +101,7 @@ export default function Race() {
   useSEO({
     title: "Le Berger Australien — Race, Caractère, Couleurs | Élevage du Berger Bleu",
     description: "Tout sur le Berger Australien : caractère, couleurs de robe, soins, éducation, guide d'achat. La race de chien la plus intelligente du monde selon de nombreux experts.",
-    canonical: "https://www.elevagedubergerbleu.fr/race",
+    canonical: "https://www.elevagedubergerbleu.com/race",
   });
 
   return (

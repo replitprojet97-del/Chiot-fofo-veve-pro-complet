@@ -46,7 +46,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
             <label className="text-sm font-medium">Email</label>
             <Input
               type="email"
-              placeholder="admin@berger-bleu.fr"
+              placeholder="admin@berger-bleu.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

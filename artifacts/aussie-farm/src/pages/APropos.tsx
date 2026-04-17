@@ -55,7 +55,7 @@ export default function APropos() {
   useSEO({
     title: "À Propos de Notre Élevage — Berger Australien Passion | Élevage du Berger Bleu",
     description: "Élevage familial passionné de Bergers Australiens depuis 2009. Découvrez notre histoire, nos valeurs, notre engagement envers le bien-être animal et nos certifications officielles.",
-    canonical: "https://www.elevagedubergerbleu.fr/a-propos",
+    canonical: "https://www.elevagedubergerbleu.com/a-propos",
   });
   return (
     <div className="min-h-screen bg-background text-foreground">
