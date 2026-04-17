@@ -5,7 +5,7 @@ import {
   CheckCircle2, AlertCircle, PawPrint as Paw, Image as ImageIcon,
   ChevronDown, Sparkles, ExternalLink, Star, ShieldCheck, Clock, MessageSquare,
   Mail, FileText, Phone, AtSign, CalendarDays, BookOpen, Info, Download,
-  Eye, EyeOff, ArrowRight, HelpCircle, Lightbulb,
+  Eye, EyeOff, ArrowRight, HelpCircle, Lightbulb, Baby,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -710,6 +710,122 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                 <div className="p-3 bg-primary/5 border border-primary/20 rounded-xl flex gap-2">
                   <Lightbulb className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                   <p className="text-foreground/70 text-xs">Vos identifiants de connexion ne doivent être partagés avec personne. En cas de doute sur la sécurité, contactez votre développeur pour changer le mot de passe.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Section Portées & Annonces */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 bg-muted/40 border-b border-border">
+                <Baby className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-base">Gestion des portées — Ce qui est automatique et ce qui est manuel</h2>
+              </div>
+              <div className="px-6 py-5 space-y-5 text-sm leading-relaxed text-foreground/90">
+
+                {/* Automatic */}
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                    <p className="font-semibold text-green-700 dark:text-green-400">Ce que le site gère seul (automatique)</p>
+                  </div>
+                  <ul className="space-y-2 ml-6 text-muted-foreground">
+                    <li className="list-disc">Le <strong>nombre de chiots disponibles</strong> affiché sur chaque portée (ex : « 4 encore disponibles ») est calculé en temps réel depuis votre base de données. Il se met à jour dès que vous changez le statut d'un chiot.</li>
+                    <li className="list-disc">Le <strong>total de chiots par portée</strong> (ex : « 6 chiots total ») est également automatique.</li>
+                    <li className="list-disc">Les <strong>annonces individuelles</strong> de chaque chiot apparaissent et disparaissent selon leur statut. Il n'y a <strong>aucune limite</strong> au nombre de chiots que vous pouvez publier.</li>
+                    <li className="list-disc">Une <strong>nouvelle portée</strong> apparaît sur le site dès que vous y publiez au moins un chiot avec un nom de portée renseigné.</li>
+                  </ul>
+                </div>
+
+                <div className="border-t border-border" />
+
+                {/* Manual warning */}
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                    <p className="font-semibold text-amber-700 dark:text-amber-400">Ce qui nécessite une mise à jour manuelle (développeur)</p>
+                  </div>
+                  <p className="text-muted-foreground mb-3">
+                    Certains textes du site ont été écrits en dur et font référence à <strong>« 2 portées actives »</strong>. Si vous ouvrez une <strong>3ème portée</strong>, ces 4 endroits deviendront inexacts et devront être corrigés par votre développeur :
+                  </p>
+                  <div className="space-y-3">
+
+                    <div className="p-3 bg-amber-500/8 border border-amber-500/20 rounded-xl space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">1</span>
+                        <p className="font-semibold text-xs">Page « Reproducteurs » — badge statistique</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground ml-5">Texte actuel : <code className="bg-muted px-1 rounded">2 portées actives</code> → à remplacer par <code className="bg-muted px-1 rounded">3 portées actives</code></p>
+                    </div>
+
+                    <div className="p-3 bg-amber-500/8 border border-amber-500/20 rounded-xl space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">2</span>
+                        <p className="font-semibold text-xs">Page « Reproducteurs » — texte d'introduction</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground ml-5">Texte actuel : <code className="bg-muted px-1 rounded">Deux portées actives issues de nos reproducteurs.</code> → à remplacer par <code className="bg-muted px-1 rounded">Trois portées actives issues de nos reproducteurs.</code></p>
+                    </div>
+
+                    <div className="p-3 bg-amber-500/8 border border-amber-500/20 rounded-xl space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">3</span>
+                        <p className="font-semibold text-xs">Page « Accueil » — section portées</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground ml-5">Texte actuel : <code className="bg-muted px-1 rounded">2 portées actives</code> → à remplacer par <code className="bg-muted px-1 rounded">3 portées actives</code></p>
+                    </div>
+
+                    <div className="p-3 bg-amber-500/8 border border-amber-500/20 rounded-xl space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">4</span>
+                        <p className="font-semibold text-xs">Balise SEO (description Google) — Page Reproducteurs</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground ml-5">Texte actuel : <code className="bg-muted px-1 rounded">Deux portées disponibles.</code> → à remplacer par <code className="bg-muted px-1 rounded">Trois portées disponibles.</code></p>
+                    </div>
+
+                  </div>
+                  <div className="mt-3 p-3 bg-muted/60 rounded-xl flex gap-2">
+                    <Info className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-muted-foreground">Les mentions <em>« 2 à 3 portées par an »</em> présentes dans les pages À Propos et Accueil sont du discours général sur votre philosophie d'élevage — elles n'ont pas besoin d'être modifiées.</p>
+                  </div>
+                </div>
+
+                <div className="border-t border-border" />
+
+                {/* How to add a new litter */}
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Plus className="w-4 h-4 text-primary flex-shrink-0" />
+                    <p className="font-semibold">Comment publier les annonces d'une nouvelle portée</p>
+                  </div>
+                  <div className="space-y-3 ml-1">
+                    <div className="flex gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+                      <div>
+                        <p className="font-semibold mb-0.5">Allez dans l'onglet « Nos Chiots »</p>
+                        <p className="text-muted-foreground">Cliquez sur <strong>+ Ajouter un chiot</strong> pour chaque chiot de la nouvelle portée.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+                      <div>
+                        <p className="font-semibold mb-0.5">Renseignez le nom de la portée</p>
+                        <p className="text-muted-foreground">Dans le champ <strong>Portée</strong> du formulaire, indiquez un nom cohérent (ex : <em>Portée 3</em> ou <em>Alaska × Ulysse II</em>). Tous les chiots d'une même portée doivent avoir le <strong>même nom de portée exactement</strong> — c'est ce qui les regroupe automatiquement sur la page Reproducteurs.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">3</span>
+                      <div>
+                        <p className="font-semibold mb-0.5">Publiez chiot par chiot</p>
+                        <p className="text-muted-foreground">Ajoutez la description, les photos, le sexe, la robe, le prix et le statut <em>Disponible</em>. La nouvelle portée apparaît instantanément sur le site public dès le premier chiot publié.</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">4</span>
+                      <div>
+                        <p className="font-semibold mb-0.5">Prévenez votre développeur</p>
+                        <p className="text-muted-foreground">Une fois la 3ème portée en ligne, signalez-le à votre développeur pour qu'il mette à jour les 4 textes listés ci-dessus. Cela prend moins de 5 minutes.</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
