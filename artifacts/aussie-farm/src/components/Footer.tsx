@@ -13,7 +13,7 @@ export default function Footer() {
               <span className="font-serif font-bold text-lg">Élevage du Berger Bleu</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Élevage familial passionné de Bergers Australiens Standard et Miniatures depuis 2009. Livraisons en France, Suisse et Belgique.
+              Élevage familial passionné de Bergers Australiens depuis 2009. Chiots LOF élevés à la maison. Livraisons en France, Suisse et Belgique.
             </p>
             <div className="flex items-center gap-2 text-xs text-primary font-medium">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

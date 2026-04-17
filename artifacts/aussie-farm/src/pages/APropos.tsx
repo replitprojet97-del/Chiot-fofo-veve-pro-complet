@@ -54,7 +54,7 @@ const WHATS_INCLUDED = [
 export default function APropos() {
   useSEO({
     title: "À Propos de Notre Élevage — Berger Australien Passion | Élevage du Berger Bleu",
-    description: "Élevage familial passionné de Bergers Australiens depuis des années. Découvrez notre histoire, nos valeurs, notre engagement envers le bien-être animal et nos certifications officielles.",
+    description: "Élevage familial passionné de Bergers Australiens depuis 2009. Découvrez notre histoire, nos valeurs, notre engagement envers le bien-être animal et nos certifications officielles.",
     canonical: "https://www.elevagedubergerbleu.fr/a-propos",
   });
   return (
@@ -68,7 +68,7 @@ export default function APropos() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 container px-4 pb-10">
             <h1 className="font-serif text-4xl md:text-6xl font-bold">Notre Élevage</h1>
-            <p className="text-muted-foreground mt-2 text-lg">15 ans de passion au cœur de la France</p>
+            <p className="text-muted-foreground mt-2 text-lg">17 ans de passion au cœur de la France</p>
           </div>
         </div>
       </div>

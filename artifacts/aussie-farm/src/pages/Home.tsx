@@ -125,9 +125,9 @@ function HomePuppyCard({ puppy, onClick, isFeatured = false }: { puppy: Puppy; o
 }
 
 const STATS = [
-  { value: "19", label: "Ans d'élevage" },
-  { value: "48", label: "Portées réussies" },
-  { value: "185+", label: "Familles heureuses" },
+  { value: "17", label: "Ans d'élevage" },
+  { value: "42+", label: "Portées réussies" },
+  { value: "160+", label: "Familles heureuses" },
   { value: "100%", label: "Tests de santé" },
 ];
 
@@ -245,7 +245,7 @@ function InfoTicker() {
 export default function Home() {
   useSEO({
     title: "Élevage du Berger Bleu — Chiots Berger Australien LOF | Bleu Merle, Rouge Merle",
-    description: "Élevage familial de Bergers Australiens Standard et Miniature. Chiots LOF bleu merle, rouge merle, noir tricolore. Pedigree officiel, suivi éleveur à vie. Bourges, France.",
+    description: "Élevage familial de Bergers Australiens. Chiots LOF bleu merle, rouge merle, noir tricolore. Pedigree officiel, suivi éleveur à vie. Depuis 2009, France.",
     canonical: "https://www.elevagedubergerbleu.fr/",
   });
   const { data: puppies = [] } = usePuppies();
@@ -298,14 +298,14 @@ export default function Home() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 font-medium text-sm border border-primary/20 backdrop-blur-sm">
               <Star className="w-4 h-4 fill-current" />
-              <span>Élevage familial certifié LOF · 19 ans d'expérience</span>
+              <span>Élevage familial certifié LOF · 17 ans d'expérience</span>
             </div>
             <h1 className="font-serif text-5xl md:text-7xl font-bold leading-[1.1] mb-6">
               Des compagnons fidèles,<br />
               élevés avec <span className="text-primary italic">passion</span>.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl leading-relaxed">
-              Bergers Australiens Standard et Miniatures, élevés en famille dans un environnement naturel.
+              Bergers Australiens élevés en famille dans un environnement naturel.
               Livraisons assurées en <strong className="text-foreground">France, Suisse et Belgique</strong>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -350,6 +350,64 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* ─── Notre histoire ─── */}
+      <section className="py-20">
+        <div className="container px-4 mx-auto max-w-5xl">
+          <div className="grid lg:grid-cols-5 gap-12 items-center">
+
+            {/* Photos empilées */}
+            <div className="lg:col-span-2 hidden lg:grid grid-cols-2 gap-3">
+              <div className="aspect-[3/4] rounded-2xl overflow-hidden mt-8">
+                <img src="/images/parent-bleu-merle.jpg" alt="Alaska, femelle bleu merle" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="aspect-square rounded-2xl overflow-hidden">
+                  <img src="/images/parent-noir-tricolore.jpg" alt="Ulysse, mâle noir tricolore" className="w-full h-full object-cover" />
+                </div>
+                <div className="aspect-square rounded-2xl overflow-hidden">
+                  <img src="/images/parent-rouge-merle.jpg" alt="Cassandra, femelle rouge merle" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+
+            {/* Texte */}
+            <div className="lg:col-span-3">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6 text-sm font-medium border border-primary/20">
+                <Heart className="w-4 h-4" /> Qui sommes-nous ?
+              </div>
+              <h2 className="font-serif text-4xl font-bold mb-6 leading-tight">
+                Une famille,<br />une passion, <span className="text-primary">une race.</span>
+              </h2>
+
+              <div className="space-y-5 text-muted-foreground leading-relaxed">
+                <p>
+                  Tout a commencé en 2009, presque par hasard. Un regard croisé avec un Berger Australien bleu merle lors d'une promenade, et plus rien n'a été pareil. Nous sommes une famille ordinaire — pas une entreprise, pas un chenil industriel — juste des gens qui sont tombés éperdument amoureux de cette race extraordinaire.
+                </p>
+                <p>
+                  Depuis cette rencontre fondatrice, l'Aussie s'est installé dans chaque recoin de notre quotidien. Aujourd'hui, <strong className="text-foreground">Ulysse</strong>, notre magnifique mâle noir tricolore, partage le canapé avec <strong className="text-foreground">Alaska</strong>, notre douce bleu merle aux yeux vairons, et <strong className="text-foreground">Cassandra</strong>, notre pétillante rouge merle. Ils ne sont pas dans un chenil : ils dorment dans nos chambres, jouent avec nos enfants, et nous accompagnent partout.
+                </p>
+                <p>
+                  C'est précisément parce que nous sommes des particuliers passionnés — et non des professionnels de la production — que chaque chiot reçoit une attention totale. Nous ne faisons que 2 à 3 portées par an. Pas davantage. Chaque chiot compte, chaque placement est réfléchi, chaque famille qui repart avec l'un de nos bébés devient pour nous une histoire qu'on suit avec le cœur.
+                </p>
+              </div>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link href="/a-propos">
+                  <Button variant="outline" className="rounded-full px-6 h-11 gap-2">
+                    Notre histoire complète <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link href="/reproducteurs">
+                  <Button variant="ghost" className="rounded-full px-6 h-11 gap-2 text-primary hover:text-primary hover:bg-primary/10">
+                    <Paw className="w-4 h-4" /> Voir nos reproducteurs
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ─── Annonces chiots ─── */}
       {hasPuppies && (
@@ -520,7 +578,7 @@ export default function Home() {
                   {[...Array(5)].map((_, k) => <Star key={k} className="w-4 h-4 fill-current" />)}
                 </div>
                 <p className="text-sm italic font-serif">"Un élevage exceptionnel, des chiens équilibrés."</p>
-                <p className="text-xs text-muted-foreground mt-2">— 185+ familles satisfaites</p>
+                <p className="text-xs text-muted-foreground mt-2">— 160+ familles satisfaites</p>
               </div>
             </div>
           </div>
