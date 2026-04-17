@@ -354,13 +354,24 @@ export default function Chiots() {
                       <span>Livraison disponible en <strong>France, Suisse et Belgique</strong></span>
                     </div>
                   </div>
-                  <div className="mt-6 pt-5 border-t border-border">
+                  <div className="mt-6 pt-5 border-t border-border space-y-3">
+                    {selectedPuppy.status === "reserved" && (
+                      <div className="flex items-start gap-2.5 p-3.5 bg-amber-500/8 border border-amber-400/30 rounded-xl text-sm text-amber-700 dark:text-amber-400">
+                        <span className="text-base flex-shrink-0">ℹ️</span>
+                        <span>Ce chiot a un acompte en cours. Une réservation peut tomber — inscrivez-vous sur liste d'attente, nous vous contacterons en priorité si il se libère.</span>
+                      </div>
+                    )}
                     <Button
                       className="w-full h-13 text-lg rounded-xl shadow-lg hover:-translate-y-1 transition-all"
                       disabled={selectedPuppy.status === "sold"}
+                      variant={selectedPuppy.status === "reserved" ? "outline" : "default"}
                       onClick={() => { setReservingPuppy(selectedPuppy); setSelectedPuppy(null); }}
                     >
-                      {selectedPuppy.status === "sold" ? "Ce chiot a trouvé son foyer" : `Réserver ${selectedPuppy.name}`}
+                      {selectedPuppy.status === "sold"
+                        ? "Ce chiot a trouvé son foyer"
+                        : selectedPuppy.status === "reserved"
+                          ? `📋 Liste d'attente — ${selectedPuppy.name}`
+                          : `Réserver ${selectedPuppy.name}`}
                     </Button>
                   </div>
                 </div>

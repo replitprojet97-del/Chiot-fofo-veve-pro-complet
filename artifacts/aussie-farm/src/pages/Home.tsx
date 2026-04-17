@@ -610,7 +610,7 @@ export default function Home() {
                 Notre élevage est officiellement enregistré auprès de la DDPP (Direction Départementale de la Protection des Populations). Nous sommes soumis à des contrôles réguliers et respectons scrupuleusement la réglementation en vigueur, notamment la loi du 30 novembre 2021 sur la protection animale.
               </p>
               <div className="flex flex-wrap gap-3">
-                {["Déclaré DDPP", "LOF certifié", "N° SIREN visible", "CEC fourni", "Passeport EU inclus"].map((tag) => (
+                {["Déclaré DDPP", "LOF certifié", "CEC fourni", "Passeport EU inclus", "Suivi vétérinaire"].map((tag) => (
                   <span key={tag} className="px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full border border-primary/20">
                     ✓ {tag}
                   </span>

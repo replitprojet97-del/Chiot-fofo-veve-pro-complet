@@ -62,7 +62,7 @@ export default function Footer() {
         <div className="border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} Élevage du Berger Bleu — Tous droits réservés</p>
           <div className="flex items-center gap-4">
-            <span>SIREN : 123 456 789</span>
+            <span>Déclaré DDPP</span>
             <span>·</span>
             <span>Élevage LOF agréé</span>
           </div>
