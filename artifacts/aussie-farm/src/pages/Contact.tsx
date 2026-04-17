@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const DELIVERY_ZONES = [
-  { flag: "🇫🇷", country: "France métropolitaine", detail: "Livraison à domicile ou remise sur notre domaine de Bourges. Frais inclus dans le prix." },
+  { flag: "🇫🇷", country: "France métropolitaine", detail: "Livraison à domicile ou récupération à notre élevage de Bellevaux (74), Haute-Savoie. Frais inclus dans le prix." },
   { flag: "🇨🇭", country: "Suisse", detail: "Transport organisé avec passeport européen, microchip, rabies titer test si requis. Délai et conditions sur devis." },
   { flag: "🇧🇪", country: "Belgique", detail: "Livraison possible à domicile ou à un point de jonction. Documents vétérinaires complets fournis." },
 ];
@@ -160,8 +160,8 @@ export default function Contact() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground font-medium">Adresse</p>
-                        <p className="font-bold">Domaine des Trois Chênes</p>
-                        <p className="text-sm">18000 Bourges, France</p>
+                        <p className="font-bold">Les Alpages du Berger Bleu</p>
+                        <p className="text-sm">74470 Bellevaux, Haute-Savoie</p>
                         <p className="text-xs text-muted-foreground mt-0.5">Visites sur rendez-vous uniquement</p>
                       </div>
                     </div>

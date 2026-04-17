@@ -159,7 +159,7 @@ const TICKER_ITEMS = [
 ];
 
 const DELIVERY_ZONES = [
-  { flag: "🇫🇷", country: "France", desc: "Livraison à domicile ou récupération sur notre domaine à Bourges" },
+  { flag: "🇫🇷", country: "France", desc: "Livraison à domicile ou récupération sur notre élevage à Bellevaux (74), Haute-Savoie" },
   { flag: "🇨🇭", country: "Suisse", desc: "Livraison sécurisée avec tous les documents vétérinaires requis" },
   { flag: "🇧🇪", country: "Belgique", desc: "Transport organisé par nos soins, en toute sérénité" },
 ];
@@ -305,8 +305,8 @@ export default function Home() {
               élevés avec <span className="text-primary italic">passion</span>.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl leading-relaxed">
-              Bergers Australiens élevés en famille dans un environnement naturel.
-              Livraisons assurées en <strong className="text-foreground">France, Suisse et Belgique</strong>.
+              Nés dans les alpages de Haute-Savoie, choyés comme des membres de la famille.
+              Chiots LOF disponibles, livrés en <strong className="text-foreground">France, Suisse et Belgique</strong>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link href="/chiots">

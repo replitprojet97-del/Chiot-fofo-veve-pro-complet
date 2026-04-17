@@ -84,14 +84,14 @@ export default function APropos() {
               <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">Nés d'une passion pour le Berger Australien</h2>
               <div className="space-y-5 text-muted-foreground leading-relaxed">
                 <p>L'Élevage du Berger Bleu est né en 2009 d'une rencontre inattendue avec un magnifique Berger Australien bleu merle. Depuis ce jour, notre famille a organisé toute sa vie autour de cette race exceptionnelle.</p>
-                <p>Notre domaine de 5 hectares en Champagne-Berrichonne offre à nos chiens un environnement idéal : prairies, forêts, ruisseaux. Ils vivent avec nous, dorment à la maison et participent à toutes nos activités.</p>
+                <p>Notre hameau perché à 900 m d'altitude dans les alpages de Haute-Savoie offre à nos chiens un environnement idéal : prairies d'alpage, forêts de sapins, torrents de montagne. Ils vivent avec nous, dorment à la maison et participent à toutes nos activités.</p>
                 <p>Chaque portée est le fruit d'une réflexion longue et sérieuse : choix des reproducteurs, timing, préparation de la mère... Nous n'avons que 2 à 3 portées par an pour garantir une socialisation parfaite de chaque chiot.</p>
               </div>
               <div className="flex items-center gap-3 mt-8 p-4 bg-primary/5 rounded-xl border border-primary/20">
                 <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-sm">Domaine des Trois Chênes</p>
-                  <p className="text-xs text-muted-foreground">18000 Bourges, Centre-Val de Loire · Visites sur rendez-vous</p>
+                  <p className="font-semibold text-sm">Les Alpages du Berger Bleu</p>
+                  <p className="text-xs text-muted-foreground">74470 Bellevaux, Haute-Savoie · Visites sur rendez-vous</p>
                 </div>
               </div>
             </div>
