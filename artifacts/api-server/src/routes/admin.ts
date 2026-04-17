@@ -1,14 +1,18 @@
 import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcryptjs";
+import speakeasy from "speakeasy";
+import QRCode from "qrcode";
 import { db } from "@workspace/db";
 import { puppiesTable, adminUsersTable, contactMessagesTable } from "@workspace/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
-import { requireAdmin, signToken, setAuthCookie, clearAuthCookie } from "../lib/auth.js";
+import { requireAdmin, signToken, signPendingToken, verifyPendingToken, setAuthCookie, clearAuthCookie } from "../lib/auth.js";
 import { uploadImageBuffer } from "../lib/cloudinary.js";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+
+/* ─── AUTH ─── */
 
 router.post("/admin/login", async (req, res) => {
   try {
@@ -26,11 +30,56 @@ router.post("/admin/login", async (req, res) => {
       res.status(401).json({ error: "Identifiants incorrects" });
       return;
     }
+    if (admin.totpEnabled && admin.totpSecret) {
+      const pendingToken = signPendingToken({ adminId: admin.id, email: admin.email });
+      res.json({ require2fa: true, pendingToken });
+      return;
+    }
     const token = signToken({ adminId: admin.id, email: admin.email });
     setAuthCookie(res, token);
     res.json({ success: true, admin: { id: admin.id, email: admin.email } });
   } catch (err) {
     console.error("[admin/login]", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+router.post("/admin/2fa/complete", async (req, res) => {
+  try {
+    const { pendingToken, code } = req.body;
+    if (!pendingToken || !code) {
+      res.status(400).json({ error: "Token et code requis" });
+      return;
+    }
+    const payload = verifyPendingToken(pendingToken);
+    if (!payload) {
+      res.status(401).json({ error: "Session expirée, veuillez vous reconnecter" });
+      return;
+    }
+    const [admin] = await db
+      .select()
+      .from(adminUsersTable)
+      .where(eq(adminUsersTable.id, payload.adminId))
+      .limit(1);
+    if (!admin?.totpSecret || !admin.totpEnabled) {
+      res.status(400).json({ error: "2FA non configuré" });
+      return;
+    }
+    const valid = speakeasy.totp.verify({
+      secret: admin.totpSecret,
+      encoding: "base32",
+      token: code.replace(/\s/g, ""),
+      window: 1,
+    });
+    if (!valid) {
+      res.status(401).json({ error: "Code incorrect ou expiré" });
+      return;
+    }
+    const token = signToken({ adminId: admin.id, email: admin.email });
+    setAuthCookie(res, token);
+    res.json({ success: true, admin: { id: admin.id, email: admin.email } });
+  } catch (err) {
+    console.error("[admin/2fa/complete]", err);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
@@ -68,6 +117,116 @@ router.get("/admin/seed", async (_req, res) => {
   await db.insert(adminUsersTable).values({ email: email.toLowerCase(), passwordHash });
   res.json({ success: true, message: "Admin created" });
 });
+
+/* ─── 2FA MANAGEMENT ─── */
+
+router.get("/admin/2fa/status", requireAdmin, async (req, res) => {
+  try {
+    const [admin] = await db
+      .select({ totpEnabled: adminUsersTable.totpEnabled })
+      .from(adminUsersTable)
+      .where(eq(adminUsersTable.id, req.admin!.adminId))
+      .limit(1);
+    res.json({ totpEnabled: admin?.totpEnabled ?? false });
+  } catch (err) {
+    console.error("[admin/2fa/status]", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+router.post("/admin/2fa/setup", requireAdmin, async (req, res) => {
+  try {
+    const secret = speakeasy.generateSecret({
+      name: `Berger Bleu Admin (${req.admin!.email})`,
+      length: 20,
+    });
+    await db
+      .update(adminUsersTable)
+      .set({ totpSecret: secret.base32, totpEnabled: false })
+      .where(eq(adminUsersTable.id, req.admin!.adminId));
+    const otpauthUrl = secret.otpauth_url!;
+    const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl, { width: 280, margin: 2 });
+    res.json({
+      secret: secret.base32,
+      qrCode: qrCodeDataUrl,
+      otpauthUrl,
+    });
+  } catch (err) {
+    console.error("[admin/2fa/setup]", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+router.post("/admin/2fa/confirm", requireAdmin, async (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code) {
+      res.status(400).json({ error: "Code TOTP requis" });
+      return;
+    }
+    const [admin] = await db
+      .select()
+      .from(adminUsersTable)
+      .where(eq(adminUsersTable.id, req.admin!.adminId))
+      .limit(1);
+    if (!admin?.totpSecret) {
+      res.status(400).json({ error: "Lancez d'abord la configuration 2FA" });
+      return;
+    }
+    const valid = speakeasy.totp.verify({
+      secret: admin.totpSecret,
+      encoding: "base32",
+      token: code.replace(/\s/g, ""),
+      window: 1,
+    });
+    if (!valid) {
+      res.status(400).json({ error: "Code incorrect ou expiré. Vérifiez l'heure de votre appareil." });
+      return;
+    }
+    await db
+      .update(adminUsersTable)
+      .set({ totpEnabled: true })
+      .where(eq(adminUsersTable.id, req.admin!.adminId));
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[admin/2fa/confirm]", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+router.post("/admin/2fa/disable", requireAdmin, async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      res.status(400).json({ error: "Mot de passe requis" });
+      return;
+    }
+    const [admin] = await db
+      .select()
+      .from(adminUsersTable)
+      .where(eq(adminUsersTable.id, req.admin!.adminId))
+      .limit(1);
+    if (!admin) {
+      res.status(404).json({ error: "Utilisateur introuvable" });
+      return;
+    }
+    const valid = await bcrypt.compare(password, admin.passwordHash);
+    if (!valid) {
+      res.status(401).json({ error: "Mot de passe incorrect" });
+      return;
+    }
+    await db
+      .update(adminUsersTable)
+      .set({ totpEnabled: false, totpSecret: null })
+      .where(eq(adminUsersTable.id, req.admin!.adminId));
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[admin/2fa/disable]", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+/* ─── PUPPIES ─── */
 
 router.get("/admin/puppies", requireAdmin, async (_req, res) => {
   try {
@@ -195,6 +354,8 @@ router.delete("/admin/puppies/:id", requireAdmin, async (req, res) => {
   }
 });
 
+/* ─── MESSAGES ─── */
+
 router.get("/admin/messages", requireAdmin, async (_req, res) => {
   try {
     const messages = await db
@@ -216,6 +377,8 @@ router.delete("/admin/messages/:id", requireAdmin, async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+
+/* ─── UPLOAD ─── */
 
 router.post("/admin/upload", requireAdmin, upload.single("image"), async (req, res) => {
   try {

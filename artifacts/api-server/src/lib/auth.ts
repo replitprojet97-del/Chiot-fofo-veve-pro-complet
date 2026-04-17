@@ -10,6 +10,12 @@ export interface AdminPayload {
   email: string;
 }
 
+export interface PendingPayload {
+  adminId: number;
+  email: string;
+  pending2fa: true;
+}
+
 declare global {
   namespace Express {
     interface Request {
@@ -22,9 +28,25 @@ export function signToken(payload: AdminPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 }
 
+export function signPendingToken(payload: Omit<PendingPayload, "pending2fa">): string {
+  return jwt.sign({ ...payload, pending2fa: true }, JWT_SECRET, { expiresIn: "5m" });
+}
+
 export function verifyToken(token: string): AdminPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as AdminPayload;
+    const decoded = jwt.verify(token, JWT_SECRET) as AdminPayload & { pending2fa?: boolean };
+    if (decoded.pending2fa) return null;
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
+export function verifyPendingToken(token: string): Omit<PendingPayload, "pending2fa"> | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as PendingPayload;
+    if (!decoded.pending2fa) return null;
+    return { adminId: decoded.adminId, email: decoded.email };
   } catch {
     return null;
   }

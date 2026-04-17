@@ -86,6 +86,16 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   // PDF generation state
   const [pdfGenerating, setPdfGenerating] = useState(false);
 
+  // 2FA state
+  const [show2faModal, setShow2faModal] = useState(false);
+  const [twoFaStep, setTwoFaStep] = useState<"status" | "setup" | "confirm" | "disable">("status");
+  const [twoFaQrCode, setTwoFaQrCode] = useState("");
+  const [twoFaSecret, setTwoFaSecret] = useState("");
+  const [twoFaCode, setTwoFaCode] = useState("");
+  const [twoFaPassword, setTwoFaPassword] = useState("");
+  const [twoFaError, setTwoFaError] = useState("");
+  const [twoFaLoading, setTwoFaLoading] = useState(false);
+
   // Puppy state
   const [showForm, setShowForm] = useState(false);
   const [editingPuppy, setEditingPuppy] = useState<Puppy | null>(null);
@@ -119,6 +129,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     queryKey: ["admin-messages"],
     queryFn: adminApi.listMessages,
     enabled: activeTab === "messages",
+  });
+
+  // 2FA query
+  const { data: twoFaStatus, refetch: refetch2faStatus } = useQuery<{ totpEnabled: boolean }>({
+    queryKey: ["admin-2fa-status"],
+    queryFn: adminApi.get2faStatus,
   });
 
   const pendingReviews = allReviews.filter((r) => r.status === "pending");
@@ -235,6 +251,66 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     setReviewFormError("");
     if (!reviewForm.name.trim() || !reviewForm.text.trim()) return;
     createReviewMut.mutate(reviewForm);
+  };
+
+  const open2faModal = () => {
+    setTwoFaStep("status");
+    setTwoFaCode("");
+    setTwoFaPassword("");
+    setTwoFaError("");
+    setTwoFaQrCode("");
+    setTwoFaSecret("");
+    setShow2faModal(true);
+  };
+
+  const handle2faSetup = async () => {
+    setTwoFaLoading(true);
+    setTwoFaError("");
+    try {
+      const data = await adminApi.setup2fa();
+      setTwoFaQrCode(data.qrCode);
+      setTwoFaSecret(data.secret);
+      setTwoFaStep("setup");
+    } catch (err) {
+      setTwoFaError(err instanceof Error ? err.message : "Erreur serveur");
+    } finally {
+      setTwoFaLoading(false);
+    }
+  };
+
+  const handle2faConfirm = async () => {
+    if (twoFaCode.length < 6) return;
+    setTwoFaLoading(true);
+    setTwoFaError("");
+    try {
+      await adminApi.confirm2fa(twoFaCode);
+      await refetch2faStatus();
+      setTwoFaStep("status");
+      setTwoFaCode("");
+      setTwoFaQrCode("");
+      setTwoFaSecret("");
+    } catch (err) {
+      setTwoFaError(err instanceof Error ? err.message : "Code incorrect");
+      setTwoFaCode("");
+    } finally {
+      setTwoFaLoading(false);
+    }
+  };
+
+  const handle2faDisable = async () => {
+    if (!twoFaPassword) return;
+    setTwoFaLoading(true);
+    setTwoFaError("");
+    try {
+      await adminApi.disable2fa(twoFaPassword);
+      await refetch2faStatus();
+      setTwoFaStep("status");
+      setTwoFaPassword("");
+    } catch (err) {
+      setTwoFaError(err instanceof Error ? err.message : "Mot de passe incorrect");
+    } finally {
+      setTwoFaLoading(false);
+    }
   };
 
   const generateContractPDF = async () => {
@@ -368,6 +444,16 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground hidden md:block">{adminEmail}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`rounded-xl gap-1.5 ${twoFaStatus?.totpEnabled ? "text-green-600" : "text-muted-foreground"}`}
+            onClick={open2faModal}
+            title="Double authentification"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span className="hidden sm:inline">2FA</span>
+          </Button>
           <a href="/" target="_blank" rel="noopener noreferrer">
             <Button variant="ghost" size="sm" className="rounded-xl gap-1.5 text-muted-foreground">
               <ExternalLink className="w-4 h-4" /> Voir le site
@@ -1290,6 +1376,168 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2FA Modal */}
+      {show2faModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-card rounded-3xl shadow-2xl border border-border w-full max-w-md p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                </div>
+                <h2 className="font-serif text-xl font-bold">Double authentification</h2>
+              </div>
+              <button
+                onClick={() => setShow2faModal(false)}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {twoFaStep === "status" && (
+              <div className="space-y-4">
+                <div className={`flex items-center gap-3 p-4 rounded-2xl border ${twoFaStatus?.totpEnabled ? "bg-green-500/10 border-green-500/30" : "bg-muted/50 border-border"}`}>
+                  <ShieldCheck className={`w-5 h-5 flex-shrink-0 ${twoFaStatus?.totpEnabled ? "text-green-600" : "text-muted-foreground"}`} />
+                  <div>
+                    <p className={`font-medium text-sm ${twoFaStatus?.totpEnabled ? "text-green-700" : "text-foreground"}`}>
+                      {twoFaStatus?.totpEnabled ? "2FA activé" : "2FA désactivé"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {twoFaStatus?.totpEnabled
+                        ? "Votre compte est protégé par une double authentification."
+                        : "Ajoutez une couche de sécurité supplémentaire à votre compte."}
+                    </p>
+                  </div>
+                </div>
+
+                {twoFaError && (
+                  <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-600 rounded-xl text-sm">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {twoFaError}
+                  </div>
+                )}
+
+                {!twoFaStatus?.totpEnabled ? (
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      En activant le 2FA, vous devrez saisir un code de 6 chiffres généré par une application comme <strong>Google Authenticator</strong> ou <strong>Authy</strong> à chaque connexion.
+                    </p>
+                    <Button
+                      className="w-full h-11 rounded-xl gap-2"
+                      onClick={handle2faSetup}
+                      disabled={twoFaLoading}
+                    >
+                      {twoFaLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+                      Activer le 2FA
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <Button
+                      variant="outline"
+                      className="w-full h-11 rounded-xl gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                      onClick={() => { setTwoFaStep("disable"); setTwoFaError(""); }}
+                    >
+                      <X className="w-4 h-4" /> Désactiver le 2FA
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {twoFaStep === "setup" && (
+              <div className="space-y-5">
+                <div>
+                  <p className="text-sm font-medium mb-2">1. Scannez ce QR code</p>
+                  <p className="text-xs text-muted-foreground mb-3">Ouvrez <strong>Google Authenticator</strong> ou <strong>Authy</strong>, appuyez sur « + » puis scannez le code ci-dessous.</p>
+                  {twoFaQrCode && (
+                    <div className="flex justify-center p-4 bg-white rounded-2xl border border-border">
+                      <img src={twoFaQrCode} alt="QR Code 2FA" className="w-48 h-48" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-medium mb-1">Clé manuelle (si scan impossible)</p>
+                  <div className="flex items-center gap-2 p-2.5 bg-muted rounded-xl">
+                    <code className="text-xs font-mono flex-1 break-all select-all">{twoFaSecret}</code>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">2. Confirmez avec le code affiché</p>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="000000"
+                    value={twoFaCode}
+                    onChange={(e) => setTwoFaCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="bg-background h-12 text-center text-xl font-mono tracking-widest"
+                    maxLength={6}
+                    autoFocus
+                  />
+                </div>
+                {twoFaError && (
+                  <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-600 rounded-xl text-sm">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {twoFaError}
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1 rounded-xl" onClick={() => { setTwoFaStep("status"); setTwoFaError(""); }}>Retour</Button>
+                  <Button
+                    className="flex-1 rounded-xl gap-2"
+                    onClick={handle2faConfirm}
+                    disabled={twoFaLoading || twoFaCode.length < 6}
+                  >
+                    {twoFaLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                    Confirmer
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {twoFaStep === "disable" && (
+              <div className="space-y-5">
+                <div className="p-4 bg-red-500/10 rounded-2xl border border-red-200">
+                  <p className="text-sm text-red-700 font-medium">Désactiver la double authentification</p>
+                  <p className="text-xs text-red-600 mt-1">Cette action supprimera la protection 2FA de votre compte. Confirmez avec votre mot de passe.</p>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Mot de passe actuel</label>
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    value={twoFaPassword}
+                    onChange={(e) => setTwoFaPassword(e.target.value)}
+                    className="bg-background h-12"
+                    autoFocus
+                  />
+                </div>
+                {twoFaError && (
+                  <div className="flex items-center gap-2 p-3 bg-red-500/10 text-red-600 rounded-xl text-sm">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {twoFaError}
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1 rounded-xl" onClick={() => { setTwoFaStep("status"); setTwoFaError(""); }}>Annuler</Button>
+                  <Button
+                    variant="destructive"
+                    className="flex-1 rounded-xl gap-2"
+                    onClick={handle2faDisable}
+                    disabled={twoFaLoading || !twoFaPassword}
+                  >
+                    {twoFaLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <X className="w-4 h-4" />}
+                    Désactiver
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

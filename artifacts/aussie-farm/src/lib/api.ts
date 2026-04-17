@@ -49,10 +49,21 @@ export const contactApi = {
 
 export const adminApi = {
   login: (email: string, password: string) =>
-    apiFetch<{ success: boolean; admin: { id: number; email: string } }>("/api/admin/login", {
+    apiFetch<{ success: boolean; require2fa?: boolean; pendingToken?: string; admin?: { id: number; email: string } }>("/api/admin/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
+  complete2fa: (pendingToken: string, code: string) =>
+    apiFetch<{ success: boolean; admin: { id: number; email: string } }>("/api/admin/2fa/complete", {
+      method: "POST",
+      body: JSON.stringify({ pendingToken, code }),
+    }),
+  get2faStatus: () => apiFetch<{ totpEnabled: boolean }>("/api/admin/2fa/status"),
+  setup2fa: () => apiFetch<{ secret: string; qrCode: string; otpauthUrl: string }>("/api/admin/2fa/setup", { method: "POST" }),
+  confirm2fa: (code: string) =>
+    apiFetch<{ success: boolean }>("/api/admin/2fa/confirm", { method: "POST", body: JSON.stringify({ code }) }),
+  disable2fa: (password: string) =>
+    apiFetch<{ success: boolean }>("/api/admin/2fa/disable", { method: "POST", body: JSON.stringify({ password }) }),
   logout: () => apiFetch<{ success: boolean }>("/api/admin/logout", { method: "POST" }),
   me: () => apiFetch<{ admin: { adminId: number; email: string } }>("/api/admin/me"),
   listPuppies: () => apiFetch<Puppy[]>("/api/admin/puppies"),
