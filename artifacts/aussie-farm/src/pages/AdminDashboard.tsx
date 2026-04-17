@@ -321,7 +321,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     const dateStr = new Date(contractDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     const solde = p.price - contractDeposit;
 
-    const sigUrl = `${window.location.origin}/images/signature-vendeur.jpg`;
+    const sigUrl = `${window.location.origin}/images/signature-vendeur.png`;
 
     const row = (label1: string, val1: string, label2 = "", val2 = "") => `
       <div style="display:flex;gap:20px;margin-bottom:5px">
@@ -372,7 +372,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       <p style="font-size:8pt;color:#555;margin:0 0 2px">Fait à Bellevaux, le ${dateStr}</p>
       <p style="font-size:8.5pt;font-weight:bold;margin:0 0 2px">Le vendeur :</p>
       <p style="font-size:8.5pt;font-weight:bold;margin:0 0 4px">MR ULRICK LE GARRERES</p>
-      <img src="${sigUrl}" alt="Signature" style="height:60px;display:block;margin-bottom:2px" crossorigin="anonymous" />
+      <img src="${sigUrl}" alt="Signature" style="width:160px;height:auto;display:block;margin:4px 0 2px" crossorigin="anonymous" />
     </div>
     <div style="flex:1;border-top:1px solid #999;padding-top:6px">
       <p style="font-size:8pt;color:#555;margin:0 0 2px">Fait à _____________, le ${dateStr}</p>
