@@ -599,10 +599,10 @@ export default function Home() {
           {/* Grid desktop / scroll mobile */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {[
-              { img: "/images/puppy-bleu-merle.png",            name: "Oméga",   color: "Bleu Merle",       sex: "Mâle",   family: "Famille Dupont",  city: "Chambéry",  year: "2024" },
-              { img: "/images/puppy-noir-tricolore-femelle.png", name: "Étoile",  color: "Noir Tricolore",   sex: "Femelle", family: "Famille Martin",  city: "Genève",    year: "2024" },
-              { img: "/images/puppy-rouge-tricolore.png",        name: "Flash",   color: "Rouge Tricolore",  sex: "Mâle",   family: "Famille Renaud",  city: "Grenoble",  year: "2023" },
-              { img: "/images/puppy-rouge-merle.png",            name: "Noisette",color: "Rouge Merle",      sex: "Femelle", family: "Famille Bernard", city: "Lausanne",  year: "2023" },
+              { img: "/images/sold-alpages.png",  name: "Oméga",    color: "Bleu Merle",      sex: "Mâle",    family: "Famille Dupont",  city: "Chambéry",  year: "2024" },
+              { img: "/images/sold-cozy.png",     name: "Étoile",   color: "Noir Tricolore",  sex: "Femelle", family: "Famille Martin",  city: "Genève",    year: "2024" },
+              { img: "/images/sold-autumn.png",   name: "Flash",    color: "Rouge Tricolore", sex: "Mâle",    family: "Famille Renaud",  city: "Grenoble",  year: "2023" },
+              { img: "/images/sold-portrait.png", name: "Noisette", color: "Rouge Merle",     sex: "Femelle", family: "Famille Bernard", city: "Lausanne",  year: "2023" },
             ].map((p) => (
               <div key={p.name} className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-muted shadow-sm hover:shadow-xl transition-shadow duration-300">
                 <img

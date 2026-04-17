@@ -96,3 +96,27 @@ id = "AznXVtmXDd5iYa0mSBoJA"
 uri = "file://artifacts/aussie-farm/public/images/puppy-rouge-tricolore-femelle.png"
 type = "image"
 title = "Red Tri female Aussie puppy"
+
+[[generated]]
+id = "tIzZrrrOJTRychuKlddtX"
+uri = "file://artifacts/aussie-farm/public/images/sold-alpages.png"
+type = "image"
+title = "sold-alpages"
+
+[[generated]]
+id = "-6lFP5PxGgqlnZnHGl5bQ"
+uri = "file://artifacts/aussie-farm/public/images/sold-cozy.png"
+type = "image"
+title = "sold-cozy"
+
+[[generated]]
+id = "RTgXuN2KZ-Amv1up3QXBF"
+uri = "file://artifacts/aussie-farm/public/images/sold-autumn.png"
+type = "image"
+title = "sold-autumn"
+
+[[generated]]
+id = "s3P_90ZNycV6XXzhhfua2"
+uri = "file://artifacts/aussie-farm/public/images/sold-portrait.png"
+type = "image"
+title = "sold-portrait"
