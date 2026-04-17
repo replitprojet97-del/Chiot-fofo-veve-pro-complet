@@ -585,6 +585,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ─── Chiots déjà placés ─── */}
+      <section className="py-24 overflow-hidden">
+        <div className="container px-4 mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 mb-6 font-medium text-sm">
+              <CheckCircle2 className="w-4 h-4" /> Chiots placés en famille
+            </div>
+            <h2 className="font-serif text-4xl font-bold mb-4">Nos bébés ont trouvé leur foyer</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Chaque chiot part avec tout notre amour vers une famille soigneusement choisie. Voici quelques-uns de nos placements récents.</p>
+          </div>
+
+          {/* Grid desktop / scroll mobile */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { img: "/images/puppy-bleu-merle.png",            name: "Oméga",   color: "Bleu Merle",       sex: "Mâle",   family: "Famille Dupont",  city: "Chambéry",  year: "2024" },
+              { img: "/images/puppy-noir-tricolore-femelle.png", name: "Étoile",  color: "Noir Tricolore",   sex: "Femelle", family: "Famille Martin",  city: "Genève",    year: "2024" },
+              { img: "/images/puppy-rouge-tricolore.png",        name: "Flash",   color: "Rouge Tricolore",  sex: "Mâle",   family: "Famille Renaud",  city: "Grenoble",  year: "2023" },
+              { img: "/images/puppy-rouge-merle.png",            name: "Noisette",color: "Rouge Merle",      sex: "Femelle", family: "Famille Bernard", city: "Lausanne",  year: "2023" },
+            ].map((p) => (
+              <div key={p.name} className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-muted shadow-sm hover:shadow-xl transition-shadow duration-300">
+                <img
+                  src={p.img}
+                  alt={`${p.name} — ${p.color} — ${p.sex} — Vendu`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                {/* Vendu badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="inline-flex items-center gap-1.5 bg-white text-gray-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-md tracking-wide">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                    VENDU
+                  </span>
+                </div>
+                {/* Year badge */}
+                <div className="absolute top-3 right-3">
+                  <span className="bg-black/40 backdrop-blur-sm text-white/90 text-xs px-2 py-0.5 rounded-full">{p.year}</span>
+                </div>
+                {/* Info bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="text-white font-semibold text-sm leading-tight">{p.name} <span className="font-normal opacity-80">· {p.sex}</span></p>
+                  <p className="text-white/70 text-xs mt-0.5">{p.color}</p>
+                  <div className="mt-2 pt-2 border-t border-white/20 flex items-center gap-1.5">
+                    <Heart className="w-3 h-3 text-rose-400 fill-rose-400 flex-shrink-0" />
+                    <p className="text-white/80 text-xs">{p.family} · {p.city}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-muted-foreground text-sm mt-8">
+            Et bien d'autres familles heureuses à travers toute la France et la Suisse romande 🐾
+          </p>
+        </div>
+      </section>
+
       {/* Nos Reproducteurs & La Race */}
       <section className="py-24 bg-secondary/20">
         <div className="container px-4 mx-auto max-w-6xl">
