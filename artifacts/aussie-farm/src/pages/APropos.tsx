@@ -96,15 +96,51 @@ export default function APropos() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="aspect-[3/4] rounded-2xl overflow-hidden">
-                <img src="/images/farm-pastoral.png" alt="Domaine" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex flex-col gap-4 mt-8">
-                <div className="aspect-square rounded-2xl overflow-hidden">
-                  <img src="/images/puppy-bleu-merle.png" alt="Chiot bleu merle" className="w-full h-full object-cover" />
+              {/* Left column — large image with Vendu badge */}
+              <div className="aspect-[3/4] rounded-2xl overflow-hidden relative group">
+                <img src="/images/puppy-noir-tricolore.png" alt="Chiot noir tricolore — Vendu" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className="inline-flex items-center gap-1.5 bg-white text-gray-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg tracking-wide">
+                    <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                    VENDU
+                  </span>
                 </div>
-                <div className="aspect-square rounded-2xl overflow-hidden">
-                  <img src="/images/puppy-rouge-merle.png" alt="Chiot rouge merle" className="w-full h-full object-cover" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-white text-sm font-semibold drop-shadow">Ninja · Noir Tricolore · Mâle</p>
+                  <p className="text-white/70 text-xs drop-shadow">Portée 2024 · Famille Bertrand, Annecy</p>
+                </div>
+              </div>
+
+              {/* Right column — two square images with Vendu badges */}
+              <div className="flex flex-col gap-4 mt-8">
+                <div className="aspect-square rounded-2xl overflow-hidden relative group">
+                  <img src="/images/puppy-bleu-merle-femelle.png" alt="Chiot bleu merle femelle — Vendu" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center gap-1.5 bg-white text-gray-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-lg tracking-wide">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                      VENDU
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <p className="text-white text-xs font-semibold drop-shadow">Luna · Bleu Merle · Femelle</p>
+                    <p className="text-white/70 text-xs drop-shadow">Portée 2024 · Famille Morel, Lyon</p>
+                  </div>
+                </div>
+                <div className="aspect-square rounded-2xl overflow-hidden relative group">
+                  <img src="/images/puppy-rouge-merle-femelle.png" alt="Chiot rouge merle femelle — Vendu" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center gap-1.5 bg-white text-gray-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-lg tracking-wide">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                      VENDU
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <p className="text-white text-xs font-semibold drop-shadow">Cannelle · Rouge Merle · Femelle</p>
+                    <p className="text-white/70 text-xs drop-shadow">Portée 2023 · Famille Girard, Genève</p>
+                  </div>
                 </div>
               </div>
             </div>
