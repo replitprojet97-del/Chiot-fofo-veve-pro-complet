@@ -691,7 +691,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="font-semibold text-lg mb-1">2 portées actives</p>
-                <p className="text-sm text-muted-foreground mb-3">Chiots issus d'Alaska × César (bleu merle / noir tricolore) et Cassandra × Ulysse (rouge merle / noir tricolore).</p>
+                <p className="text-sm text-muted-foreground mb-3">Chiots issus d'Alaska × Ulysse (bleu merle / noir tricolore) et Cassandra × César (rouge merle / noir tricolore).</p>
                 <Link href="/reproducteurs">
                   <Button size="sm" className="rounded-full gap-2 h-9">Voir les portées <ArrowRight className="w-3.5 h-3.5" /></Button>
                 </Link>
