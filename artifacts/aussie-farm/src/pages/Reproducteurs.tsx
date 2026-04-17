@@ -9,19 +9,34 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const MALE = {
-  name: "Ulysse du Berger Bleu",
-  shortName: "Ulysse",
-  color: "Noir tricolore",
-  sex: "Mâle",
-  birthYear: 2020,
-  photo: "/images/parent-noir-tricolore.jpg",
-  titles: ["LOF confirmé", "Titré Exposition", "Excellent morphologie"],
-  tests: ["MDR1 Normal/Normal", "AOC Libre", "APR-prcd Libre", "HSF4 Libre", "Hanches A/A"],
-  description:
-    "Ulysse est notre reproducteur principal, un Berger Australien noir tricolore d'exception. Doté d'un caractère équilibré et joyeux, il transmet à ses chiots son énergie communicative, son équilibre nerveux et sa beauté caractéristique. Socialisé depuis sa naissance avec des enfants et d'autres animaux, il est la fierté de notre élevage.",
-  traits: ["Équilibré", "Joueur", "Sociable", "Endurant"],
-};
+const MALES = [
+  {
+    name: "Ulysse du Berger Bleu",
+    shortName: "Ulysse",
+    color: "Noir tricolore",
+    sex: "Mâle",
+    birthYear: 2020,
+    photo: "/images/parent-ulysse.jpg",
+    titles: ["LOF confirmé", "Titré Exposition", "Excellent morphologie"],
+    tests: ["MDR1 Normal/Normal", "AOC Libre", "APR-prcd Libre", "HSF4 Libre", "Hanches A/A"],
+    description:
+      "Ulysse est l'un de nos reproducteurs principaux, un Berger Australien noir tricolore d'exception. Doté d'un caractère équilibré et joyeux, il transmet à ses chiots son énergie communicative, son équilibre nerveux et sa beauté caractéristique. Socialisé depuis sa naissance avec des enfants et d'autres animaux, il est la fierté de notre élevage.",
+    traits: ["Équilibré", "Joueur", "Sociable", "Endurant"],
+  },
+  {
+    name: "César du Berger Bleu",
+    shortName: "César",
+    color: "Noir tricolore",
+    sex: "Mâle",
+    birthYear: 2021,
+    photo: "/images/parent-cesar.jpg",
+    titles: ["LOF confirmé", "Sélectionné reproduction", "Excellent caractère"],
+    tests: ["MDR1 Normal/Normal", "AOC Libre", "APR-prcd Libre", "HSF4 Libre", "Hanches A/B"],
+    description:
+      "César est notre deuxième reproducteur noir tricolore, un mâle au caractère affirmé et au regard perçant. Vif, curieux et très sociable, il transmet à ses descendants sa puissance, son équilibre psychologique et sa présence naturelle. Élevé dans notre famille dès son plus jeune âge, il est très à l'aise avec les enfants et les autres animaux.",
+    traits: ["Vif", "Courageux", "Sociable", "Expressif"],
+  },
+];
 
 const FEMELLES = [
   {
@@ -30,11 +45,11 @@ const FEMELLES = [
     color: "Bleu merle",
     sex: "Femelle",
     birthYear: 2021,
-    photo: "/images/parent-bleu-merle.jpg",
+    photo: "/images/parent-alaska.jpg",
     titles: ["LOF confirmée", "Sélectionnée reproduction", "Morphologie Excellent"],
     tests: ["MDR1 Normal/Normal", "AOC Libre", "APR-prcd Libre", "HSF4 Libre", "Hanches A/B"],
     description:
-      "Alaska est une superbe Berger Australien bleu merle aux yeux vairons envoûtants. Mère attentionnée et excellente éducatrice de ses chiots, elle leur transmet douceur, intelligence et un instinct naturel extraordinaire. Ses portées sont réputées pour la qualité exceptionnelle des robes et l'équilibre du caractère.",
+      "Alaska est une superbe Berger Australien bleu merle au pelage dense et aux yeux envoûtants. Mère attentionnée et excellente éducatrice de ses chiots, elle leur transmet douceur, intelligence et un instinct naturel extraordinaire. Ses portées sont réputées pour la qualité exceptionnelle des robes bleu merle & noir tricolore.",
     traits: ["Douce", "Intelligente", "Maternelle", "Athlétique"],
     litter: 1,
   },
@@ -44,11 +59,11 @@ const FEMELLES = [
     color: "Rouge merle",
     sex: "Femelle",
     birthYear: 2022,
-    photo: "/images/parent-rouge-merle.jpg",
+    photo: "/images/parent-cassandra.jpg",
     titles: ["LOF confirmée", "Sélectionnée reproduction"],
     tests: ["MDR1 Normal/Normal", "AOC Libre", "APR-prcd Libre", "HSF4 Libre", "Hanches A/A"],
     description:
-      "Cassandra est notre jeune reproductrice rouge merle, issue d'une lignée internationale primée. Vive, curieuse et débordante d'affection, elle donne naissance à des chiots aux robes soleil aux caractères remarquables. Son instinct maternel exceptionnel garantit une socialisation optimale de ses petits dès les premiers jours.",
+      "Cassandra est notre reproductrice rouge merle, issue d'une lignée internationale primée. Vive, curieuse et débordante d'affection, elle donne naissance à des chiots aux robes soleil aux caractères remarquables. Son instinct maternel exceptionnel garantit une socialisation optimale de ses petits dès les premiers jours.",
     traits: ["Vive", "Affectueuse", "Curieuse", "Dynamique"],
     litter: 2,
   },
@@ -59,13 +74,13 @@ const PORTEES = [
     id: 1,
     label: "Portée 1",
     mere: "Alaska",
-    pere: "Ulysse",
+    pere: "César",
     mereCouleur: "Bleu merle",
     pereCouleur: "Noir tricolore",
-    colors: ["Bleu merle", "Noir tricolore", "Rouge merle"],
-    nbreChiots: 6,
-    nbreDisponibles: 4,
-    description: "Croisement Alaska × Ulysse — chiots aux robes bleu merle & noir tricolore d'exception. Tous testés génétiquement sains.",
+    colors: ["Bleu merle", "Noir tricolore"],
+    nbreChiots: 9,
+    nbreDisponibles: 7,
+    description: "Croisement Alaska × César — chiots aux robes bleu merle & noir tricolore d'exception. Tous testés génétiquement sains.",
     badge: "Disponibles",
     badgeColor: "bg-green-500/10 text-green-700 border-green-200",
   },
@@ -76,10 +91,10 @@ const PORTEES = [
     pere: "Ulysse",
     mereCouleur: "Rouge merle",
     pereCouleur: "Noir tricolore",
-    colors: ["Rouge merle", "Rouge tricolore"],
-    nbreChiots: 5,
-    nbreDisponibles: 3,
-    description: "Croisement Cassandra × Ulysse — chiots soleil aux robes rouge merle & rouge tricolore. Caractère équilibré garanti.",
+    colors: ["Rouge merle", "Noir tricolore"],
+    nbreChiots: 9,
+    nbreDisponibles: 6,
+    description: "Croisement Cassandra × Ulysse — chiots aux robes rouge merle & noir tricolore. Caractère équilibré garanti.",
     badge: "Disponibles",
     badgeColor: "bg-green-500/10 text-green-700 border-green-200",
   },
@@ -166,7 +181,7 @@ function ParentCard({ parent, reverse = false }: { parent: typeof MALE | (typeof
 export default function Reproducteurs() {
   useSEO({
     title: "Nos Reproducteurs — Mâles & Femelles LOF | Élevage du Berger Bleu",
-    description: "Découvrez nos reproducteurs Berger Australien : Ulysse (noir tricolore), Alaska (bleu merle) et Cassandra (rouge merle). Tous testés génétiquement, LOF confirmés. Deux portées disponibles.",
+    description: "Découvrez nos reproducteurs Berger Australien : Ulysse et César (noir tricolore), Alaska (bleu merle) et Cassandra (rouge merle). Tous testés génétiquement, LOF confirmés. Deux portées disponibles, 13 chiots.",
     canonical: "https://www.elevagedubergerbleu.com/reproducteurs",
   });
 
@@ -209,7 +224,7 @@ export default function Reproducteurs() {
                 { icon: <Shield className="w-6 h-6" />, label: "100% testés", sub: "Génétiquement sains" },
                 { icon: <Award className="w-6 h-6" />, label: "LOF confirmés", sub: "Pedigree officiel" },
                 { icon: <Heart className="w-6 h-6" />, label: "Élevés en famille", sub: "Socialisés dès la naissance" },
-                { icon: <Baby className="w-6 h-6" />, label: "2 portées actives", sub: "Chiots disponibles" },
+                { icon: <Baby className="w-6 h-6" />, label: "2 portées actives", sub: "13 chiots disponibles" },
               ].map((item) => (
                 <div key={item.label} className="flex flex-col items-center gap-2 p-4">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">{item.icon}</div>
@@ -221,16 +236,20 @@ export default function Reproducteurs() {
           </div>
         </section>
 
-        {/* Notre mâle */}
+        {/* Nos mâles */}
         <section className="py-20">
           <div className="container px-4 mx-auto max-w-6xl">
             <div className="flex items-center gap-4 mb-14">
               <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 font-bold text-lg border border-blue-200/50 dark:border-blue-700/40">
-                <Mars className="w-5 h-5" /> Notre Mâle
+                <Mars className="w-5 h-5" /> Nos Mâles
               </div>
               <div className="flex-1 h-px bg-border" />
             </div>
-            <ParentCard parent={MALE} />
+            <div className="space-y-24">
+              {MALES.map((m, i) => (
+                <ParentCard key={m.name} parent={m} reverse={i % 2 !== 0} />
+              ))}
+            </div>
           </div>
         </section>
 
@@ -257,7 +276,7 @@ export default function Reproducteurs() {
             <div className="text-center mb-14">
               <h2 className="font-serif text-4xl font-bold mb-4">Nos Portées en Cours</h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Deux portées actives issues de nos reproducteurs. Chiots élevés à la maison, socialisés avec enfants et animaux.
+                Deux portées actives issues de nos reproducteurs. 18 chiots au total, élevés à la maison et socialisés avec enfants et animaux.
               </p>
             </div>
 
@@ -329,7 +348,7 @@ export default function Reproducteurs() {
           <div className="container px-4 mx-auto text-center max-w-2xl">
             <h2 className="font-serif text-4xl font-bold mb-4">Vous avez des questions ?</h2>
             <p className="text-primary-foreground/80 text-lg mb-8">
-              Nos reproducteurs peuvent être visités sur rendez-vous. Venez rencontrer Alaska, Cassandra et Ulysse en personne.
+              Nos reproducteurs peuvent être visités sur rendez-vous. Venez rencontrer Alaska, Cassandra, Ulysse et César en personne.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">
