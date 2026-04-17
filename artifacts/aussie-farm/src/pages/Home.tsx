@@ -356,17 +356,22 @@ export default function Home() {
         <div className="container px-4 mx-auto max-w-5xl">
           <div className="grid lg:grid-cols-5 gap-12 items-center">
 
-            {/* Photos empilées */}
+            {/* Photos empilées — 4 parents */}
             <div className="lg:col-span-2 hidden lg:grid grid-cols-2 gap-3">
-              <div className="aspect-[3/4] rounded-2xl overflow-hidden mt-8">
-                <img src="/images/parent-bleu-merle.jpg" alt="Alaska, femelle bleu merle" className="w-full h-full object-cover" />
-              </div>
               <div className="flex flex-col gap-3">
                 <div className="aspect-square rounded-2xl overflow-hidden">
-                  <img src="/images/parent-noir-tricolore.jpg" alt="Ulysse, mâle noir tricolore" className="w-full h-full object-cover" />
+                  <img src="/images/parent-alaska.jpg" alt="Alaska, femelle bleu merle" className="w-full h-full object-cover" />
                 </div>
                 <div className="aspect-square rounded-2xl overflow-hidden">
-                  <img src="/images/parent-rouge-merle.jpg" alt="Cassandra, femelle rouge merle" className="w-full h-full object-cover" />
+                  <img src="/images/parent-cesar.jpg" alt="César, mâle noir tricolore" className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-3 mt-6">
+                <div className="aspect-square rounded-2xl overflow-hidden">
+                  <img src="/images/parent-ulysse.jpg" alt="Ulysse, mâle noir tricolore" className="w-full h-full object-cover" />
+                </div>
+                <div className="aspect-square rounded-2xl overflow-hidden">
+                  <img src="/images/parent-cassandra.jpg" alt="Cassandra, femelle rouge merle" className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
