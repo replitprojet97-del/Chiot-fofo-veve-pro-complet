@@ -149,10 +149,10 @@ const HERO_SLIDES = [
 const TICKER_ITEMS = [
   { icon: "⚖️", text: "Loi du 30 nov. 2021 : tout éleveur réalisant plus d'une portée par an doit être déclaré à la DDPP — notre élevage est en règle et contrôlé." },
   { icon: "📋", text: "Depuis le 1er janv. 2024, la vente d'un chiot est conditionnée à la remise d'un Certificat d'Engagement et de Connaissance (CEC) signé par l'acheteur." },
-  { icon: "🏆", text: "Le Berger Australien figure dans le top 10 des races les plus intelligentes au monde selon le Dr Stanley Coren, professeur de psychologie canine." },
+  { icon: "🏆", text: "Le Berger Australien figure parmi les races les plus intelligentes au monde : il comprend un nouvel ordre en moins de 5 répétitions et obéit à plus de 95 % du temps." },
   { icon: "🧬", text: "Nos reproducteurs sont systématiquement testés : MDR1, dysplasie des hanches (OFA), APR-prcd et tares oculaires DOMS — résultats disponibles sur demande." },
   { icon: "🌍", text: "Le passeport européen pour animaux de compagnie est obligatoire pour tout transport vers la Suisse ou la Belgique — nous le fournissons avec chaque chiot." },
-  { icon: "📦", text: "En France, tout annonceur professionnel doit mentionner son numéro SIREN sur ses annonces en ligne — le nôtre figure sur toutes nos publications." },
+  { icon: "🏔️", text: "Nos chiens évoluent à 900 m d'altitude dans les alpages de Haute-Savoie — un cadre naturel exceptionnel qui contribue à leur équilibre physique et comportemental." },
   { icon: "🐾", text: "Un chiot bien socialisé entre 3 et 12 semaines devient un adulte équilibré : c'est pourquoi nos chiots grandissent avec nos enfants, nos autres animaux et du bruit quotidien." },
   { icon: "🩺", text: "Chaque chiot quitte notre élevage avec : puce électronique, vaccins à jour, carnet de santé, vermifugations, bilan vétérinaire complet et kit de bienvenue." },
   { icon: "📜", text: "Le LOF (Livre des Origines Français) est tenu par la SCC — nos chiots inscrits ont un pedigree officiel garantissant la traçabilité sur 3 générations minimum." },
@@ -545,7 +545,7 @@ export default function Home() {
               <h2 className="font-serif text-4xl font-bold mb-6">Pourquoi choisir l'Élevage du Berger Bleu ?</h2>
               <div className="grid sm:grid-cols-2 gap-6 mb-8">
                 {[
-                  { title: "Bien-être animal", desc: "Nos chiots grandissent en liberté sur 5 hectares de prairies." },
+                  { title: "Bien-être animal", desc: "Nos chiots grandissent en liberté dans nos prairies d'alpage à 900 m d'altitude." },
                   { title: "Tests génétiques", desc: "MDR1, AOC, APR-prcd, dysplasie — tout est testé." },
                   { title: "Suivi à vie", desc: "Notre équipe répond à toutes vos questions, même des années après." },
                   { title: "Kit complet", desc: "Pucé, vacciné, vermifugé, carnet de santé, kit de bienvenue." },

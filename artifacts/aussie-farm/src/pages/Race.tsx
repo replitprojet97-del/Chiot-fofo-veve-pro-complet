@@ -11,7 +11,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const TRAITS = [
-  { icon: <Brain className="w-5 h-5" />, label: "Intelligence", value: 98, note: "Rang #1 mondial" },
+  { icon: <Brain className="w-5 h-5" />, label: "Intelligence", value: 95, note: "Top 3 mondial" },
   { icon: <Heart className="w-5 h-5" />, label: "Affection familiale", value: 96, note: "Très attaché" },
   { icon: <Dumbbell className="w-5 h-5" />, label: "Énergie & Sport", value: 94, note: "Sport quotidien" },
   { icon: <Users className="w-5 h-5" />, label: "Sociabilité", value: 88, note: "Excellent" },

@@ -68,7 +68,7 @@ export default function APropos() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 container px-4 pb-10">
             <h1 className="font-serif text-4xl md:text-6xl font-bold">Notre Élevage</h1>
-            <p className="text-muted-foreground mt-2 text-lg">17 ans de passion au cœur de la France</p>
+            <p className="text-muted-foreground mt-2 text-lg">17 ans de passion dans les alpages de Haute-Savoie</p>
           </div>
         </div>
       </div>
