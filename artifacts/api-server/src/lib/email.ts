@@ -23,9 +23,11 @@ function createTransporter() {
   });
 }
 
-const ADMIN_EMAIL = process.env.ADMIN_NOTIFY_EMAIL ?? process.env.SENDPULSE_SMTP_USER ?? "admin@berger-bleu.fr";
 const FROM_NAME = "Élevage du Berger Bleu";
-const FROM_ADDR = process.env.SENDPULSE_FROM_EMAIL ?? ADMIN_EMAIL;
+
+const CONTACT_TO   = process.env.CONTACT_NOTIFY_EMAIL      ?? "contact@berger-bleu.com";
+const RESERVATION_TO = process.env.RESERVATION_NOTIFY_EMAIL ?? "reservation@berger-bleu.com";
+const NOREPLY_FROM = process.env.NOREPLY_FROM_EMAIL         ?? "noreply@berger-bleu.com";
 
 export async function sendContactEmail(data: {
   firstName: string;
@@ -44,8 +46,8 @@ export async function sendContactEmail(data: {
 
   await Promise.all([
     transporter.sendMail({
-      from: `"${FROM_NAME}" <${FROM_ADDR}>`,
-      to: ADMIN_EMAIL,
+      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
+      to: CONTACT_TO,
       replyTo: data.email,
       subject: `Nouveau message de contact — ${data.firstName} ${data.lastName}`,
       html: `
@@ -61,9 +63,9 @@ export async function sendContactEmail(data: {
       `,
     }),
     transporter.sendMail({
-      from: `"${FROM_NAME}" <${FROM_ADDR}>`,
+      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
       to: data.email,
-      replyTo: ADMIN_EMAIL,
+      replyTo: CONTACT_TO,
       subject: `Votre message a bien été reçu — Élevage du Berger Bleu`,
       html: `
         <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a">
@@ -111,8 +113,8 @@ export async function sendReservationEmail(data: {
 
   await Promise.all([
     transporter.sendMail({
-      from: `"${FROM_NAME}" <${FROM_ADDR}>`,
-      to: ADMIN_EMAIL,
+      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
+      to: RESERVATION_TO,
       replyTo: data.email,
       subject: `Demande de réservation — ${data.puppyName} (${data.puppyColor}) — ${data.firstName} ${data.lastName}`,
       html: `
@@ -135,9 +137,9 @@ export async function sendReservationEmail(data: {
       `,
     }),
     transporter.sendMail({
-      from: `"${FROM_NAME}" <${FROM_ADDR}>`,
+      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
       to: data.email,
-      replyTo: ADMIN_EMAIL,
+      replyTo: RESERVATION_TO,
       subject: `Votre demande de réservation — ${escapeHtml(data.puppyName)} — Élevage du Berger Bleu`,
       html: `
         <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;color:#1a1a1a">
