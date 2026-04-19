@@ -1,5 +1,3 @@
-import nodemailer from "nodemailer";
-
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
@@ -9,25 +7,50 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-function createTransporter() {
-  const host = process.env.SENDPULSE_SMTP_HOST ?? "smtp.sendpulse.com";
-  const port = parseInt(process.env.SENDPULSE_SMTP_PORT ?? "465", 10);
-  const user = process.env.SENDPULSE_SMTP_USER ?? "";
-  const pass = process.env.SENDPULSE_SMTP_PASS ?? "";
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
+async function getSendPulseToken(): Promise<string> {
+  const res = await fetch("https://api.sendpulse.com/oauth/access_token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      grant_type: "client_credentials",
+      client_id: process.env.SENDPULSE_API_ID,
+      client_secret: process.env.SENDPULSE_API_SECRET,
+    }),
   });
+  if (!res.ok) throw new Error(`SendPulse auth failed: ${res.status}`);
+  const data = await res.json() as { access_token: string };
+  return data.access_token;
 }
 
-const FROM_NAME = "Élevage du Berger Bleu";
+async function sendMail(token: string, mail: {
+  from: { name: string; email: string };
+  to: Array<{ name: string; email: string }>;
+  replyTo?: string;
+  subject: string;
+  html: string;
+}): Promise<void> {
+  const res = await fetch("https://api.sendpulse.com/smtp/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email: mail }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`SendPulse send failed: ${res.status} — ${body}`);
+  }
+}
 
-const CONTACT_TO   = process.env.CONTACT_NOTIFY_EMAIL      ?? "contact@berger-bleu.com";
+const FROM_NAME     = "Élevage du Berger Bleu";
+const NOREPLY_FROM  = process.env.NOREPLY_FROM_EMAIL        ?? "noreply@berger-bleu.com";
+const CONTACT_TO    = process.env.CONTACT_NOTIFY_EMAIL      ?? "contact@berger-bleu.com";
 const RESERVATION_TO = process.env.RESERVATION_NOTIFY_EMAIL ?? "reservation@berger-bleu.com";
-const NOREPLY_FROM = process.env.NOREPLY_FROM_EMAIL         ?? "noreply@berger-bleu.com";
+
+function isConfigured() {
+  return !!(process.env.SENDPULSE_API_ID && process.env.SENDPULSE_API_SECRET);
+}
 
 export async function sendContactEmail(data: {
   firstName: string;
@@ -36,18 +59,18 @@ export async function sendContactEmail(data: {
   phone?: string;
   message: string;
 }): Promise<void> {
-  if (!process.env.SENDPULSE_SMTP_USER) {
-    console.log("[email] SendPulse not configured — skipping send. Data:", data);
+  if (!isConfigured()) {
+    console.log("[email] SendPulse API not configured — skipping. Data:", data);
     return;
   }
 
-  const transporter = createTransporter();
+  const token = await getSendPulseToken();
   const dateStr = new Date().toLocaleString("fr-FR");
 
   await Promise.all([
-    transporter.sendMail({
-      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
-      to: CONTACT_TO,
+    sendMail(token, {
+      from: { name: FROM_NAME, email: NOREPLY_FROM },
+      to: [{ name: "Élevage du Berger Bleu", email: CONTACT_TO }],
       replyTo: data.email,
       subject: `Nouveau message de contact — ${data.firstName} ${data.lastName}`,
       html: `
@@ -62,9 +85,9 @@ export async function sendContactEmail(data: {
         <p style="color:#888;font-size:12px">Élevage du Berger Bleu — message reçu le ${dateStr}</p>
       `,
     }),
-    transporter.sendMail({
-      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
-      to: data.email,
+    sendMail(token, {
+      from: { name: FROM_NAME, email: NOREPLY_FROM },
+      to: [{ name: `${data.firstName} ${data.lastName}`, email: data.email }],
       replyTo: CONTACT_TO,
       subject: `Votre message a bien été reçu — Élevage du Berger Bleu`,
       html: `
@@ -103,18 +126,18 @@ export async function sendReservationEmail(data: {
   puppyPrice: number;
   puppyId: number;
 }): Promise<void> {
-  if (!process.env.SENDPULSE_SMTP_USER) {
-    console.log("[email] SendPulse not configured — skipping send. Data:", data);
+  if (!isConfigured()) {
+    console.log("[email] SendPulse API not configured — skipping. Data:", data);
     return;
   }
 
-  const transporter = createTransporter();
+  const token = await getSendPulseToken();
   const dateStr = new Date().toLocaleString("fr-FR");
 
   await Promise.all([
-    transporter.sendMail({
-      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
-      to: RESERVATION_TO,
+    sendMail(token, {
+      from: { name: FROM_NAME, email: NOREPLY_FROM },
+      to: [{ name: "Réservations Berger Bleu", email: RESERVATION_TO }],
       replyTo: data.email,
       subject: `Demande de réservation — ${data.puppyName} (${data.puppyColor}) — ${data.firstName} ${data.lastName}`,
       html: `
@@ -136,9 +159,9 @@ export async function sendReservationEmail(data: {
         <p style="color:#888;font-size:12px">Élevage du Berger Bleu — demande reçue le ${dateStr}</p>
       `,
     }),
-    transporter.sendMail({
-      from: `"${FROM_NAME}" <${NOREPLY_FROM}>`,
-      to: data.email,
+    sendMail(token, {
+      from: { name: FROM_NAME, email: NOREPLY_FROM },
+      to: [{ name: `${data.firstName} ${data.lastName}`, email: data.email }],
       replyTo: RESERVATION_TO,
       subject: `Votre demande de réservation — ${escapeHtml(data.puppyName)} — Élevage du Berger Bleu`,
       html: `
