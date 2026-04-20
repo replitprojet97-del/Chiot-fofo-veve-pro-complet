@@ -1,0 +1,50 @@
+2026-04-20T09:09:28.959230043Z 
+2026-04-20T09:09:31.9664256Z {"level":30,"time":1776676171965,"pid":80,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-599d96ddc9-2wr8j","port":10000,"msg":"Server listening"}
+2026-04-20T09:09:31.966772517Z {"level":30,"time":1776676171966,"pid":80,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-599d96ddc9-2wr8j","selfUrl":"https://chiot-fofo-veve-pro-complet.onrender.com","intervalMin":14,"msg":"Keepalive cron started"}
+2026-04-20T09:09:32.273781204Z {"level":30,"time":1776676172273,"pid":80,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-599d96ddc9-2wr8j","req":{"id":1,"method":"HEAD","url":"/"},"res":{"statusCode":404},"responseTime":4,"msg":"request completed"}
+2026-04-20T09:09:42.13947054Z ==> Your service is live 🎉
+2026-04-20T09:09:42.230948857Z {"level":30,"time":1776676182230,"pid":80,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-599d96ddc9-2wr8j","req":{"id":2,"method":"GET","url":"/"},"res":{"statusCode":404},"responseTime":1,"msg":"request completed"}
+2026-04-20T09:09:42.324656344Z ==> 
+2026-04-20T09:09:42.326855011Z ==> ///////////////////////////////////////////////////////////
+2026-04-20T09:09:42.328778169Z ==> 
+2026-04-20T09:09:42.331663487Z ==> Available at your primary URL https://api.berger-bleu.com + 1 more domain
+2026-04-20T09:09:42.333841754Z ==> 
+2026-04-20T09:09:42.336517845Z ==> ///////////////////////////////////////////////////////////
+2026-04-20T09:09:47.261821483Z Error: CORS not allowed for origin: https://www.berger-bleu.com
+2026-04-20T09:09:47.261857854Z     at origin (/opt/render/project/src/artifacts/api-server/src/app.ts:23:23)
+2026-04-20T09:09:47.261865644Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:219:13)
+2026-04-20T09:09:47.261873924Z     at optionsCallback (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:199:9)
+2026-04-20T09:09:47.261880354Z     at corsMiddleware (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:204:7)
+2026-04-20T09:09:47.261887094Z     at Layer.handleRequest (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/lib/layer.js:152:17)
+2026-04-20T09:09:47.261893544Z     at trimPrefix (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:342:13)
+2026-04-20T09:09:47.261899514Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:297:9)
+2026-04-20T09:09:47.261905495Z     at processParams (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:582:12)
+2026-04-20T09:09:47.261911885Z     at next (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:291:5)
+2026-04-20T09:09:47.261916475Z     at Function.handle (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:186:3)
+2026-04-20T09:10:05.214891346Z Error: CORS not allowed for origin: https://www.berger-bleu.com
+2026-04-20T09:10:05.214925327Z     at origin (/opt/render/project/src/artifacts/api-server/src/app.ts:23:23)
+2026-04-20T09:10:05.214930127Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:219:13)
+2026-04-20T09:10:05.214934517Z     at optionsCallback (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:199:9)
+2026-04-20T09:10:05.214937677Z     at corsMiddleware (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:204:7)
+2026-04-20T09:10:05.214940967Z     at Layer.handleRequest (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/lib/layer.js:152:17)
+2026-04-20T09:10:05.214944127Z     at trimPrefix (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:342:13)
+2026-04-20T09:10:05.214947458Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:297:9)
+2026-04-20T09:10:05.214965958Z     at processParams (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:582:12)
+2026-04-20T09:10:05.214969918Z     at next (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:291:5)
+2026-04-20T09:10:05.214973218Z     at Function.handle (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:186:3)
+2026-04-20T09:10:28.349451085Z Error: CORS not allowed for origin: https://www.berger-bleu.com
+2026-04-20T09:10:28.349484276Z     at origin (/opt/render/project/src/artifacts/api-server/src/app.ts:23:23)
+2026-04-20T09:10:28.349492356Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:219:13)
+2026-04-20T09:10:28.349498216Z     at optionsCallback (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:199:9)
+2026-04-20T09:10:28.349503007Z     at corsMiddleware (/opt/render/project/src/node_modules/.pnpm/cors@2.8.6/node_modules/cors/lib/index.js:204:7)
+2026-04-20T09:10:28.349507736Z     at Layer.handleRequest (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/lib/layer.js:152:17)
+2026-04-20T09:10:28.349512457Z     at trimPrefix (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:342:13)
+2026-04-20T09:10:28.349516957Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:297:9)
+2026-04-20T09:10:28.349521477Z     at processParams (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:582:12)
+2026-04-20T09:10:28.349525897Z     at next (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:291:5)
+2026-04-20T09:10:28.349530087Z     at Function.handle (/opt/render/project/src/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:186:3)
+2026-04-20T09:10:41.210347851Z /opt/render/project/src/artifacts/api-server:
+2026-04-20T09:10:41.211499422Z  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node --enable-source-maps ./dist/index.mjs`
+2026-04-20T09:10:41.211508612Z Command failed with signal "SIGTERM"
+2026-04-20T09:14:40.290994118Z ==> Detected service running on port 10000
+2026-04-20T09:14:40.746163601Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding

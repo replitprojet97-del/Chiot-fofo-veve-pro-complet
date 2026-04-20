@@ -11,15 +11,27 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((s) => s.trim())
   : ["http://localhost:21570", "http://localhost:5173"];
 
+function isAllowedOrigin(origin: string): boolean {
+  if (CORS_ORIGIN.includes(origin)) return true;
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    if (hostname.endsWith(".replit.dev") || hostname.endsWith(".janeway.replit.dev")) return true;
+    for (const allowed of CORS_ORIGIN) {
+      try {
+        const allowedHost = new URL(allowed).hostname;
+        if (hostname === `www.${allowedHost}` || `www.${hostname}` === allowedHost) return true;
+      } catch {}
+    }
+  } catch {}
+  return false;
+}
+
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      if (CORS_ORIGIN.includes(origin)) return callback(null, true);
-      try {
-        const hostname = new URL(origin).hostname;
-        if (hostname.endsWith(".replit.dev") || hostname.endsWith(".janeway.replit.dev")) return callback(null, true);
-      } catch {}
+      if (isAllowedOrigin(origin)) return callback(null, true);
       return callback(new Error(`CORS not allowed for origin: ${origin}`), false);
     },
     credentials: true,
