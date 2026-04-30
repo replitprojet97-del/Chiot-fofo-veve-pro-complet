@@ -46,7 +46,9 @@ function FeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void })
           {puppy.status === "available" && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
           {puppy.status === "reserved" && <span className="w-1.5 h-1.5 rounded-full bg-white/80 flex-shrink-0" />}
           {puppy.status === "sold" && <X className="w-3 h-3 text-white/70 flex-shrink-0" />}
-          {STATUS_LABELS[puppy.status]}
+          {puppy.status === "reserved" && puppy.reservedFor
+            ? <>Réservé pour <span className="font-extrabold ml-1">{puppy.reservedFor}</span></>
+            : STATUS_LABELS[puppy.status]}
         </div>
         {/* Badge sexe */}
         <div className={`absolute bottom-3 right-3 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow ${puppy.sex === "Mâle" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/80 dark:text-blue-200" : "bg-pink-100 text-pink-700 dark:bg-pink-900/80 dark:text-pink-200"}`}>
@@ -75,12 +77,6 @@ function FeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void })
           </div>
         )}
 
-        {puppy.status === "reserved" && puppy.reservedFor && (
-          <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
-            Réservé pour <span className="font-bold">{puppy.reservedFor}</span>
-          </div>
-        )}
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-amber-100 dark:border-amber-800/30">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <CheckCircle2 className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
@@ -109,7 +105,9 @@ function PuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
             {puppy.status === "available" && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
             {puppy.status === "reserved" && <span className="w-1.5 h-1.5 rounded-full bg-white/80 flex-shrink-0" />}
             {puppy.status === "sold" && <X className="w-3 h-3 text-white/70 flex-shrink-0" />}
-            {STATUS_LABELS[puppy.status]}
+            {puppy.status === "reserved" && puppy.reservedFor
+              ? <>Réservé pour <span className="font-extrabold ml-1">{puppy.reservedFor}</span></>
+              : STATUS_LABELS[puppy.status]}
           </span>
         </div>
         <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
@@ -129,12 +127,6 @@ function PuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
         <div className="flex flex-wrap gap-1.5 mb-3 mt-3">
           {puppy.traits.slice(0, 2).map((t) => <span key={t} className="px-2.5 py-1 bg-secondary text-secondary-foreground text-xs rounded-md font-medium">{t}</span>)}
         </div>
-        {puppy.status === "reserved" && puppy.reservedFor && (
-          <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 font-medium mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
-            Réservé pour <span className="font-bold">{puppy.reservedFor}</span>
-          </div>
-        )}
         <Button className="w-full rounded-xl h-11 font-medium">Voir les détails</Button>
       </div>
     </div>
