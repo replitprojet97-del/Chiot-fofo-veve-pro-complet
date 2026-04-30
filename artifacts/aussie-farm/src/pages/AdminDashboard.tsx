@@ -80,6 +80,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   const [contractDeposit, setContractDeposit] = useState(300);
   const [contractSecondPayment, setContractSecondPayment] = useState(0);
   const [contractDate, setContractDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [contractAvailableDate, setContractAvailableDate] = useState("");
 
   // Messages state
   const [deleteMessageConfirm, setDeleteMessageConfirm] = useState<number | null>(null);
@@ -430,9 +431,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           ${field("Sexe", p.sex)}
           ${field("Âge (semaines)", String(p.ageWeeks))}
         </div>
-        <div style="display:flex;gap:10px">
+        <div style="display:flex;gap:10px;margin-bottom:6px">
           ${field("Inscrit au LOF", "Oui — Livre des Origines Français", 2)}
           ${p.parents ? field("Parenté", p.parents, 2) : ""}
+        </div>
+        <div style="display:flex;gap:10px">
+          ${field("Sevré & disponible à partir du", contractAvailableDate ? new Date(contractAvailableDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "—", 2)}
         </div>
       </div>
       <div style="flex:1;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px">
@@ -1589,6 +1593,10 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                   <label className="text-sm font-medium">Date du contrat</label>
                   <Input type="date" value={contractDate} onChange={(e) => setContractDate(e.target.value)} className="bg-background" />
                 </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Sevré & disponible à partir du</label>
+                <Input type="date" value={contractAvailableDate} onChange={(e) => setContractAvailableDate(e.target.value)} className="bg-background max-w-xs" />
               </div>
               <div className="flex gap-3 pt-2">
                 <Button type="button" variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setContractPuppy(null)}>Annuler</Button>
