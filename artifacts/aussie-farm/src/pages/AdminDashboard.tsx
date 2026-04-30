@@ -434,16 +434,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         </div>
         <div style="display:flex;gap:6px;margin-bottom:8px">
           <div style="flex:1;background:rgba(255,255,255,0.7);border-radius:5px;padding:6px 8px">
-            <div style="font-size:5.5pt;color:#92400e;margin-bottom:1px">① Acompte versé</div>
+            <div style="font-size:5.5pt;color:#92400e;margin-bottom:1px">Acompte versé</div>
             <div style="font-size:9.5pt;font-weight:700;color:#d97706">${contractDeposit.toLocaleString("fr-FR")} €</div>
           </div>
-          ${contractSecondPayment > 0 ? `<div style="flex:1;background:rgba(255,255,255,0.7);border-radius:5px;padding:6px 8px">
-            <div style="font-size:5.5pt;color:#92400e;margin-bottom:1px">② Second virement</div>
-            <div style="font-size:9.5pt;font-weight:700;color:#d97706">${contractSecondPayment.toLocaleString("fr-FR")} €</div>
-          </div>` : ""}
           <div style="flex:1;background:#2d6a4f;border-radius:5px;padding:6px 8px">
-            <div style="font-size:5.5pt;color:rgba(255,255,255,0.7);margin-bottom:1px">${contractSecondPayment > 0 ? "③ Solde au départ" : "Solde à la remise"}</div>
-            <div style="font-size:9.5pt;font-weight:700;color:#ffffff">${(contractSecondPayment > 0 ? auDepart : solde).toLocaleString("fr-FR")} €</div>
+            <div style="font-size:5.5pt;color:rgba(255,255,255,0.7);margin-bottom:1px">Solde restant</div>
+            <div style="font-size:9.5pt;font-weight:700;color:#ffffff">${solde.toLocaleString("fr-FR")} €</div>
           </div>
         </div>
         <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">Règlement en 3 tranches — acompte à la réservation, second virement dès réception du contrat signé, solde au départ du chiot.</div>
