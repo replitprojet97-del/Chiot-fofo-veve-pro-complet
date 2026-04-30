@@ -78,6 +78,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   const [contractPuppy, setContractPuppy] = useState<Puppy | null>(null);
   const [contractBuyer, setContractBuyer] = useState({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
   const [contractDeposit, setContractDeposit] = useState(300);
+  const [contractSecondPayment, setContractSecondPayment] = useState(0);
   const [contractDate, setContractDate] = useState(() => new Date().toISOString().split("T")[0]);
 
   // Messages state
@@ -320,6 +321,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     const b = contractBuyer;
     const dateStr = new Date(contractDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     const solde = p.price - contractDeposit;
+    const auDepart = solde - contractSecondPayment;
 
     const sigUrl = `${window.location.origin}/images/signature-vendeur.png`;
     const refNum = `BB-${contractDate.replace(/-/g, "")}-${p.name.toUpperCase().replace(/\s+/g, "")}`;
@@ -430,17 +432,21 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           <div style="font-size:6.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#92400e;margin-bottom:1px">Prix de vente total</div>
           <div style="font-size:13pt;font-weight:800;color:#111827">${p.price.toLocaleString("fr-FR")} €</div>
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="display:flex;gap:6px;margin-bottom:8px">
           <div style="flex:1;background:rgba(255,255,255,0.7);border-radius:5px;padding:6px 8px">
-            <div style="font-size:6pt;color:#92400e;margin-bottom:1px">Acompte versé</div>
-            <div style="font-size:10pt;font-weight:700;color:#d97706">${contractDeposit.toLocaleString("fr-FR")} €</div>
+            <div style="font-size:5.5pt;color:#92400e;margin-bottom:1px">① Acompte versé</div>
+            <div style="font-size:9.5pt;font-weight:700;color:#d97706">${contractDeposit.toLocaleString("fr-FR")} €</div>
           </div>
+          ${contractSecondPayment > 0 ? `<div style="flex:1;background:rgba(255,255,255,0.7);border-radius:5px;padding:6px 8px">
+            <div style="font-size:5.5pt;color:#92400e;margin-bottom:1px">② Second virement</div>
+            <div style="font-size:9.5pt;font-weight:700;color:#d97706">${contractSecondPayment.toLocaleString("fr-FR")} €</div>
+          </div>` : ""}
           <div style="flex:1;background:#2d6a4f;border-radius:5px;padding:6px 8px">
-            <div style="font-size:6pt;color:rgba(255,255,255,0.7);margin-bottom:1px">Solde à la remise</div>
-            <div style="font-size:10pt;font-weight:700;color:#ffffff">${solde.toLocaleString("fr-FR")} €</div>
+            <div style="font-size:5.5pt;color:rgba(255,255,255,0.7);margin-bottom:1px">${contractSecondPayment > 0 ? "③ Solde au départ" : "Solde à la remise"}</div>
+            <div style="font-size:9.5pt;font-weight:700;color:#ffffff">${(contractSecondPayment > 0 ? auDepart : solde).toLocaleString("fr-FR")} €</div>
           </div>
         </div>
-        <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">Le solde sera réglé en espèces ou par virement à la remise du chiot.</div>
+        <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">${contractSecondPayment > 0 ? `Second virement de ${contractSecondPayment.toLocaleString("fr-FR")} € dès réception du contrat, puis ${auDepart.toLocaleString("fr-FR")} € au départ du chiot.` : "Le solde sera réglé en espèces ou par virement à la remise du chiot."}</div>
       </div>
     </div>
 
@@ -455,7 +461,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 1 — Annulation de la réservation.</strong> Si l'acquéreur annule cette réservation, l'acompte versé est définitivement perdu pour lui. Si le vendeur ne peut pas fournir le chiot réservé, l'acompte est intégralement restitué à l'acquéreur.</p>
         <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 2 — Propriété du chiot.</strong> Le chiot reste la propriété du vendeur jusqu'au paiement intégral du prix de vente. L'acquéreur bénéficie d'un délai de <strong>14 jours</strong> de rétractation et sera immédiatement remboursé si le chiot de son choix ne lui convient pas lors de la visite.</p>
         <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 3 — Révocabilité pour maladie.</strong> La réservation du chiot est révocable en cas de maladie grave détectée avant l'acquisition définitive, engageant la survie du chiot, sa bonne santé ou son espérance de vie. Le vendeur s'engage à en informer l'acquéreur dans les meilleurs délais et à lui restituer l'intégralité de l'acompte versé.</p>
-        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 4 — Finalisation &amp; attestation de vente.</strong> Pour finaliser la vente et établir le titre de nouveau propriétaire, l'acquéreur procédera à un <strong>second virement du solde restant</strong> dès réception du présent document signé, afin d'obtenir le permis de visite délivré en titre de nouvelle famille. Le solde restant sera réglé au départ du chiot.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 4 — Finalisation &amp; attestation de vente.</strong> Pour finaliser la vente et établir le titre de nouveau propriétaire, l'acquéreur procédera à un second virement de <strong>${contractSecondPayment > 0 ? contractSecondPayment.toLocaleString("fr-FR") + " €" : "_____ €"}</strong> dès réception du présent document dûment signé, afin d'obtenir le permis de visite qui lui sera délivré en titre de nouvelle famille. Les <strong>${contractSecondPayment > 0 ? auDepart.toLocaleString("fr-FR") + " €" : "_____ €"}</strong> restants seront réglés au départ du chiot.</p>
         <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 5 — Retour du contrat.</strong> À réception du présent contrat de réservation, celui-ci devra être retourné dûment signé par l'acquéreur, accompagné du justificatif du second virement. Le chiot sera remis muni de son carnet de santé, de sa puce électronique et de son certificat de naissance LOF.</p>
         <p style="margin:0;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 6 — Conformité légale.</strong> La présente réservation est conforme aux conditions prescrites par le code civil et par le code rural, notamment en ce qui concerne les vices rédhibitoires. L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins, conformément à l'article L. 214-1 du Code rural.</p>
       </div>
@@ -1555,10 +1561,17 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                   <Input value={contractBuyer.email} onChange={(e) => setContractBuyer({ ...contractBuyer, email: e.target.value })} placeholder="marie@example.com" className="bg-background" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Acompte (€)</label>
                   <Input type="number" min={0} value={contractDeposit} onChange={(e) => setContractDeposit(parseInt(e.target.value, 10) || 0)} className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Second virement (€)</label>
+                  <Input type="number" min={0} value={contractSecondPayment} onChange={(e) => setContractSecondPayment(parseInt(e.target.value, 10) || 0)} placeholder="0" className="bg-background" />
+                  {contractPuppy && contractSecondPayment > 0 && (
+                    <p className="text-xs text-muted-foreground">Solde au départ : {(contractPuppy.price - contractDeposit - contractSecondPayment).toLocaleString("fr-FR")} €</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Date du contrat</label>
