@@ -13,9 +13,9 @@ import Footer from "@/components/Footer";
 
 const STATUS_LABELS: Record<string, string> = { available: "Disponible", reserved: "Réservé", sold: "Vendu" };
 const STATUS_COLORS: Record<string, string> = {
-  available: "bg-green-500/10 text-green-700 dark:text-green-400",
-  reserved: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  sold: "bg-red-500/10 text-red-700 dark:text-red-400",
+  available: "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30",
+  reserved: "bg-amber-500 text-white shadow-lg shadow-amber-900/25",
+  sold: "bg-slate-600 text-white shadow-lg shadow-slate-900/25",
 };
 
 function FeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
@@ -42,7 +42,10 @@ function FeaturedCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void })
           {puppy.price.toLocaleString("fr-FR")} €
         </div>
         {/* Statut */}
-        <div className={`absolute bottom-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${STATUS_COLORS[puppy.status]}`}>
+        <div className={`absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ring-1 ring-white/20 ${STATUS_COLORS[puppy.status]}`}>
+          {puppy.status === "available" && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
+          {puppy.status === "reserved" && <span className="w-1.5 h-1.5 rounded-full bg-white/80 flex-shrink-0" />}
+          {puppy.status === "sold" && <X className="w-3 h-3 text-white/70 flex-shrink-0" />}
           {STATUS_LABELS[puppy.status]}
         </div>
         {/* Badge sexe */}
@@ -96,7 +99,12 @@ function PuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <img src={img} alt={puppy.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
         <div className="absolute top-3 left-3">
-          <span className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${STATUS_COLORS[puppy.status]}`}>{STATUS_LABELS[puppy.status]}</span>
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ring-1 ring-white/20 ${STATUS_COLORS[puppy.status]}`}>
+            {puppy.status === "available" && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
+            {puppy.status === "reserved" && <span className="w-1.5 h-1.5 rounded-full bg-white/80 flex-shrink-0" />}
+            {puppy.status === "sold" && <X className="w-3 h-3 text-white/70 flex-shrink-0" />}
+            {STATUS_LABELS[puppy.status]}
+          </span>
         </div>
         <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-bold shadow-sm">
           {puppy.price.toLocaleString("fr-FR")} €
@@ -316,7 +324,12 @@ export default function Chiots() {
                 />
                 <div className="p-8 flex flex-col">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[selectedPuppy.status]}`}>{STATUS_LABELS[selectedPuppy.status]}</span>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ring-1 ring-white/20 ${STATUS_COLORS[selectedPuppy.status]}`}>
+                      {selectedPuppy.status === "available" && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
+                      {selectedPuppy.status === "reserved" && <span className="w-1.5 h-1.5 rounded-full bg-white/80 flex-shrink-0" />}
+                      {selectedPuppy.status === "sold" && <X className="w-3 h-3 text-white/70 flex-shrink-0" />}
+                      {STATUS_LABELS[selectedPuppy.status]}
+                    </span>
                     <span className="text-muted-foreground font-bold">{selectedPuppy.price.toLocaleString("fr-FR")} €</span>
                   </div>
                   <h2 className="font-serif text-4xl font-bold mb-2">{selectedPuppy.name}</h2>

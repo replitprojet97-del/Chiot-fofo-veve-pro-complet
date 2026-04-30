@@ -19,9 +19,9 @@ import {
 const COLORS: PuppyColor[] = ["bleu merle", "rouge merle", "noir tricolore", "rouge tricolore"];
 const SEXES: PuppySex[] = ["Mâle", "Femelle"];
 const STATUSES: { value: PuppyStatus; label: string; color: string }[] = [
-  { value: "available", label: "Disponible", color: "text-green-600 bg-green-500/10" },
-  { value: "reserved", label: "Réservé", color: "text-amber-600 bg-amber-500/10" },
-  { value: "sold", label: "Vendu", color: "text-red-600 bg-red-500/10" },
+  { value: "available", label: "Disponible", color: "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30" },
+  { value: "reserved", label: "Réservé", color: "bg-amber-500 text-white shadow-lg shadow-amber-900/25" },
+  { value: "sold", label: "Vendu", color: "bg-slate-600 text-white shadow-lg shadow-slate-900/25" },
 ];
 
 const EMPTY_PUPPY: PuppyPayload = {
@@ -1305,7 +1305,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                             </div>
                           </div>
                         )}
-                        <div className={`absolute ${p.isPremium ? "top-12" : "top-3"} left-3 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${st.color}`}>{st.label}</div>
+                        <div className={`absolute ${p.isPremium ? "top-12" : "top-3"} left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ring-1 ring-white/20 ${st.color}`}>
+                          {p.status === "available" && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />}
+                          {p.status === "reserved" && <span className="w-1.5 h-1.5 rounded-full bg-white/80 flex-shrink-0" />}
+                          {p.status === "sold" && <X className="w-3 h-3 text-white/70 flex-shrink-0" />}
+                          {st.label}
+                        </div>
                       </div>
                       <div className="p-5">
                         <div className="flex items-center justify-between mb-1">
