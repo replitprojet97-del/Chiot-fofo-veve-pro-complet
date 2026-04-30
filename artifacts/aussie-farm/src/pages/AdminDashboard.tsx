@@ -83,6 +83,13 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   const [contractAvailableDate, setContractAvailableDate] = useState("");
   const [contractParents, setContractParents] = useState("");
 
+  // Permit state
+  const [permitPuppy, setPermitPuppy] = useState<Puppy | null>(null);
+  const [permitBuyerName, setPermitBuyerName] = useState("");
+  const [permitVisitDate, setPermitVisitDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [permitVisitTime, setPermitVisitTime] = useState("10:00");
+  const [permitGenerating, setPermitGenerating] = useState(false);
+
   // Messages state
   const [deleteMessageConfirm, setDeleteMessageConfirm] = useState<number | null>(null);
 
@@ -540,6 +547,214 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     } finally {
       document.body.removeChild(container);
       setPdfGenerating(false);
+    }
+  };
+
+  const generatePermitPDF = async () => {
+    if (!permitPuppy || !permitBuyerName.trim()) return;
+    setPermitGenerating(true);
+    const p = permitPuppy;
+    const visitDateStr = new Date(permitVisitDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    const refNum = `PV-${permitVisitDate.replace(/-/g, "")}-${p.name.toUpperCase().replace(/\s+/g, "")}`;
+    const issuedStr = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
+    let sigBase64 = "";
+    try {
+      const resp = await fetch(`${window.location.origin}/images/signature-vendeur.png`);
+      const blob = await resp.blob();
+      sigBase64 = await new Promise<string>((res) => {
+        const fr = new FileReader();
+        fr.onload = () => res(fr.result as string);
+        fr.readAsDataURL(blob);
+      });
+    } catch { sigBase64 = ""; }
+
+    const bodyHtml = `
+<div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#fff;width:794px;height:1123px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden">
+
+  <!-- HEADER -->
+  <div style="background:#1c4a35;padding:28px 50px 22px;flex-shrink:0">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="width:52px;height:52px;background:rgba(255,255,255,0.12);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+            <ellipse cx="5" cy="7" rx="2" ry="3" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="9" cy="4.5" rx="1.8" ry="2.6" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="15" cy="4.5" rx="1.8" ry="2.6" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="19" cy="7" rx="2" ry="3" fill="rgba(255,255,255,0.9)"/>
+            <path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z" fill="rgba(255,255,255,0.9)"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:17pt;font-weight:800;color:#fff;letter-spacing:-0.3px;line-height:1.1">Élevage du Berger Bleu</div>
+          <div style="font-size:8pt;color:rgba(255,255,255,0.6);margin-top:3px;letter-spacing:0.3px">Bergers Australiens LOF · Bellevaux, Haute-Savoie</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:6.5pt;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.45);margin-bottom:3px">Réf. permis</div>
+        <div style="font-size:8.5pt;font-weight:700;color:rgba(255,255,255,0.9);font-family:monospace">${refNum}</div>
+        <div style="font-size:6.5pt;color:rgba(255,255,255,0.45);margin-top:4px">Délivré le ${issuedStr}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TITLE BAND -->
+  <div style="background:#f0f7f4;border-bottom:2px solid #2d6a4f;padding:0;flex-shrink:0;display:flex;align-items:stretch">
+    <div style="background:#2d6a4f;width:6px;flex-shrink:0"></div>
+    <div style="padding:14px 44px;flex:1">
+      <div style="font-size:16pt;font-weight:900;text-transform:uppercase;letter-spacing:3px;color:#1c4a35">Permis de Visite</div>
+      <div style="font-size:7.5pt;color:#6b7280;margin-top:2px;letter-spacing:0.2px">Document officiel délivré par l'éleveur · À présenter obligatoirement le jour de la visite</div>
+    </div>
+    <div style="display:flex;align-items:center;padding-right:44px">
+      <div style="background:#1c4a35;color:#fff;font-size:7pt;font-weight:800;padding:5px 14px;border-radius:20px;text-transform:uppercase;letter-spacing:1px">Valide 1 visite</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div style="padding:36px 50px;flex:1;display:flex;flex-direction:column;gap:20px;overflow:hidden">
+
+    <!-- BADGE CENTRAL -->
+    <div style="background:linear-gradient(135deg,#f0f7f4 0%,#e8f5ee 100%);border:2px solid #2d6a4f;border-radius:16px;padding:28px 36px;display:flex;align-items:center;gap:28px">
+      <div style="flex-shrink:0;width:72px;height:72px;background:#1c4a35;border-radius:50%;display:flex;align-items:center;justify-content:center">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:7pt;text-transform:uppercase;letter-spacing:1.5px;color:#2d6a4f;font-weight:700;margin-bottom:4px">Titulaire du permis</div>
+        <div style="font-size:18pt;font-weight:800;color:#111827;line-height:1.1">${permitBuyerName}</div>
+        <div style="font-size:8pt;color:#6b7280;margin-top:4px">est autorisé(e) à visiter le chiot mentionné ci-dessous</div>
+      </div>
+    </div>
+
+    <!-- DETAILS ROW -->
+    <div style="display:flex;gap:16px">
+
+      <!-- CHIOT -->
+      <div style="flex:1.3;background:#fafafa;border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px">
+          <div style="width:18px;height:18px;background:#4f46e5;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:white;flex-shrink:0">🐾</div>
+          <div style="font-size:7pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4f46e5">Chiot concerné</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:8pt;color:#6b7280;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px;font-size:6.5pt">Nom</div>
+          <div style="font-size:15pt;font-weight:800;color:#111827">${p.name}</div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <div>
+            <div style="font-size:6.5pt;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Race</div>
+            <div style="font-size:8.5pt;font-weight:600;color:#374151">Berger Australien</div>
+          </div>
+          <div>
+            <div style="font-size:6.5pt;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Robe</div>
+            <div style="font-size:8.5pt;font-weight:600;color:#374151">${p.color}</div>
+          </div>
+          <div>
+            <div style="font-size:6.5pt;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Sexe</div>
+            <div style="font-size:8.5pt;font-weight:600;color:#374151">${p.sex}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISITE -->
+      <div style="flex:1;background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:18px 20px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px">
+          <div style="width:18px;height:18px;background:#d97706;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div style="font-size:7pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#b45309">Rendez-vous</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:6.5pt;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Date</div>
+          <div style="font-size:12pt;font-weight:800;color:#111827">${visitDateStr}</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:6.5pt;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Heure</div>
+          <div style="font-size:12pt;font-weight:800;color:#111827">${permitVisitTime}</div>
+        </div>
+        <div>
+          <div style="font-size:6.5pt;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Lieu</div>
+          <div style="font-size:7.5pt;font-weight:600;color:#374151;line-height:1.4">Les Alpages du Berger Bleu<br>74470 Bellevaux, Haute-Savoie</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CONDITIONS -->
+    <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:12px;padding:16px 20px">
+      <div style="font-size:7pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Conditions d'utilisation du permis
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:160px">
+          <div style="width:5px;height:5px;background:#2d6a4f;border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:7pt;color:#4b5563;line-height:1.5">Ce permis est <strong>strictement personnel</strong> et non cessible à un tiers.</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:160px">
+          <div style="width:5px;height:5px;background:#2d6a4f;border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:7pt;color:#4b5563;line-height:1.5">Il est valable pour <strong>une seule visite</strong> à la date mentionnée ci-dessus.</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:160px">
+          <div style="width:5px;height:5px;background:#2d6a4f;border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:7pt;color:#4b5563;line-height:1.5">Il doit être <strong>présenté à l'arrivée</strong> à l'éleveur, en version imprimée ou numérique.</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:6px;flex:1;min-width:160px">
+          <div style="width:5px;height:5px;background:#2d6a4f;border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+          <div style="font-size:7pt;color:#4b5563;line-height:1.5">Ce permis est délivré <strong>après réception du second virement</strong> prévu au contrat.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNATURE -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto">
+      <div>
+        <div style="font-size:6.5pt;color:#9ca3af;margin-bottom:4px">Tél. : 07 57 81 72 02 · contact@berger-bleu.com</div>
+        <div style="font-size:6.5pt;color:#9ca3af">Particulier déclaré DDPP · SIREN disponible sur demande</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:7pt;font-weight:600;color:#374151;margin-bottom:2px">MR JESSE BOUCHAND — Éleveur</div>
+        <div style="font-size:6.5pt;color:#9ca3af;margin-bottom:6px">Fait à Bellevaux, le ${issuedStr}</div>
+        ${sigBase64 ? `<img src="${sigBase64}" alt="Signature" style="height:60px;width:auto;object-fit:contain;max-width:180px;display:block;margin-left:auto" />` : `<div style="height:60px;width:180px;border-bottom:1px solid #d1d5db;margin-left:auto"></div>`}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div style="background:#1c4a35;padding:9px 50px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:6.5pt;color:rgba(255,255,255,0.55)">Élevage du Berger Bleu · Les Alpages du Berger Bleu, 74470 Bellevaux, Haute-Savoie</div>
+    <div style="font-size:6.5pt;color:rgba(255,255,255,0.55)">07 57 81 72 02 · Particulier déclaré DDPP</div>
+  </div>
+
+</div>`;
+
+    const container = document.createElement("div");
+    container.style.cssText = "position:fixed;left:-9999px;top:0;width:794px;height:1123px;background:#fff;box-sizing:border-box;overflow:hidden;";
+    container.innerHTML = bodyHtml;
+    document.body.appendChild(container);
+
+    try {
+      await new Promise<void>((r) => setTimeout(r, 300));
+      const html2canvas = (await import("html2canvas")).default;
+      const jsPDF = (await import("jspdf")).default;
+      const canvas = await html2canvas(container, {
+        scale: 3, useCORS: false, allowTaint: true,
+        backgroundColor: "#ffffff", logging: false,
+        width: 794, height: 1123, windowWidth: 794, windowHeight: 1123,
+      });
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pW = pdf.internal.pageSize.getWidth();
+      const pH = pdf.internal.pageSize.getHeight();
+      pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, pW, pH);
+      pdf.save(`Permis_visite_${p.name}_${permitVisitDate}.pdf`);
+    } catch (err) {
+      console.error("Erreur génération permis:", err);
+      alert("Erreur lors de la génération du permis. Veuillez réessayer.");
+    } finally {
+      document.body.removeChild(container);
+      setPermitGenerating(false);
     }
   };
 
@@ -1024,22 +1239,37 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                           <Button variant="outline" size="sm" className="flex-1 gap-1.5 rounded-xl text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950" onClick={() => setDeleteConfirm(p.id)}><Trash2 className="w-4 h-4" /> Supprimer</Button>
                         </div>
                         {p.status === "reserved" && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full gap-1.5 rounded-xl text-amber-700 border-amber-200 hover:bg-amber-50 dark:hover:bg-amber-900/20"
-                            onClick={() => {
-                              setContractPuppy(p);
-                              setContractBuyer({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
-                              setContractDeposit(300);
-                              setContractSecondPayment(0);
-                              setContractDate(new Date().toISOString().split("T")[0]);
-                              setContractAvailableDate("");
-                              setContractParents(p.parents || "");
-                            }}
-                          >
-                            <FileText className="w-4 h-4" /> Générer le contrat
-                          </Button>
+                          <div className="flex flex-col gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full gap-1.5 rounded-xl text-amber-700 border-amber-200 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                              onClick={() => {
+                                setContractPuppy(p);
+                                setContractBuyer({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
+                                setContractDeposit(300);
+                                setContractSecondPayment(0);
+                                setContractDate(new Date().toISOString().split("T")[0]);
+                                setContractAvailableDate("");
+                                setContractParents(p.parents || "");
+                              }}
+                            >
+                              <FileText className="w-4 h-4" /> Générer le contrat
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full gap-1.5 rounded-xl text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                              onClick={() => {
+                                setPermitPuppy(p);
+                                setPermitBuyerName("");
+                                setPermitVisitDate(new Date().toISOString().split("T")[0]);
+                                setPermitVisitTime("10:00");
+                              }}
+                            >
+                              <ShieldCheck className="w-4 h-4" /> Permis de visite
+                            </Button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1620,6 +1850,59 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                     <><Loader2 className="w-4 h-4 animate-spin" /> Génération en cours...</>
                   ) : (
                     <><FileText className="w-4 h-4" /> Télécharger le PDF</>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── PERMIT MODAL ─── */}
+      {permitPuppy && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setPermitPuppy(null)} />
+          <div className="relative bg-card text-card-foreground w-full max-w-lg rounded-3xl shadow-2xl border border-border overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <div>
+                <h2 className="font-serif text-2xl font-bold">Permis de visite</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Renseignez le titulaire et la date de visite</p>
+              </div>
+              <button onClick={() => setPermitPuppy(null)} className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center hover:bg-accent transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-200/50 dark:border-emerald-900/30">
+                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-2">Chiot concerné</p>
+                <p className="font-semibold">{permitPuppy.name} — {permitPuppy.color} · {permitPuppy.sex}</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Nom complet du titulaire</label>
+                <Input value={permitBuyerName} onChange={(e) => setPermitBuyerName(e.target.value)} placeholder="Ex : Marie Dupont" className="bg-background" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Date de la visite</label>
+                  <Input type="date" value={permitVisitDate} onChange={(e) => setPermitVisitDate(e.target.value)} className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Heure du rendez-vous</label>
+                  <Input type="time" value={permitVisitTime} onChange={(e) => setPermitVisitTime(e.target.value)} className="bg-background" />
+                </div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setPermitPuppy(null)}>Annuler</Button>
+                <Button
+                  type="button"
+                  className="flex-1 rounded-xl h-12 gap-2 bg-emerald-700 hover:bg-emerald-800 text-white border-none"
+                  disabled={permitGenerating || !permitBuyerName.trim()}
+                  onClick={generatePermitPDF}
+                >
+                  {permitGenerating ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Génération en cours...</>
+                  ) : (
+                    <><ShieldCheck className="w-4 h-4" /> Télécharger le permis</>
                   )}
                 </Button>
               </div>
