@@ -422,16 +422,16 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           <div style="width:16px;height:16px;background:#4f46e5;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">🐾</div>
           <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4f46e5">Animal cédé</div>
         </div>
-        <div style="display:flex;gap:10px;margin-bottom:6px">
+        <div style="display:flex;gap:10px;margin-bottom:4px">
           ${field("Nom du chiot", p.name)}
           ${field("Race", "Berger Australien")}
         </div>
-        <div style="display:flex;gap:10px;margin-bottom:6px">
+        <div style="display:flex;gap:10px;margin-bottom:4px">
           ${field("Robe", p.color)}
           ${field("Sexe", p.sex)}
           ${field("Âge (semaines)", String(p.ageWeeks))}
         </div>
-        <div style="display:flex;gap:10px;margin-bottom:6px">
+        <div style="display:flex;gap:10px;margin-bottom:4px">
           ${field("Inscrit au LOF", "Oui — Livre des Origines Français", 2)}
           ${p.parents ? field("Parenté", p.parents, 2) : ""}
         </div>
