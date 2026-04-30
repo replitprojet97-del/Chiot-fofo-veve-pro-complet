@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
+import path from "path";
+import { existsSync } from "fs";
 
 const app: Express = express();
 
@@ -56,5 +58,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+// En production, servir le frontend buildé depuis le même serveur
+const frontendDist = path.resolve(process.cwd(), "artifacts/aussie-farm/dist/public");
+if (existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+  logger.info({ frontendDist }, "Serving frontend static files");
+}
 
 export default app;
