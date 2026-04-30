@@ -1,0 +1,50 @@
+2026-04-30T17:24:32.700469881Z ==> Your service is live 🎉
+2026-04-30T17:24:32.759762591Z {"level":30,"time":1777569872759,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":2,"method":"GET","url":"/"},"res":{"statusCode":404},"responseTime":1,"msg":"request completed"}
+2026-04-30T17:24:32.920641504Z ==> 
+2026-04-30T17:24:32.928553256Z ==> ///////////////////////////////////////////////////////////
+2026-04-30T17:24:32.932343221Z ==> 
+2026-04-30T17:24:32.944380798Z ==> Available at your primary URL https://api.berger-bleu.com + 1 more domain
+2026-04-30T17:24:32.948844534Z ==> 
+2026-04-30T17:24:32.952824201Z ==> ///////////////////////////////////////////////////////////
+2026-04-30T17:25:28.610858935Z (node:81) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+2026-04-30T17:25:28.610887345Z In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+2026-04-30T17:25:28.610892815Z 
+2026-04-30T17:25:28.610898046Z To prepare for this change:
+2026-04-30T17:25:28.610903235Z - If you want the current behavior, explicitly use 'sslmode=verify-full'
+2026-04-30T17:25:28.610907726Z - If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+2026-04-30T17:25:28.610935136Z 
+2026-04-30T17:25:28.610943546Z See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+2026-04-30T17:25:28.610948696Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-04-30T17:25:28.952571605Z {"level":30,"time":1777569928952,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":4,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":341,"msg":"request completed"}
+2026-04-30T17:25:28.953790501Z {"level":30,"time":1777569928953,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":5,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":301,"msg":"request completed"}
+2026-04-30T17:25:28.954513321Z {"level":30,"time":1777569928954,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":3,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":358,"msg":"request completed"}
+2026-04-30T17:25:31.828172918Z /opt/render/project/src/artifacts/api-server:
+2026-04-30T17:25:31.828212809Z  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/api-server@0.0.0 start: `node --enable-source-maps ./dist/index.mjs`
+2026-04-30T17:25:31.828217639Z Command failed with signal "SIGTERM"
+2026-04-30T17:26:10.655072209Z {"level":30,"time":1777569970654,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":6,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":92,"msg":"request completed"}
+2026-04-30T17:26:10.683180726Z {"level":30,"time":1777569970682,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":7,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":118,"msg":"request completed"}
+2026-04-30T17:26:10.690627778Z {"level":30,"time":1777569970690,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":8,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":108,"msg":"request completed"}
+2026-04-30T17:26:26.457479315Z {"level":30,"time":1777569986457,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":9,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":190,"msg":"request completed"}
+2026-04-30T17:26:26.465024469Z {"level":30,"time":1777569986463,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":10,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":192,"msg":"request completed"}
+2026-04-30T17:26:26.475380591Z {"level":30,"time":1777569986475,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":11,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":180,"msg":"request completed"}
+2026-04-30T17:26:40.533466275Z {"level":30,"time":1777570000533,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":12,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":26,"msg":"request completed"}
+2026-04-30T17:26:40.537320378Z {"level":30,"time":1777570000537,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":13,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+2026-04-30T17:26:40.566681672Z {"level":30,"time":1777570000566,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":14,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+2026-04-30T17:27:02.355003062Z {"level":30,"time":1777570022354,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":15,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":40,"msg":"request completed"}
+2026-04-30T17:27:02.366334867Z {"level":30,"time":1777570022365,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":16,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":49,"msg":"request completed"}
+2026-04-30T17:27:02.368894373Z {"level":30,"time":1777570022368,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":17,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":51,"msg":"request completed"}
+2026-04-30T17:27:28.969738708Z {"level":30,"time":1777570048969,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":18,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":56,"msg":"request completed"}
+2026-04-30T17:27:29.053061404Z {"level":30,"time":1777570048975,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":19,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":59,"msg":"request completed"}
+2026-04-30T17:27:29.054486143Z {"level":30,"time":1777570049053,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":20,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":128,"msg":"request completed"}
+2026-04-30T17:27:30.367659362Z {"level":30,"time":1777570050367,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":21,"method":"GET","url":"/api/admin/me"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+2026-04-30T17:27:30.614248293Z {"level":30,"time":1777570050614,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":22,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":6,"msg":"request completed"}
+2026-04-30T17:27:30.63804178Z {"level":30,"time":1777570050637,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":23,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+2026-04-30T17:27:30.639517891Z {"level":30,"time":1777570050639,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":24,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":3,"msg":"request completed"}
+2026-04-30T17:29:37.985416595Z ==> Detected service running on port 10000
+2026-04-30T17:29:38.310777904Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2026-04-30T17:29:48.779002515Z {"level":30,"time":1777570188777,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":26,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":35,"msg":"request completed"}
+2026-04-30T17:29:48.781072263Z {"level":30,"time":1777570188778,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":27,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":35,"msg":"request completed"}
+2026-04-30T17:29:48.781100984Z {"level":30,"time":1777570188780,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":25,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":41,"msg":"request completed"}
+2026-04-30T17:30:24.179452404Z {"level":30,"time":1777570224177,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":29,"method":"GET","url":"/api/admin/puppies"},"res":{"statusCode":304},"responseTime":43,"msg":"request completed"}
+2026-04-30T17:30:24.261273029Z {"level":30,"time":1777570224178,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":28,"method":"GET","url":"/api/admin/reviews"},"res":{"statusCode":304},"responseTime":50,"msg":"request completed"}
+2026-04-30T17:30:24.354445721Z {"level":30,"time":1777570224278,"pid":81,"hostname":"srv-d7f5rf4vikkc73fg72rg-hibernate-856d47bb7f-gt4dq","req":{"id":30,"method":"GET","url":"/api/admin/2fa/status"},"res":{"statusCode":304},"responseTime":115,"msg":"request completed"}
