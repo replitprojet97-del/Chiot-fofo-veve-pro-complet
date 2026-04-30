@@ -378,7 +378,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           <div style="width:16px;height:16px;background:#2d6a4f;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">V</div>
           <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2d6a4f">Vendeur</div>
         </div>
-        <div style="font-size:8.5pt;font-weight:700;color:#111827;line-height:1.4">MR ULRICK LE GARRERES</div>
+        <div style="font-size:8.5pt;font-weight:700;color:#111827;line-height:1.4">MR JESSE BOUCHAND</div>
         <div style="font-size:7.5pt;color:#4b5563;line-height:1.5;margin-top:1px">Élevage du Berger Bleu<br>Les Alpages du Berger Bleu, 74470 Bellevaux<br>Tél. : 07 57 81 72 02 · DDPP déclaré</div>
       </div>
       <div style="flex:1.4;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px">
@@ -452,12 +452,12 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         <div style="flex:1;height:1px;background:#e5e7eb;margin-left:4px"></div>
       </div>
       <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
-        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 1 — Acompte non remboursable.</strong> L'acompte versé est non remboursable en cas de désistement de l'acquéreur, sauf cas de force majeure dûment justifié. En cas de désistement du vendeur, l'acompte sera intégralement restitué.</p>
-        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 2 — Visite vétérinaire.</strong> L'acquéreur s'engage à soumettre l'animal à un examen vétérinaire dans les <strong>5 jours ouvrables</strong> suivant la remise. Toute anomalie constatée devra être signalée par écrit au vendeur dans ce délai.</p>
-        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 3 — Garantie vices rédhibitoires.</strong> Conformément aux articles L. 213-1 et suivants du Code rural, le vendeur garantit l'animal contre les vices rédhibitoires pendant <strong>30 jours</strong> à compter de la remise, sur présentation d'un certificat vétérinaire.</p>
-        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 4 — Droit de rétractation.</strong> L'acquéreur dispose d'un délai de <strong>14 jours</strong> pour exercer son droit de rétractation à compter de la remise du chiot, sauf si l'état de santé de l'animal nécessite une prise en charge immédiate.</p>
-        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 5 — Conditions de remise.</strong> Le chiot sera remis muni de son carnet de santé à jour, de sa puce électronique, de son certificat de naissance LOF et d'un certificat vétérinaire de bonne santé. L'âge minimal de cession est de <strong>8 semaines</strong> révolues conformément à la loi.</p>
-        <p style="margin:0;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 6 — Bien-être animal.</strong> L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins physiologiques, comportementaux et sociaux, conformément à l'article L. 214-1 du Code rural et de la pêche maritime.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 1 — Annulation de la réservation.</strong> Si l'acquéreur annule cette réservation, l'acompte versé est définitivement perdu pour lui. Si le vendeur ne peut pas fournir le chiot réservé, l'acompte est intégralement restitué à l'acquéreur.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 2 — Propriété du chiot.</strong> Le chiot reste la propriété du vendeur jusqu'au paiement intégral du prix de vente. L'acquéreur bénéficie d'un délai de <strong>14 jours</strong> de rétractation et sera immédiatement remboursé si le chiot de son choix ne lui convient pas lors de la visite.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 3 — Révocabilité pour maladie.</strong> La réservation du chiot est révocable en cas de maladie grave détectée avant l'acquisition définitive, engageant la survie du chiot, sa bonne santé ou son espérance de vie. Le vendeur s'engage à en informer l'acquéreur dans les meilleurs délais et à lui restituer l'intégralité de l'acompte versé.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 4 — Finalisation &amp; attestation de vente.</strong> Pour finaliser la vente et établir le titre de nouveau propriétaire, l'acquéreur procédera à un <strong>second virement du solde restant</strong> dès réception du présent document signé, afin d'obtenir le permis de visite délivré en titre de nouvelle famille. Le solde restant sera réglé au départ du chiot.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 5 — Retour du contrat.</strong> À réception du présent contrat de réservation, celui-ci devra être retourné dûment signé par l'acquéreur, accompagné du justificatif du second virement. Le chiot sera remis muni de son carnet de santé, de sa puce électronique et de son certificat de naissance LOF.</p>
+        <p style="margin:0;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 6 — Conformité légale.</strong> La présente réservation est conforme aux conditions prescrites par le code civil et par le code rural, notamment en ce qui concerne les vices rédhibitoires. L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins, conformément à l'article L. 214-1 du Code rural.</p>
       </div>
     </div>
 
@@ -465,7 +465,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     <div style="display:flex;gap:16px;margin-bottom:12px">
       <div style="flex:1;border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;background:#fff">
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">Le vendeur</div>
-        <div style="font-size:8pt;font-weight:600;color:#111827;margin-bottom:1px">MR ULRICK LE GARRERES</div>
+        <div style="font-size:8pt;font-weight:600;color:#111827;margin-bottom:1px">MR JESSE BOUCHAND</div>
         <div style="font-size:6.5pt;color:#6b7280;margin-bottom:8px">Fait à Bellevaux, le ${dateStr}</div>
         <img src="${sigUrl}" alt="Signature vendeur" style="height:90px;width:auto;display:block;object-fit:contain;max-width:220px" crossorigin="anonymous" />
       </div>
