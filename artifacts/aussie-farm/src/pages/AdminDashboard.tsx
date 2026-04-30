@@ -446,7 +446,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
             <div style="font-size:9.5pt;font-weight:700;color:#ffffff">${(contractSecondPayment > 0 ? auDepart : solde).toLocaleString("fr-FR")} €</div>
           </div>
         </div>
-        <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">${contractSecondPayment > 0 ? `Second virement de ${contractSecondPayment.toLocaleString("fr-FR")} € dès réception du contrat, puis ${auDepart.toLocaleString("fr-FR")} € au départ du chiot.` : "Le solde sera réglé en espèces ou par virement à la remise du chiot."}</div>
+        <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">Règlement en 3 tranches — acompte à la réservation, second virement dès réception du contrat signé, solde au départ du chiot.</div>
       </div>
     </div>
 
@@ -505,7 +505,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       const jsPDF = (await import("jspdf")).default;
 
       const canvas = await html2canvas(container, {
-        scale: 2,
+        scale: 3,
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
@@ -518,7 +518,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pW = pdf.internal.pageSize.getWidth();
       const pH = pdf.internal.pageSize.getHeight();
-      pdf.addImage(canvas.toDataURL("image/jpeg", 0.97), "JPEG", 0, 0, pW, pH);
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, pW, pH);
       pdf.save(`Contrat_reservation_${p.name}_${contractDate}.pdf`);
     } finally {
       document.body.removeChild(container);
