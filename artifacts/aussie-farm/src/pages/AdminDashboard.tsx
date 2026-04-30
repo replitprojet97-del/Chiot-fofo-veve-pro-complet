@@ -513,7 +513,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pW = pdf.internal.pageSize.getWidth();
       const pH = pdf.internal.pageSize.getHeight();
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, pW, pH);
+      pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, pW, pH);
       pdf.save(`Contrat_reservation_${p.name}_${contractDate}.pdf`);
     } finally {
       document.body.removeChild(container);
