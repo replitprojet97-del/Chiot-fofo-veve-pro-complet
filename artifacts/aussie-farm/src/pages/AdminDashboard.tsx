@@ -442,7 +442,6 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
             <div style="font-size:9.5pt;font-weight:700;color:#ffffff">${solde.toLocaleString("fr-FR")} €</div>
           </div>
         </div>
-        <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">Règlement en 3 tranches — acompte à la réservation, second virement dès réception du contrat signé, solde au départ du chiot.</div>
       </div>
     </div>
 
