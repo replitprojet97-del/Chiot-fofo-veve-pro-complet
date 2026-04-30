@@ -445,36 +445,36 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     </div>
 
     <!-- CLAUSES -->
-    <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+    <div style="flex:1;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;flex-shrink:0">
         <div style="width:16px;height:16px;background:#1f2937;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">§</div>
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1f2937">Clauses contractuelles</div>
         <div style="flex:1;height:1px;background:#e5e7eb;margin-left:4px"></div>
       </div>
-      <div style="columns:2;column-gap:16px">
-        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 1 — Acompte.</strong> L'acompte versé est non remboursable en cas de désistement de l'acquéreur, sauf force majeure justifiée. En cas de désistement du vendeur, l'acompte est intégralement restitué.</p>
-        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 2 — Visite vétérinaire.</strong> L'acquéreur s'engage à soumettre l'animal à un examen vétérinaire dans les <strong>5 jours ouvrables</strong> suivant la remise. Toute anomalie doit être signalée par écrit dans ce délai.</p>
-        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 3 — Garantie légale.</strong> Conformément aux art. L. 213-1 et suivants du Code rural, le vendeur garantit l'animal contre les vices rédhibitoires pendant <strong>30 jours</strong> à compter de la remise.</p>
-        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 4 — Rétractation.</strong> L'acquéreur dispose d'un délai de <strong>14 jours</strong> pour exercer son droit de rétractation à compter de la remise du chiot, sauf si l'état de santé de l'animal l'exige.</p>
-        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 5 — Remise du chiot.</strong> Le chiot sera remis avec son carnet de santé, sa puce électronique, son certificat LOF et un certificat vétérinaire. L'âge minimal de cession est de <strong>8 semaines</strong> révolues.</p>
-        <p style="margin:0;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 6 — Bien-être.</strong> L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins physiologiques et comportementaux, conformément à l'art. L. 214-1 du Code rural.</p>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between">
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 1 — Acompte non remboursable.</strong> L'acompte versé est non remboursable en cas de désistement de l'acquéreur, sauf cas de force majeure dûment justifié. En cas de désistement du vendeur, l'acompte sera intégralement restitué.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 2 — Visite vétérinaire.</strong> L'acquéreur s'engage à soumettre l'animal à un examen vétérinaire dans les <strong>5 jours ouvrables</strong> suivant la remise. Toute anomalie constatée devra être signalée par écrit au vendeur dans ce délai.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 3 — Garantie vices rédhibitoires.</strong> Conformément aux articles L. 213-1 et suivants du Code rural, le vendeur garantit l'animal contre les vices rédhibitoires pendant <strong>30 jours</strong> à compter de la remise, sur présentation d'un certificat vétérinaire.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 4 — Droit de rétractation.</strong> L'acquéreur dispose d'un délai de <strong>14 jours</strong> pour exercer son droit de rétractation à compter de la remise du chiot, sauf si l'état de santé de l'animal nécessite une prise en charge immédiate.</p>
+        <p style="margin:0 0 8px;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 5 — Conditions de remise.</strong> Le chiot sera remis muni de son carnet de santé à jour, de sa puce électronique, de son certificat de naissance LOF et d'un certificat vétérinaire de bonne santé. L'âge minimal de cession est de <strong>8 semaines</strong> révolues conformément à la loi.</p>
+        <p style="margin:0;font-size:7.5pt;line-height:1.55;color:#374151"><strong style="color:#111827">Art. 6 — Bien-être animal.</strong> L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins physiologiques, comportementaux et sociaux, conformément à l'article L. 214-1 du Code rural et de la pêche maritime.</p>
       </div>
     </div>
 
     <!-- SIGNATURES -->
-    <div style="display:flex;gap:16px;margin-bottom:10px">
-      <div style="flex:1;border:1px solid #d1d5db;border-radius:8px;padding:10px 12px;background:#fff">
-        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:6px">Le vendeur</div>
-        <div style="font-size:7.5pt;font-weight:600;color:#111827;margin-bottom:2px">MR ULRICK LE GARRERES</div>
-        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:6px">Fait à Bellevaux, le ${dateStr}</div>
-        <img src="${sigUrl}" alt="Signature vendeur" style="height:48px;width:auto;display:block;object-fit:contain" crossorigin="anonymous" />
+    <div style="display:flex;gap:16px;margin-bottom:12px">
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;background:#fff">
+        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">Le vendeur</div>
+        <div style="font-size:8pt;font-weight:600;color:#111827;margin-bottom:1px">MR ULRICK LE GARRERES</div>
+        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:8px">Fait à Bellevaux, le ${dateStr}</div>
+        <img src="${sigUrl}" alt="Signature vendeur" style="height:90px;width:auto;display:block;object-fit:contain;max-width:220px" crossorigin="anonymous" />
       </div>
-      <div style="flex:1;border:1px dashed #d1d5db;border-radius:8px;padding:10px 12px;background:#fafafa">
-        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:6px">L'acquéreur</div>
-        <div style="font-size:7.5pt;color:#111827;margin-bottom:2px">${b.firstName || ""} ${b.lastName || ""}</div>
-        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:8px">Fait à ________, le ${dateStr}</div>
-        <div style="height:40px;border-bottom:1px solid #9ca3af"></div>
-        <div style="font-size:6pt;color:#9ca3af;font-style:italic;margin-top:3px">Précédée de « Lu et approuvé »</div>
+      <div style="flex:1;border:1px dashed #d1d5db;border-radius:8px;padding:12px 16px;background:#fafafa">
+        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">L'acquéreur</div>
+        <div style="font-size:8pt;color:#111827;margin-bottom:1px">${b.firstName || ""} ${b.lastName || ""}</div>
+        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:16px">Fait à ________, le ${dateStr}</div>
+        <div style="height:58px;border-bottom:1px solid #9ca3af"></div>
+        <div style="font-size:6.5pt;color:#9ca3af;font-style:italic;margin-top:4px">Précédée de « Lu et approuvé »</div>
       </div>
     </div>
 
