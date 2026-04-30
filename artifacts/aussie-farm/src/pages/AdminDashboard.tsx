@@ -323,8 +323,20 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     const solde = p.price - contractDeposit;
     const auDepart = solde - contractSecondPayment;
 
-    const sigUrl = `${window.location.origin}/images/signature-vendeur.png`;
     const refNum = `BB-${contractDate.replace(/-/g, "")}-${p.name.toUpperCase().replace(/\s+/g, "")}`;
+
+    let sigBase64 = "";
+    try {
+      const resp = await fetch(`${window.location.origin}/images/signature-vendeur.png`);
+      const blob = await resp.blob();
+      sigBase64 = await new Promise<string>((res) => {
+        const fr = new FileReader();
+        fr.onload = () => res(fr.result as string);
+        fr.readAsDataURL(blob);
+      });
+    } catch {
+      sigBase64 = "";
+    }
 
     const field = (label: string, value: string, grow = 1) => `
       <div style="flex:${grow};min-width:0">
@@ -468,7 +480,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">Le vendeur</div>
         <div style="font-size:8pt;font-weight:600;color:#111827;margin-bottom:1px">MR JESSE BOUCHAND</div>
         <div style="font-size:6.5pt;color:#6b7280;margin-bottom:8px">Fait à Bellevaux, le ${dateStr}</div>
-        <img src="${sigUrl}" alt="Signature vendeur" style="height:90px;width:auto;display:block;object-fit:contain;max-width:220px" crossorigin="anonymous" />
+        ${sigBase64 ? `<img src="${sigBase64}" alt="Signature vendeur" style="height:90px;width:auto;display:block;object-fit:contain;max-width:220px" />` : `<div style="height:90px;border-bottom:1px solid #d1d5db;width:220px"></div>`}
       </div>
       <div style="flex:1;border:1px dashed #d1d5db;border-radius:8px;padding:12px 16px;background:#fafafa">
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">L'acquéreur</div>
@@ -495,13 +507,14 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     document.body.appendChild(container);
 
     try {
-      await new Promise<void>((r) => setTimeout(r, 900));
+      await new Promise<void>((r) => setTimeout(r, 300));
       const html2canvas = (await import("html2canvas")).default;
       const jsPDF = (await import("jspdf")).default;
 
       const canvas = await html2canvas(container, {
         scale: 3,
-        useCORS: true,
+        useCORS: false,
+        allowTaint: true,
         backgroundColor: "#ffffff",
         logging: false,
         width: 794,
@@ -515,6 +528,9 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       const pH = pdf.internal.pageSize.getHeight();
       pdf.addImage(canvas.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, pW, pH);
       pdf.save(`Contrat_reservation_${p.name}_${contractDate}.pdf`);
+    } catch (err) {
+      console.error("Erreur génération PDF:", err);
+      alert("Erreur lors de la génération du PDF. Veuillez réessayer.");
     } finally {
       document.body.removeChild(container);
       setPdfGenerating(false);
