@@ -301,14 +301,17 @@ router.put("/admin/puppies/:id", requireAdmin, async (req, res) => {
 router.patch("/admin/puppies/:id/status", requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { status } = req.body;
+    const { status, reservedFor } = req.body;
     if (!["available", "reserved", "sold"].includes(status)) {
       res.status(400).json({ error: "Statut invalide" });
       return;
     }
     const [updated] = await db
       .update(puppiesTable)
-      .set({ status })
+      .set({
+        status,
+        reservedFor: status === "reserved" ? (reservedFor?.trim() || null) : null,
+      })
       .where(eq(puppiesTable.id, id))
       .returning();
     if (!updated) {

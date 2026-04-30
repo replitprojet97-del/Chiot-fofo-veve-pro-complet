@@ -18,6 +18,7 @@ export const puppiesTable = pgTable("puppies", {
   parents: text("parents").notNull().default(""),
   images: text("images").array().notNull().default([]),
   status: puppyStatusEnum("status").notNull().default("available"),
+  reservedFor: text("reserved_for"),
   isPremium: boolean("is_premium").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

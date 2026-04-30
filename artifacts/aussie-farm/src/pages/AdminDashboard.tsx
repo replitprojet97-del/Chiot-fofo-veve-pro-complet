@@ -171,9 +171,18 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     onError: (err) => setFormError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde"),
   });
 
+  const [pendingReservedId, setPendingReservedId] = useState<number | null>(null);
+  const [pendingReservedName, setPendingReservedName] = useState("");
+
   const statusMut = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: PuppyStatus }) => adminApi.setStatus(id, status),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-puppies"] }); qc.invalidateQueries({ queryKey: ["puppies"] }); },
+    mutationFn: ({ id, status, reservedFor }: { id: number; status: PuppyStatus; reservedFor?: string | null }) =>
+      adminApi.setStatus(id, status, reservedFor),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-puppies"] });
+      qc.invalidateQueries({ queryKey: ["puppies"] });
+      setPendingReservedId(null);
+      setPendingReservedName("");
+    },
   });
 
   const premiumMut = useMutation({
@@ -1318,12 +1327,62 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                           {p.isPremium ? "Retirer de la Une" : "Mettre À la Une"}
                         </button>
 
-                        <div className="relative mb-3">
-                          <select value={p.status} onChange={(e) => statusMut.mutate({ id: p.id, status: e.target.value as PuppyStatus })}
-                            className="w-full appearance-none bg-secondary border border-border rounded-xl px-4 py-2.5 pr-9 text-sm font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50">
-                            {STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-                          </select>
-                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                        {p.status === "reserved" && p.reservedFor && (
+                          <div className="flex items-center gap-2 px-3 py-1.5 mb-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl">
+                            <span className="text-xs text-amber-700 dark:text-amber-400 font-medium">Réservé pour</span>
+                            <span className="text-xs font-bold text-amber-800 dark:text-amber-300 truncate">{p.reservedFor}</span>
+                          </div>
+                        )}
+                        <div className="mb-3">
+                          <div className="relative">
+                            <select
+                              value={pendingReservedId === p.id ? "reserved" : p.status}
+                              onChange={(e) => {
+                                const newStatus = e.target.value as PuppyStatus;
+                                if (newStatus === "reserved") {
+                                  setPendingReservedId(p.id);
+                                  setPendingReservedName(p.reservedFor ?? "");
+                                } else {
+                                  setPendingReservedId(null);
+                                  setPendingReservedName("");
+                                  statusMut.mutate({ id: p.id, status: newStatus, reservedFor: null });
+                                }
+                              }}
+                              className="w-full appearance-none bg-secondary border border-border rounded-xl px-4 py-2.5 pr-9 text-sm font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
+                            >
+                              {STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                          </div>
+                          {pendingReservedId === p.id && (
+                            <div className="mt-2 flex flex-col gap-2">
+                              <Input
+                                placeholder="Nom de famille de l'acheteur"
+                                value={pendingReservedName}
+                                onChange={(e) => setPendingReservedName(e.target.value)}
+                                className="bg-background text-sm h-9 rounded-xl"
+                                autoFocus
+                              />
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  className="flex-1 h-8 rounded-xl bg-amber-600 hover:bg-amber-700 text-white border-none text-xs"
+                                  disabled={statusMut.isPending}
+                                  onClick={() => statusMut.mutate({ id: p.id, status: "reserved", reservedFor: pendingReservedName.trim() || null })}
+                                >
+                                  Enregistrer
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 rounded-xl text-xs px-3"
+                                  onClick={() => { setPendingReservedId(null); setPendingReservedName(""); }}
+                                >
+                                  Annuler
+                                </Button>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         <div className="flex gap-2 mb-2">

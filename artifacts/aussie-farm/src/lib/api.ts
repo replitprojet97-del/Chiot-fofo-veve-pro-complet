@@ -71,8 +71,8 @@ export const adminApi = {
     apiFetch<Puppy>("/api/admin/puppies", { method: "POST", body: JSON.stringify(data) }),
   updatePuppy: (id: number, data: Partial<PuppyPayload>) =>
     apiFetch<Puppy>(`/api/admin/puppies/${id}`, { method: "PUT", body: JSON.stringify(data) }),
-  setStatus: (id: number, status: PuppyStatus) =>
-    apiFetch<Puppy>(`/api/admin/puppies/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
+  setStatus: (id: number, status: PuppyStatus, reservedFor?: string | null) =>
+    apiFetch<Puppy>(`/api/admin/puppies/${id}/status`, { method: "PATCH", body: JSON.stringify({ status, reservedFor }) }),
   setPremium: (id: number, isPremium: boolean) =>
     apiFetch<Puppy>(`/api/admin/puppies/${id}/premium`, { method: "PATCH", body: JSON.stringify({ isPremium }) }),
   deletePuppy: (id: number) =>
@@ -111,6 +111,7 @@ export interface Puppy {
   parents: string;
   images: string[];
   status: PuppyStatus;
+  reservedFor: string | null;
   isPremium: boolean;
   createdAt: string;
 }
