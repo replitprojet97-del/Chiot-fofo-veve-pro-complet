@@ -322,76 +322,179 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     const solde = p.price - contractDeposit;
 
     const sigUrl = `${window.location.origin}/images/signature-vendeur.png`;
+    const refNum = `BB-${contractDate.replace(/-/g, "")}-${p.name.toUpperCase().replace(/\s+/g, "")}`;
 
-    const row = (label1: string, val1: string, label2 = "", val2 = "") => `
-      <div style="display:flex;gap:20px;margin-bottom:5px">
-        <div style="flex:1"><div style="font-size:7.5pt;color:#666;margin-bottom:1px">${label1}</div><div style="font-size:10pt;font-weight:bold;border-bottom:1px solid #bbb;padding-bottom:2px;min-height:18px">${val1}</div></div>
-        ${label2 ? `<div style="flex:1"><div style="font-size:7.5pt;color:#666;margin-bottom:1px">${label2}</div><div style="font-size:10pt;font-weight:bold;border-bottom:1px solid #bbb;padding-bottom:2px;min-height:18px">${val2}</div></div>` : '<div style="flex:1"></div>'}
+    const field = (label: string, value: string, grow = 1) => `
+      <div style="flex:${grow};min-width:0">
+        <div style="font-size:6.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#6b7280;margin-bottom:2px">${label}</div>
+        <div style="font-size:9.5pt;font-weight:600;color:#111827;border-bottom:1px solid #d1d5db;padding-bottom:3px;min-height:20px;line-height:1.4">${value || "—"}</div>
       </div>`;
 
-    const sectionTitle = (t: string) => `<div style="font-size:8.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:7px;color:#444">${t}</div>`;
-
     const bodyHtml = `
-<div style="font-family:'Georgia',serif;font-size:10pt;color:#1a1a1a;background:#fff;max-width:700px;margin:0 auto">
-  <h1 style="font-size:15pt;text-align:center;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid #1a1a1a;padding-bottom:7px;margin:0 0 4px">Contrat de Réservation</h1>
-  <p style="text-align:center;font-size:8pt;color:#555;margin:0 0 14px">Élevage du Berger Bleu — Particulier déclaré DDPP · Bellevaux (74), Haute-Savoie</p>
+<div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#fff;width:794px;height:1123px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden">
 
-  <div style="margin-bottom:11px">${sectionTitle("Vendeur")}<div style="border:1px solid #ccc;border-radius:3px;padding:7px 12px;background:#fafafa;font-size:9.5pt;line-height:1.5"><strong>MR ULRICK LE GARRERES — Élevage du Berger Bleu</strong><br>Les Alpages du Berger Bleu, 74470 Bellevaux, Haute-Savoie · Tél. : 07 57 81 72 02 · Particulier déclaré DDPP</div></div>
-
-  <div style="margin-bottom:11px">${sectionTitle("Acquéreur")}
-    ${row("Nom et prénom", `${b.firstName || "…"} ${b.lastName || "…"}`, "Téléphone", b.phone || "…")}
-    ${row("Adresse", b.address || "…", "Code postal · Ville", `${b.zip || "…"} ${b.city || "…"}`)}
-    ${row("Email", b.email || "…")}
-  </div>
-
-  <div style="margin-bottom:11px">${sectionTitle("Animal Cédé")}
-    ${row("Nom", p.name, "Race", "Berger Australien (Australian Shepherd)")}
-    ${row("Robe", p.color, "Sexe", p.sex)}
-    ${row("Âge à la signature", `${p.ageWeeks} semaines`, "Inscrit au LOF", "Oui — Livre des Origines Français")}
-    ${p.parents ? row("Parenté", p.parents) : ""}
-  </div>
-
-  <div style="margin-bottom:11px">${sectionTitle("Conditions Financières")}
-    <div style="border:1px solid #d97706;border-radius:3px;padding:9px 14px;background:#fffbeb">
-      ${row("Prix de vente total", `${p.price.toLocaleString("fr-FR")} €`, "Acompte versé à la signature", `${contractDeposit.toLocaleString("fr-FR")} €`)}
-      <div style="display:flex;gap:20px"><div style="flex:1"><div style="font-size:7.5pt;color:#666;margin-bottom:1px">Solde à verser à la remise du chiot</div><div style="font-size:12pt;font-weight:bold;color:#b45309;border-bottom:1px solid #d97706;padding-bottom:2px">${solde.toLocaleString("fr-FR")} €</div></div><div style="flex:1"></div></div>
+  <!-- HEADER -->
+  <div style="background:#1c4a35;padding:22px 44px 18px;flex-shrink:0">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:48px;height:48px;background:rgba(255,255,255,0.12);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="5" cy="7" rx="2" ry="3" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="9" cy="4.5" rx="1.8" ry="2.6" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="15" cy="4.5" rx="1.8" ry="2.6" fill="rgba(255,255,255,0.9)"/>
+            <ellipse cx="19" cy="7" rx="2" ry="3" fill="rgba(255,255,255,0.9)"/>
+            <path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z" fill="rgba(255,255,255,0.9)"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:16pt;font-weight:800;color:#ffffff;letter-spacing:-0.3px;line-height:1.1">Élevage du Berger Bleu</div>
+          <div style="font-size:7.5pt;color:rgba(255,255,255,0.65);margin-top:2px;letter-spacing:0.3px">Bergers Australiens LOF · Bellevaux, Haute-Savoie</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:6.5pt;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);margin-bottom:2px">Réf. contrat</div>
+        <div style="font-size:8pt;font-weight:700;color:rgba(255,255,255,0.9);font-family:monospace">${refNum}</div>
+        <div style="font-size:6.5pt;color:rgba(255,255,255,0.5);margin-top:3px">${dateStr}</div>
+      </div>
     </div>
   </div>
 
-  <div style="margin-bottom:12px">${sectionTitle("Clauses Contractuelles")}
-    <p style="margin-bottom:4px;font-size:8pt;line-height:1.45;color:#333"><strong>Art. 1 — Acompte non remboursable.</strong> L'acompte versé est non remboursable en cas de désistement de l'acquéreur, sauf cas de force majeure dûment justifié. En cas de désistement du vendeur, l'acompte sera intégralement restitué.</p>
-    <p style="margin-bottom:4px;font-size:8pt;line-height:1.45;color:#333"><strong>Art. 2 — Visite vétérinaire.</strong> L'acquéreur s'engage à soumettre l'animal à un examen vétérinaire dans les <strong>5 jours ouvrables</strong> suivant la remise. Toute anomalie constatée devra être signalée par écrit dans ce délai.</p>
-    <p style="margin-bottom:4px;font-size:8pt;line-height:1.45;color:#333"><strong>Art. 3 — Garantie vices rédhibitoires.</strong> Conformément aux articles L. 213-1 et suivants du Code rural, le vendeur garantit l'animal contre les vices rédhibitoires pendant <strong>30 jours</strong> à compter de la remise, sur présentation d'un certificat vétérinaire.</p>
-    <p style="margin-bottom:4px;font-size:8pt;line-height:1.45;color:#333"><strong>Art. 4 — Droit de rétractation.</strong> L'acquéreur dispose d'un délai de <strong>14 jours</strong> pour exercer son droit de rétractation à compter de la remise du chiot, sauf si l'état de santé de l'animal l'exige autrement.</p>
-    <p style="margin-bottom:4px;font-size:8pt;line-height:1.45;color:#333"><strong>Art. 5 — Conditions de remise.</strong> Le chiot sera remis muni de son carnet de santé, de sa puce électronique, de son certificat de naissance LOF et d'un certificat vétérinaire de bonne santé. L'âge minimal de cession est de <strong>8 semaines</strong> révolues.</p>
-    <p style="font-size:8pt;line-height:1.45;color:#333"><strong>Art. 6 — Bien-être animal.</strong> L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins, conformément à l'article L. 214-1 du Code rural.</p>
+  <!-- TITLE BAND -->
+  <div style="background:#f0f7f4;border-bottom:2px solid #2d6a4f;padding:10px 44px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:13pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#1c4a35">Contrat de Réservation</div>
+      <div style="font-size:7pt;color:#6b7280;margin-top:1px">Cession d'animal de compagnie — Particulier déclaré DDPP</div>
+    </div>
+    <div style="background:#2d6a4f;color:white;font-size:7pt;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px">Original</div>
   </div>
 
-  <div style="display:flex;gap:40px;margin-top:16px">
-    <div style="flex:1;border-top:1px solid #999;padding-top:6px">
-      <p style="font-size:8pt;color:#555;margin:0 0 2px">Fait à Bellevaux, le ${dateStr}</p>
-      <p style="font-size:8.5pt;font-weight:bold;margin:0 0 2px">Le vendeur :</p>
-      <p style="font-size:8.5pt;font-weight:bold;margin:0 0 4px">MR ULRICK LE GARRERES</p>
-      <img src="${sigUrl}" alt="Signature" style="width:160px;height:auto;display:block;margin:4px 0 2px" crossorigin="anonymous" />
+  <!-- CONTENT -->
+  <div style="padding:16px 44px 0;flex:1;display:flex;flex-direction:column;overflow:hidden">
+
+    <!-- VENDEUR + ACQUÉREUR side by side -->
+    <div style="display:flex;gap:16px;margin-bottom:10px">
+      <div style="flex:1;background:#f8fffe;border:1px solid #d1fae5;border-radius:8px;padding:10px 12px">
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+          <div style="width:16px;height:16px;background:#2d6a4f;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">V</div>
+          <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2d6a4f">Vendeur</div>
+        </div>
+        <div style="font-size:8.5pt;font-weight:700;color:#111827;line-height:1.4">MR ULRICK LE GARRERES</div>
+        <div style="font-size:7.5pt;color:#4b5563;line-height:1.5;margin-top:1px">Élevage du Berger Bleu<br>Les Alpages du Berger Bleu, 74470 Bellevaux<br>Tél. : 07 57 81 72 02 · DDPP déclaré</div>
+      </div>
+      <div style="flex:1.4;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px">
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+          <div style="width:16px;height:16px;background:#374151;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">A</div>
+          <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151">Acquéreur</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:6px">
+          ${field("Nom et prénom", `${b.firstName || ""} ${b.lastName || ""}`.trim(), 2)}
+          ${field("Téléphone", b.phone || "")}
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:6px">
+          ${field("Adresse", b.address || "", 2)}
+          ${field("Code postal · Ville", b.zip && b.city ? `${b.zip} ${b.city}` : (b.zip || b.city || ""))}
+        </div>
+        <div style="display:flex;gap:10px">
+          ${field("Email", b.email || "", 2)}
+        </div>
+      </div>
     </div>
-    <div style="flex:1;border-top:1px solid #999;padding-top:6px">
-      <p style="font-size:8pt;color:#555;margin:0 0 2px">Fait à _____________, le ${dateStr}</p>
-      <p style="font-size:7.5pt;color:#777;margin:0 0 1px">Signature de l'acquéreur</p>
-      <p style="font-size:7pt;color:#aaa;font-style:italic;margin:0 0 0">(précédée de « Lu et approuvé »)</p>
-      <div style="height:60px"></div>
+
+    <!-- ANIMAL + FINANCES side by side -->
+    <div style="display:flex;gap:16px;margin-bottom:10px">
+      <div style="flex:1.4;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px">
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+          <div style="width:16px;height:16px;background:#4f46e5;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">🐾</div>
+          <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4f46e5">Animal cédé</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:6px">
+          ${field("Nom du chiot", p.name)}
+          ${field("Race", "Berger Australien")}
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:6px">
+          ${field("Robe", p.color)}
+          ${field("Sexe", p.sex)}
+          ${field("Âge (semaines)", String(p.ageWeeks))}
+        </div>
+        <div style="display:flex;gap:10px">
+          ${field("Inscrit au LOF", "Oui — Livre des Origines Français", 2)}
+          ${p.parents ? field("Parenté", p.parents, 2) : ""}
+        </div>
+      </div>
+      <div style="flex:1;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px">
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+          <div style="width:16px;height:16px;background:#d97706;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">€</div>
+          <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#b45309">Conditions financières</div>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:6.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#92400e;margin-bottom:1px">Prix de vente total</div>
+          <div style="font-size:13pt;font-weight:800;color:#111827">${p.price.toLocaleString("fr-FR")} €</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <div style="flex:1;background:rgba(255,255,255,0.7);border-radius:5px;padding:6px 8px">
+            <div style="font-size:6pt;color:#92400e;margin-bottom:1px">Acompte versé</div>
+            <div style="font-size:10pt;font-weight:700;color:#d97706">${contractDeposit.toLocaleString("fr-FR")} €</div>
+          </div>
+          <div style="flex:1;background:#2d6a4f;border-radius:5px;padding:6px 8px">
+            <div style="font-size:6pt;color:rgba(255,255,255,0.7);margin-bottom:1px">Solde à la remise</div>
+            <div style="font-size:10pt;font-weight:700;color:#ffffff">${solde.toLocaleString("fr-FR")} €</div>
+          </div>
+        </div>
+        <div style="font-size:6.5pt;color:#92400e;font-style:italic;line-height:1.4">Le solde sera réglé en espèces ou par virement à la remise du chiot.</div>
+      </div>
     </div>
+
+    <!-- CLAUSES -->
+    <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+        <div style="width:16px;height:16px;background:#1f2937;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">§</div>
+        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1f2937">Clauses contractuelles</div>
+        <div style="flex:1;height:1px;background:#e5e7eb;margin-left:4px"></div>
+      </div>
+      <div style="columns:2;column-gap:16px">
+        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 1 — Acompte.</strong> L'acompte versé est non remboursable en cas de désistement de l'acquéreur, sauf force majeure justifiée. En cas de désistement du vendeur, l'acompte est intégralement restitué.</p>
+        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 2 — Visite vétérinaire.</strong> L'acquéreur s'engage à soumettre l'animal à un examen vétérinaire dans les <strong>5 jours ouvrables</strong> suivant la remise. Toute anomalie doit être signalée par écrit dans ce délai.</p>
+        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 3 — Garantie légale.</strong> Conformément aux art. L. 213-1 et suivants du Code rural, le vendeur garantit l'animal contre les vices rédhibitoires pendant <strong>30 jours</strong> à compter de la remise.</p>
+        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 4 — Rétractation.</strong> L'acquéreur dispose d'un délai de <strong>14 jours</strong> pour exercer son droit de rétractation à compter de la remise du chiot, sauf si l'état de santé de l'animal l'exige.</p>
+        <p style="margin:0 0 4px;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 5 — Remise du chiot.</strong> Le chiot sera remis avec son carnet de santé, sa puce électronique, son certificat LOF et un certificat vétérinaire. L'âge minimal de cession est de <strong>8 semaines</strong> révolues.</p>
+        <p style="margin:0;font-size:7pt;line-height:1.45;color:#374151;break-inside:avoid"><strong style="color:#111827">Art. 6 — Bien-être.</strong> L'acquéreur s'engage à assurer à l'animal des conditions de vie adaptées à ses besoins physiologiques et comportementaux, conformément à l'art. L. 214-1 du Code rural.</p>
+      </div>
+    </div>
+
+    <!-- SIGNATURES -->
+    <div style="display:flex;gap:16px;margin-bottom:10px">
+      <div style="flex:1;border:1px solid #d1d5db;border-radius:8px;padding:10px 12px;background:#fff">
+        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:6px">Le vendeur</div>
+        <div style="font-size:7.5pt;font-weight:600;color:#111827;margin-bottom:2px">MR ULRICK LE GARRERES</div>
+        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:6px">Fait à Bellevaux, le ${dateStr}</div>
+        <img src="${sigUrl}" alt="Signature vendeur" style="height:48px;width:auto;display:block;object-fit:contain" crossorigin="anonymous" />
+      </div>
+      <div style="flex:1;border:1px dashed #d1d5db;border-radius:8px;padding:10px 12px;background:#fafafa">
+        <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:6px">L'acquéreur</div>
+        <div style="font-size:7.5pt;color:#111827;margin-bottom:2px">${b.firstName || ""} ${b.lastName || ""}</div>
+        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:8px">Fait à ________, le ${dateStr}</div>
+        <div style="height:40px;border-bottom:1px solid #9ca3af"></div>
+        <div style="font-size:6pt;color:#9ca3af;font-style:italic;margin-top:3px">Précédée de « Lu et approuvé »</div>
+      </div>
+    </div>
+
   </div>
 
-  <p style="text-align:center;font-size:7pt;color:#bbb;margin:16px 0 0;border-top:1px solid #eee;padding-top:8px">Élevage du Berger Bleu · 74470 Bellevaux, Haute-Savoie · 07 57 81 72 02 · Particulier déclaré DDPP</p>
+  <!-- FOOTER -->
+  <div style="background:#1c4a35;padding:8px 44px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:6.5pt;color:rgba(255,255,255,0.6)">Élevage du Berger Bleu · Les Alpages du Berger Bleu, 74470 Bellevaux, Haute-Savoie</div>
+    <div style="font-size:6.5pt;color:rgba(255,255,255,0.6)">07 57 81 72 02 · contact@berger-bleu.com · Particulier déclaré DDPP</div>
+  </div>
+
 </div>`;
 
     const container = document.createElement("div");
-    container.style.cssText = "position:fixed;left:-9999px;top:0;width:794px;padding:32px 48px;background:#fff;box-sizing:border-box;";
+    container.style.cssText = "position:fixed;left:-9999px;top:0;width:794px;height:1123px;background:#fff;box-sizing:border-box;overflow:hidden;";
     container.innerHTML = bodyHtml;
     document.body.appendChild(container);
 
     try {
-      await new Promise<void>((r) => setTimeout(r, 800));
+      await new Promise<void>((r) => setTimeout(r, 900));
       const html2canvas = (await import("html2canvas")).default;
       const jsPDF = (await import("jspdf")).default;
 
@@ -401,15 +504,15 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         backgroundColor: "#ffffff",
         logging: false,
         width: 794,
+        height: 1123,
         windowWidth: 794,
+        windowHeight: 1123,
       });
 
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pW = pdf.internal.pageSize.getWidth();
       const pH = pdf.internal.pageSize.getHeight();
-      const imgH = (canvas.height * pW) / canvas.width;
-      const finalH = Math.min(imgH, pH);
-      pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", 0, 0, pW, finalH);
+      pdf.addImage(canvas.toDataURL("image/jpeg", 0.97), "JPEG", 0, 0, pW, pH);
       pdf.save(`Contrat_reservation_${p.name}_${contractDate}.pdf`);
     } finally {
       document.body.removeChild(container);
