@@ -81,6 +81,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   const [contractSecondPayment, setContractSecondPayment] = useState(0);
   const [contractDate, setContractDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [contractAvailableDate, setContractAvailableDate] = useState("");
+  const [contractParents, setContractParents] = useState("");
 
   // Messages state
   const [deleteMessageConfirm, setDeleteMessageConfirm] = useState<number | null>(null);
@@ -433,7 +434,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         </div>
         <div style="display:flex;gap:10px;margin-bottom:4px">
           ${field("Inscrit au LOF", "Oui — Livre des Origines Français", 2)}
-          ${p.parents ? field("Parenté", p.parents, 2) : ""}
+          ${contractParents ? field("Parenté", contractParents, 2) : ""}
         </div>
         <div style="display:flex;gap:10px">
           ${field("Sevré & disponible à partir du", contractAvailableDate ? new Date(contractAvailableDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "—", 2)}
@@ -1031,7 +1032,10 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                               setContractPuppy(p);
                               setContractBuyer({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
                               setContractDeposit(300);
+                              setContractSecondPayment(0);
                               setContractDate(new Date().toISOString().split("T")[0]);
+                              setContractAvailableDate("");
+                              setContractParents(p.parents || "");
                             }}
                           >
                             <FileText className="w-4 h-4" /> Générer le contrat
@@ -1594,9 +1598,15 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                   <Input type="date" value={contractDate} onChange={(e) => setContractDate(e.target.value)} className="bg-background" />
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">Sevré & disponible à partir du</label>
-                <Input type="date" value={contractAvailableDate} onChange={(e) => setContractAvailableDate(e.target.value)} className="bg-background max-w-xs" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Parenté (père × mère)</label>
+                  <Input value={contractParents} onChange={(e) => setContractParents(e.target.value)} placeholder="Ex : Titan × Luna" className="bg-background" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Sevré & disponible à partir du</label>
+                  <Input type="date" value={contractAvailableDate} onChange={(e) => setContractAvailableDate(e.target.value)} className="bg-background" />
+                </div>
               </div>
               <div className="flex gap-3 pt-2">
                 <Button type="button" variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setContractPuppy(null)}>Annuler</Button>
