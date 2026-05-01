@@ -507,10 +507,10 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       </div>
       <div style="flex:1;border:1px dashed #d1d5db;border-radius:8px;padding:12px 16px;background:#fafafa">
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">L'acquéreur</div>
-        <div style="font-size:8pt;color:#111827;margin-bottom:1px">${b.firstName || ""} ${b.lastName || ""}</div>
-        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:16px">Fait à <span style="display:inline-block;width:100px;border-bottom:0.8px solid #9ca3af"></span> le <span style="display:inline-block;width:80px;border-bottom:0.8px solid #9ca3af"></span> 2026.</div>
+        <div style="font-size:8pt;color:#111827;margin-bottom:12px">${b.firstName || ""} ${b.lastName || ""}</div>
         <div style="height:58px;border-bottom:1px solid #9ca3af"></div>
-        <div style="font-size:6.5pt;color:#9ca3af;font-style:italic;margin-top:4px">Précédée de « Lu et approuvé »</div>
+        <div style="font-size:6.5pt;color:#9ca3af;font-style:italic;margin-top:4px;margin-bottom:8px">Précédée de « Lu et approuvé »</div>
+        <div style="font-size:6.5pt;color:#6b7280">Fait à <span style="display:inline-block;width:100px;border-bottom:0.8px solid #9ca3af"></span> le <span style="display:inline-block;width:80px;border-bottom:0.8px solid #9ca3af"></span> 2026.</div>
       </div>
     </div>
 
