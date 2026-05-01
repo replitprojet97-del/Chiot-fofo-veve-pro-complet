@@ -810,9 +810,8 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         <span style="font-size:7.5pt;color:#374151">Nom &amp; Prénom : </span>
         <span style="display:inline-block;width:130px;border-bottom:0.8px solid #9ca3af"></span>
       </div>
-      <div style="display:flex;gap:12px;margin-bottom:12px">
-        <span style="font-size:7.5pt;color:#374151">Date : ....../....../ 2026</span>
-        <span style="font-size:7.5pt;color:#374151">Heure : ............</span>
+      <div style="margin-bottom:12px">
+        <span style="font-size:7.5pt;color:#374151">Fait à ............. le .......... 2026.</span>
       </div>
       <div style="flex:1;border:1px solid #e5e7eb;border-radius:6px;background:#f9fafb;display:flex;align-items:center;justify-content:center">
         <span style="font-size:7.5pt;color:#c4c4c4;font-style:italic">Signature du visiteur</span>
