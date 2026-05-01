@@ -574,49 +574,37 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     const p = permitPuppy;
     const visitDateStr = new Date(permitVisitDate + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
     const refNum = `PV-${permitVisitDate.replace(/-/g, "")}-${p.name.toUpperCase().replace(/\s+/g, "")}`;
-    const issuedStr = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    const _issuedStr = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+    // ── Load signature ─────────────────────────────────────────────
     let sigBase64 = "";
     try {
       const resp = await fetch(`${window.location.origin}/images/signature-vendeur.png`);
-      const blob = await resp.blob();
-      sigBase64 = await new Promise<string>((res) => {
-        const fr = new FileReader();
-        fr.onload = () => res(fr.result as string);
-        fr.readAsDataURL(blob);
-      });
+      if (resp.ok) {
+        const blob = await resp.blob();
+        sigBase64 = await new Promise<string>((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result as string); fr.readAsDataURL(blob); });
+      }
     } catch { sigBase64 = ""; }
 
+    // ── Load puppy photo ───────────────────────────────────────────
     let photoBase64 = permitPhotoBase64;
     if (!photoBase64 && p.images?.[0]) {
       try {
         const resp = await fetch(p.images[0]);
         const blob = await resp.blob();
-        photoBase64 = await new Promise<string>((res) => {
-          const fr = new FileReader();
-          fr.onload = () => res(fr.result as string);
-          fr.readAsDataURL(blob);
-        });
+        photoBase64 = await new Promise<string>((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result as string); fr.readAsDataURL(blob); });
       } catch { photoBase64 = ""; }
     }
 
-    // ── shared helpers ─────────────────────────────────────────────
-    const corners = (bottomOffset = 42) => `
-  <svg style="position:absolute;top:5px;left:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M4,36 L4,8 Q4,4 8,4 L36,4" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M9,26 L9,13 Q9,9 13,9 L26,9" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="4" cy="4" r="2.2" fill="#c9a84c"/></svg>
-  <svg style="position:absolute;top:5px;right:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M48,36 L48,8 Q48,4 44,4 L16,4" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M43,26 L43,13 Q43,9 39,9 L26,9" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="48" cy="4" r="2.2" fill="#c9a84c"/></svg>
-  <svg style="position:absolute;bottom:${bottomOffset}px;left:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M4,16 L4,44 Q4,48 8,48 L36,48" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M9,26 L9,39 Q9,43 13,43 L26,43" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="4" cy="48" r="2.2" fill="#c9a84c"/></svg>
-  <svg style="position:absolute;bottom:${bottomOffset}px;right:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M48,16 L48,44 Q48,48 44,48 L16,48" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M43,26 L43,39 Q43,43 39,43 L26,43" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="48" cy="48" r="2.2" fill="#c9a84c"/></svg>`;
+    // ── Shared decorative elements ─────────────────────────────────
+    const corners = `
+  <svg style="position:absolute;top:5px;left:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52"><path d="M4,36 L4,8 Q4,4 8,4 L36,4" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M9,26 L9,13 Q9,9 13,9 L26,9" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="4" cy="4" r="2.2" fill="#c9a84c"/></svg>
+  <svg style="position:absolute;top:5px;right:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52"><path d="M48,36 L48,8 Q48,4 44,4 L16,4" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M43,26 L43,13 Q43,9 39,9 L26,9" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="48" cy="4" r="2.2" fill="#c9a84c"/></svg>
+  <svg style="position:absolute;bottom:42px;left:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52"><path d="M4,16 L4,44 Q4,48 8,48 L36,48" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M9,26 L9,39 Q9,43 13,43 L26,43" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="4" cy="48" r="2.2" fill="#c9a84c"/></svg>
+  <svg style="position:absolute;bottom:42px;right:5px;width:52px;height:52px;z-index:10;pointer-events:none" viewBox="0 0 52 52"><path d="M48,16 L48,44 Q48,48 44,48 L16,48" fill="none" stroke="#c9a84c" stroke-width="1.4"/><path d="M43,26 L43,39 Q43,43 39,43 L26,43" fill="none" stroke="#c9a84c" stroke-width="0.7"/><circle cx="48" cy="48" r="2.2" fill="#c9a84c"/></svg>`;
 
-    const cardFrame = (content: string, bottomBar: string) => `
-<div style="width:800px;height:462px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#faf8f0;box-sizing:border-box;display:flex;flex-direction:column;position:relative;border:3px solid #c9a84c;overflow:hidden">
-  <div style="position:absolute;inset:8px;border:1px solid rgba(201,168,76,0.3);pointer-events:none;z-index:5"></div>
-  ${corners(38)}
-  <div style="flex:1;display:flex;overflow:hidden">${content}</div>
-  <div style="background:#1c4a35;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0 20px">${bottomBar}</div>
-</div>`;
-
-    // ── QR code (decorative) ──────────────────────────────────────
-    const qrHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" width="66" height="66" style="display:block">
+    // ── QR code SVG ───────────────────────────────────────────────
+    const qrSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" width="64" height="64" style="display:block">
   <rect width="21" height="21" fill="white"/>
   <rect x="1" y="1" width="7" height="7" fill="#1c4a35"/><rect x="2" y="2" width="5" height="5" fill="white"/><rect x="3" y="3" width="3" height="3" fill="#1c4a35"/>
   <rect x="13" y="1" width="7" height="7" fill="#1c4a35"/><rect x="14" y="2" width="5" height="5" fill="white"/><rect x="15" y="3" width="3" height="3" fill="#1c4a35"/>
@@ -641,209 +629,221 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   <rect x="17" y="19" width="1" height="1" fill="#1c4a35"/><rect x="19" y="18" width="1" height="1" fill="#1c4a35"/>
 </svg>`;
 
-    // ── Stamp (pure HTML/CSS — no textPath issues) ────────────────
-    const stampHtml = `
-<div style="width:92px;height:92px;border-radius:50%;border:2.5px solid #1c4a35;background:rgba(255,255,255,0.97);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+    // ── Stamp HTML ────────────────────────────────────────────────
+    const stampHtml = `<div style="width:92px;height:92px;border-radius:50%;border:2.5px solid #1c4a35;background:rgba(255,255,255,0.97);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
   <div style="position:absolute;inset:4px;border-radius:50%;border:0.8px solid #c9a84c"></div>
   <div style="font-size:5.2pt;font-weight:900;color:#1c4a35;text-transform:uppercase;letter-spacing:0.6px;text-align:center;line-height:1.3;z-index:1">VALIDÉ PAR<br>L'ÉLEVEUR</div>
   <div style="width:52px;height:0.7px;background:#c9a84c;margin:4px 0;z-index:1"></div>
-  ${sigBase64 ? `<img src="${sigBase64}" style="width:48px;height:24px;object-fit:contain;z-index:1" />` : `<div style="font-size:7.5pt;font-family:Georgia,serif;font-style:italic;color:#1c4a35;z-index:1">Bouchand</div>`}
+  ${sigBase64 ? `<img src="${sigBase64}" style="width:48px;height:22px;object-fit:contain;z-index:1"/>` : `<div style="font-size:8pt;font-family:Georgia,serif;font-style:italic;color:#1c4a35;z-index:1">Bouchand</div>`}
   <div style="width:52px;height:0.7px;background:#c9a84c;margin:4px 0;z-index:1"></div>
   <div style="font-size:4.5pt;color:#c9a84c;text-align:center;letter-spacing:0.4px;z-index:1">QUALITÉ &amp; CONFIANCE ★★★</div>
 </div>`;
 
-    // ── Photo oval (nested divs — reliable with html2canvas) ──────
-    const photoOval = photoBase64
-      ? `<div style="border-radius:50%;background:#c9a84c;padding:4px;display:inline-flex;flex-shrink:0"><div style="border-radius:50%;background:#faf8f0;padding:4px;display:inline-flex"><div style="border-radius:50%;background:#c9a84c;padding:3px;display:inline-flex"><div style="width:114px;height:134px;border-radius:50%;overflow:hidden"><img src="${photoBase64}" style="width:100%;height:100%;object-fit:cover;display:block"/></div></div></div></div>`
-      : `<div style="border-radius:50%;background:#c9a84c;padding:4px;display:inline-flex;flex-shrink:0"><div style="border-radius:50%;background:#faf8f0;padding:4px;display:inline-flex"><div style="border-radius:50%;background:#c9a84c;padding:3px;display:inline-flex"><div style="width:114px;height:134px;border-radius:50%;overflow:hidden;background:#e5dcc8;display:flex;align-items:center;justify-content:center"><span style="font-size:6pt;color:#aaa;text-align:center">Photo<br>du chiot</span></div></div></div></div>`;
+    // ── Photo oval HTML ───────────────────────────────────────────
+    const photoHtml = photoBase64
+      ? `<div style="border-radius:50%;background:#c9a84c;padding:4px;display:inline-flex;flex-shrink:0"><div style="border-radius:50%;background:#faf8f0;padding:4px;display:inline-flex"><div style="border-radius:50%;background:#c9a84c;padding:3px;display:inline-flex"><div style="width:110px;height:130px;border-radius:50%;overflow:hidden"><img src="${photoBase64}" style="width:100%;height:100%;object-fit:cover;display:block"/></div></div></div></div>`
+      : `<div style="border-radius:50%;background:#c9a84c;padding:4px;display:inline-flex;flex-shrink:0"><div style="border-radius:50%;background:#faf8f0;padding:4px;display:inline-flex"><div style="border-radius:50%;background:#c9a84c;padding:3px;display:inline-flex"><div style="width:110px;height:130px;border-radius:50%;overflow:hidden;background:#e5dcc8;display:flex;align-items:center;justify-content:center"><span style="font-size:6pt;color:#aaa;text-align:center">Photo<br>du chiot</span></div></div></div></div>`;
 
-    // ══ RECTO ════════════════════════════════════════════════════
-    const rectoContent = `
-    <!-- LEFT BANNER -->
-    <div style="width:68px;background:#1c4a35;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:18px 0">
-      <div style="width:36px;height:36px;background:#c9a84c;border-radius:9px;display:flex;align-items:center;justify-content:center">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    // ══ RECTO HTML ════════════════════════════════════════════════
+    const rectoHtml = `<div style="width:800px;height:462px;font-family:Arial,Helvetica,sans-serif;background:#faf8f0;position:relative;box-sizing:border-box;overflow:hidden">
+  <div style="position:absolute;inset:0;border:3px solid #c9a84c;pointer-events:none;z-index:20"></div>
+  <div style="position:absolute;top:8px;left:8px;right:8px;bottom:46px;border:1px solid rgba(201,168,76,0.3);pointer-events:none;z-index:20"></div>
+  ${corners}
+  <div style="position:absolute;top:0;left:0;right:0;bottom:38px;display:flex;overflow:hidden">
+    <!-- LEFT BANNER: fixed width, position:relative for rotated text -->
+    <div style="width:68px;flex-shrink:0;background:#1c4a35;position:relative;overflow:hidden">
+      <div style="position:absolute;top:16px;left:14px;width:40px;height:40px;background:#c9a84c;border-radius:10px;display:flex;align-items:center;justify-content:center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
-      <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:13pt;font-weight:900;color:white;letter-spacing:3px;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,0.3)">PERMIS DE VISITE</div>
-      <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:5pt;color:rgba(255,255,255,0.45);letter-spacing:2px;text-transform:uppercase">ÉLEVAGE CANIN PROFESSIONNEL</div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;font-size:14pt;font-weight:900;color:white;letter-spacing:3.5px;text-transform:uppercase">PERMIS DE VISITE</div>
+      <div style="position:absolute;top:80%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;font-size:5pt;color:rgba(255,255,255,0.4);letter-spacing:2px;text-transform:uppercase">ÉLEVAGE CANIN PROFESSIONNEL</div>
     </div>
-
     <!-- PHOTO SECTION -->
-    <div style="width:170px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px 8px;border-left:1px solid #d4b86a;border-right:1px solid #d4b86a;background:linear-gradient(180deg,#faf8f0 70%,#f5f0e0 100%)">
-      ${photoOval}
-      <div style="width:30px;height:30px;background:#1c4a35;border-radius:50%;border:2.5px solid #c9a84c;display:flex;align-items:center;justify-content:center">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><ellipse cx="5" cy="7" rx="2" ry="3"/><ellipse cx="9" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="15" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="19" cy="7" rx="2" ry="3"/><path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z"/></svg>
+    <div style="width:165px;flex-shrink:0;background:linear-gradient(180deg,#faf8f0 0%,#f0ead8 100%);border-left:1px solid #d4b86a;border-right:1px solid #d4b86a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px 8px">
+      ${photoHtml}
+      <div style="width:32px;height:32px;background:#1c4a35;border-radius:50%;border:2.5px solid #c9a84c;display:flex;align-items:center;justify-content:center">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><ellipse cx="5" cy="7" rx="2" ry="3"/><ellipse cx="9" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="15" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="19" cy="7" rx="2" ry="3"/><path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z"/></svg>
       </div>
     </div>
-
-    <!-- INFO SECTION -->
-    <div style="width:228px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 14px;border-right:1px solid #e8d8a0">
-      <div style="text-align:center;margin-bottom:5px">
-        <div style="font-size:6pt;text-transform:uppercase;letter-spacing:2px;color:#92400e;font-weight:700">Élevage</div>
-        <div style="font-size:12pt;font-weight:900;color:#1c4a35;letter-spacing:0.5px;line-height:1.1">BERGER BLEU</div>
-        <div style="font-size:5pt;color:#c9a84c;letter-spacing:1.5px;text-transform:uppercase;margin-top:1px">Passion • Sélection • Excellence</div>
-        <div style="height:1px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);margin:5px auto;width:80%"></div>
-      </div>
-      <div style="font-size:6.5pt;text-transform:uppercase;letter-spacing:1.5px;color:#c9a84c;font-weight:700;margin-bottom:1px;text-align:center">Visite autorisée pour</div>
-      <div style="font-family:'Dancing Script',Georgia,serif;font-style:italic;font-size:27pt;font-weight:700;color:#1c4a35;line-height:1;text-align:center;margin-bottom:3px">${p.name}</div>
-      <div style="font-size:7pt;color:#374151;text-align:center;margin-bottom:7px;line-height:1.5">Berger Australien LOF<br>${p.sex}${p.ageWeeks ? ` – ${p.ageWeeks} semaines` : ""}</div>
-      <div style="height:1px;width:80%;background:linear-gradient(90deg,transparent,#d4b86a,transparent);margin-bottom:7px"></div>
-      <div style="width:100%;margin-bottom:6px">
-        <div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:3px">
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <div style="font-size:6.5pt;color:#4b5563;line-height:1.5">Les Alpages du Berger Bleu<br>74470 Bellevaux, France</div>
+    <!-- MAIN CONTENT: column flex (logo header + content row) -->
+    <div style="flex:1;display:flex;flex-direction:column">
+      <!-- LOGO HEADER ROW -->
+      <div style="height:62px;flex-shrink:0;border-bottom:1px solid #e8d8a0;display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 18px">
+        <div style="width:42px;height:42px;border-radius:50%;background:#1c4a35;border:2.5px solid #c9a84c;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><ellipse cx="5" cy="7" rx="2" ry="3"/><ellipse cx="9" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="15" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="19" cy="7" rx="2" ry="3"/><path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z"/></svg>
         </div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <div style="font-size:6.5pt;color:#4b5563">www.berger-bleu.fr</div>
+        <div>
+          <div style="font-size:5.5pt;text-transform:uppercase;letter-spacing:3px;color:#92400e;font-weight:700">ÉLEVAGE</div>
+          <div style="font-size:14.5pt;font-weight:900;color:#1c4a35;letter-spacing:0.5px;line-height:1.05">DU BERGER BLEU</div>
+          <div style="font-size:5pt;color:#c9a84c;letter-spacing:1.8px;text-transform:uppercase;margin-top:1px">Passion &bull; Sélection &bull; Excellence</div>
         </div>
       </div>
-      <div style="display:flex;gap:5px;width:100%">
-        <div style="flex:1;background:#f0f7f4;border:1px solid #2d6a4f;border-radius:5px;padding:3px 6px">
-          <div style="font-size:5.5pt;color:#1c4a35;font-weight:900">LOF</div>
-          <div style="font-size:4.5pt;color:#4b5563">Chiot inscrit au LOF</div>
+      <!-- CONTENT ROW: center | right -->
+      <div style="flex:1;display:flex">
+        <!-- CENTER: name + breed + address + badges -->
+        <div style="width:248px;flex-shrink:0;border-right:1px solid #e8d8a0;padding:10px 16px;display:flex;flex-direction:column">
+          <div style="font-size:6pt;text-transform:uppercase;letter-spacing:2px;color:#c9a84c;font-weight:700;text-align:center;margin-bottom:2px">Visite autorisée pour</div>
+          <div style="font-family:Georgia,'Times New Roman',Times,serif;font-style:italic;font-size:27pt;font-weight:bold;color:#1c4a35;line-height:0.9;text-align:center;margin-bottom:4px">${p.name}</div>
+          <div style="font-size:7.5pt;color:#374151;text-align:center;margin-bottom:8px;line-height:1.5">Berger Australien LOF<br>${p.sex}${p.ageWeeks ? ` &ndash; ${p.ageWeeks} semaines` : ""}</div>
+          <div style="height:1px;background:linear-gradient(90deg,transparent,#d4b86a 25%,#d4b86a 75%,transparent);margin-bottom:8px"></div>
+          <div style="display:flex;align-items:flex-start;gap:5px;margin-bottom:5px">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div style="font-size:6.5pt;color:#4b5563;line-height:1.5">Les Alpages du Berger Bleu<br>74470 Bellevaux, France</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <div style="font-size:6.5pt;color:#4b5563">www.berger-bleu.com</div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:auto">
+            <div style="flex:1;background:#f0f7f4;border:1px solid #2d6a4f;border-radius:5px;padding:4px 7px">
+              <div style="font-size:6pt;color:#1c4a35;font-weight:900;margin-bottom:1px">LOF</div>
+              <div style="font-size:4.5pt;color:#4b5563">Chiot inscrit au LOF</div>
+            </div>
+            <div style="flex:1;background:#f0f7f4;border:1px solid #2d6a4f;border-radius:5px;padding:4px 7px">
+              <div style="font-size:6pt;color:#1c4a35;font-weight:900;margin-bottom:1px">N&deg; DDPP</div>
+              <div style="font-size:4.5pt;color:#4b5563">Déclaration d'activité</div>
+            </div>
+          </div>
         </div>
-        <div style="flex:1;background:#f0f7f4;border:1px solid #2d6a4f;border-radius:5px;padding:3px 6px">
-          <div style="font-size:5.5pt;color:#1c4a35;font-weight:900">N° DDPP</div>
-          <div style="font-size:4.5pt;color:#4b5563">Déclaration d'activité</div>
+        <!-- RIGHT: serial + date/time/visitor + QR/stamp -->
+        <div style="flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+          <div style="background:#1c4a35;border-radius:5px;padding:6px 12px;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:5.5pt;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.5)">N&deg; de série</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:8pt;font-weight:900;color:white;letter-spacing:0.5px">${refNum}</div>
+          </div>
+          <div style="flex:1;display:flex;gap:12px">
+            <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;align-items:flex-start;gap:7px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <div>
+                  <div style="font-size:5pt;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;font-weight:700;margin-bottom:2px">DATE DE VISITE</div>
+                  <div style="font-size:11pt;font-weight:900;color:#111827;line-height:1.1">${visitDateStr}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:7px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div>
+                  <div style="font-size:5pt;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;font-weight:700;margin-bottom:2px">HEURE</div>
+                  <div style="font-size:13pt;font-weight:900;color:#111827;line-height:1.1">${permitVisitTime}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:7px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <div>
+                  <div style="font-size:5pt;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;font-weight:700;margin-bottom:4px">VISITEUR</div>
+                  <div style="font-size:7pt;color:#374151;margin-bottom:4px">Nom : <span style="display:inline-block;width:75px;border-bottom:0.7px solid #9ca3af">&nbsp;</span></div>
+                  <div style="font-size:7pt;color:#374151">Prénom : <span style="display:inline-block;width:65px;border-bottom:0.7px solid #9ca3af">&nbsp;</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="width:106px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
+              <div style="text-align:center">
+                <div style="padding:5px;background:white;border:1px solid #e5e7eb;border-radius:5px;display:inline-block">${qrSvg}</div>
+                <div style="font-size:4.5pt;color:#9ca3af;text-align:center;margin-top:3px;text-transform:uppercase;letter-spacing:0.4px">Vérification à l'accueil</div>
+              </div>
+              ${stampHtml}
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+  <div style="position:absolute;bottom:0;left:0;right:0;height:38px;background:#1c4a35;display:flex;align-items:center;justify-content:center;z-index:2">
+    <span style="font-size:8.5pt;font-weight:900;text-transform:uppercase;letter-spacing:2.5px;color:white">Valable uniquement le ${visitDateStr}&nbsp;&nbsp;&bull;&nbsp;&nbsp;Non reconductible</span>
+  </div>
+</div>`;
 
-    <!-- DETAILS SECTION -->
-    <div style="flex:1;display:flex;flex-direction:column;padding:12px 14px;gap:7px">
-      <div style="display:flex;justify-content:flex-end">
-        <div style="background:#1c4a35;border-radius:4px;padding:5px 10px;display:flex;align-items:center;gap:10px">
-          <div style="font-size:5.5pt;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5)">N° de série</div>
-          <div style="font-family:'Courier New',monospace;font-size:8.5pt;font-weight:900;color:white">${refNum}</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;flex:1">
-        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
-          <div>
-            <div style="font-size:5.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;font-weight:700;margin-bottom:2px">DATE DE VISITE</div>
-            <div style="font-size:12pt;font-weight:900;color:#111827;line-height:1.1">${visitDateStr}</div>
-          </div>
-          <div>
-            <div style="font-size:5.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;font-weight:700;margin-bottom:2px">HEURE</div>
-            <div style="font-size:14pt;font-weight:900;color:#111827;line-height:1.1">${permitVisitTime}</div>
-          </div>
-          <div>
-            <div style="font-size:5.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#9ca3af;font-weight:700;margin-bottom:4px">VISITEUR</div>
-            <div style="font-size:7pt;color:#374151;margin-bottom:3px">Nom : <span style="display:inline-block;width:82px;border-bottom:0.7px solid #9ca3af">&nbsp;</span></div>
-            <div style="font-size:7pt;color:#374151">Prénom : <span style="display:inline-block;width:72px;border-bottom:0.7px solid #9ca3af">&nbsp;</span></div>
-          </div>
-        </div>
-        <div style="width:110px;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
-          <div style="text-align:center">
-            <div style="padding:4px;background:white;border:1px solid #e5e7eb;border-radius:4px;display:inline-block">${qrHtml}</div>
-            <div style="font-size:4.8pt;color:#9ca3af;text-align:center;margin-top:2px;text-transform:uppercase;letter-spacing:0.4px">Vérification à l'accueil</div>
-          </div>
-          ${stampHtml}
-        </div>
-      </div>
-    </div>`;
-
-    const rectoHtml = cardFrame(rectoContent,
-      `<span style="font-size:8pt;font-weight:900;text-transform:uppercase;letter-spacing:2.5px;color:white">Valable uniquement le ${visitDateStr}&nbsp;&nbsp;•&nbsp;&nbsp;Non reconductible</span>`
-    );
-
-    // ══ VERSO ════════════════════════════════════════════════════
-    const checkItem = (text: string) => `
-<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:5px">
+    // ══ VERSO HTML ════════════════════════════════════════════════
+    const checkItem = (text: string) => `<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px">
   <div style="width:14px;height:14px;border-radius:50%;background:#2d6a4f;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
     <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
   <div style="font-size:7pt;color:#374151;line-height:1.5">${text}</div>
 </div>`;
 
-    const versoContent = `
-    <!-- CONDITIONS DE VISITE -->
-    <div style="flex:1;padding:16px 16px 14px;border-right:1px solid #e8d8a0;display:flex;flex-direction:column">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e8d8a0">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        <div style="font-size:7.5pt;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#1c4a35">Conditions de visite</div>
+    const versoHtml = `<div style="width:800px;height:462px;font-family:Arial,Helvetica,sans-serif;background:#faf8f0;position:relative;box-sizing:border-box;overflow:hidden">
+  <div style="position:absolute;inset:0;border:3px solid #c9a84c;pointer-events:none;z-index:20"></div>
+  <div style="position:absolute;top:8px;left:8px;right:8px;bottom:46px;border:1px solid rgba(201,168,76,0.3);pointer-events:none;z-index:20"></div>
+  ${corners}
+  <div style="position:absolute;top:0;left:0;right:0;bottom:38px;display:flex">
+    <div style="flex:1;padding:18px 18px 14px;border-right:1px solid #e8d8a0;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e8d8a0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <div style="font-size:8pt;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#1c4a35">Conditions de visite</div>
       </div>
       ${checkItem("Présentation d'une <u>pièce d'identité</u> obligatoire.")}
       ${checkItem("Respect des consignes de l'éleveur et des chiens.")}
       ${checkItem("Aucun contact avec les autres chiens sans autorisation.")}
       ${checkItem("Interdiction de fumer dans l'enceinte de l'élevage.")}
       ${checkItem("Les enfants restent sous la responsabilité de l'accompagnant.")}
-      <div style="margin-top:auto;background:#fef9e7;border:1px solid #c9a84c;border-radius:6px;padding:8px 10px;display:flex;gap:7px;align-items:flex-start">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="#c9a84c" style="flex-shrink:0;margin-top:1px"><ellipse cx="5" cy="7" rx="2" ry="3"/><ellipse cx="9" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="15" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="19" cy="7" rx="2" ry="3"/><path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z"/></svg>
+      <div style="margin-top:auto;background:#fef9e7;border:1px solid #c9a84c;border-radius:6px;padding:9px 11px;display:flex;gap:7px;align-items:flex-start">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#c9a84c" style="flex-shrink:0;margin-top:1px"><ellipse cx="5" cy="7" rx="2" ry="3"/><ellipse cx="9" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="15" cy="4.5" rx="1.8" ry="2.6"/><ellipse cx="19" cy="7" rx="2" ry="3"/><path d="M12 9C8.5 9 6 11.5 6 15C6 17.5 7.5 19.5 9.5 20.5C10.5 21 11.2 21 12 21C12.8 21 13.5 21 14.5 20.5C16.5 19.5 18 17.5 18 15C18 11.5 15.5 9 12 9Z"/></svg>
         <div>
-          <div style="font-size:6pt;font-weight:900;color:#1c4a35;margin-bottom:1px">LE BIEN-ÊTRE DE NOS CHIENS EST NOTRE PRIORITÉ.</div>
-          <div style="font-size:6pt;color:#4b5563">Merci de respecter leur environnement.</div>
+          <div style="font-size:6.5pt;font-weight:900;color:#1c4a35;margin-bottom:2px">LE BIEN-ÊTRE DE NOS CHIENS EST NOTRE PRIORITÉ.</div>
+          <div style="font-size:6.5pt;color:#4b5563">Merci de respecter leur environnement.</div>
         </div>
       </div>
     </div>
-
-    <!-- INFORMATIONS IMPORTANTES -->
-    <div style="flex:1;padding:16px 16px 14px;border-right:1px solid #e8d8a0;display:flex;flex-direction:column">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e8d8a0">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <div style="font-size:7.5pt;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#1c4a35">Informations importantes</div>
+    <div style="flex:1;padding:18px 18px 14px;border-right:1px solid #e8d8a0;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e8d8a0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div style="font-size:8pt;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#1c4a35">Informations importantes</div>
       </div>
-      <p style="font-size:7pt;color:#4b5563;line-height:1.6;margin-bottom:8px">Cette autorisation est personnelle et non cessible. Elle ne garantit pas la réservation ou l'acquisition du chiot.</p>
-      <p style="font-size:7pt;color:#4b5563;line-height:1.6;margin-bottom:12px">Toute réservation fera l'objet d'un contrat séparé conforme à la législation en vigueur.</p>
-      <div style="background:#f0f7f4;border:1.5px solid #2d6a4f;border-radius:7px;padding:10px 12px;margin-top:auto">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 2.98 1.28l3-.04a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.17 8.84a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.26 16h.66z"/></svg>
-          <div style="font-size:6.5pt;font-weight:900;color:#1c4a35;text-transform:uppercase;letter-spacing:0.5px">Contact élevage</div>
+      <p style="font-size:7.5pt;color:#4b5563;line-height:1.65;margin-bottom:10px">Cette autorisation est personnelle et non cessible. Elle ne garantit pas la réservation ou l'acquisition du chiot.</p>
+      <p style="font-size:7.5pt;color:#4b5563;line-height:1.65;margin-bottom:14px">Toute réservation fera l'objet d'un contrat séparé conforme à la législation en vigueur.</p>
+      <div style="background:#f0f7f4;border:1.5px solid #2d6a4f;border-radius:8px;padding:12px 14px;margin-top:auto">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 2.98 1.28l3-.04a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.17 8.84a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.26 16h.66z"/></svg>
+          <div style="font-size:7pt;font-weight:900;color:#1c4a35;text-transform:uppercase;letter-spacing:0.5px">Contact élevage</div>
         </div>
-        <div style="font-size:10pt;font-weight:800;color:#1c4a35;margin-bottom:2px">07 57 81 72 02</div>
+        <div style="font-size:11pt;font-weight:800;color:#1c4a35;margin-bottom:3px">07 57 81 72 02</div>
         <div style="font-size:6.5pt;color:#4b5563">contact@berger-bleu.com</div>
       </div>
     </div>
-
-    <!-- SIGNATURE À L'ARRIVÉE -->
-    <div style="flex:1;padding:16px 16px 14px;display:flex;flex-direction:column">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e8d8a0">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <div style="font-size:7.5pt;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#1c4a35">Signature à l'arrivée</div>
+    <div style="flex:1;padding:18px 18px 14px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e8d8a0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <div style="font-size:8pt;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#1c4a35">Signature à l'arrivée</div>
       </div>
-      <p style="font-size:7pt;color:#4b5563;line-height:1.6;margin-bottom:10px">Je soussigné(e) certifie être présent(e) à l'élevage le jour et à l'heure indiqués pour une visite.</p>
-      <div style="margin-bottom:7px">
-        <span style="font-size:7pt;color:#374151">Nom &amp; Prénom : </span>
-        <span style="display:inline-block;width:140px;border-bottom:0.8px solid #9ca3af"></span>
+      <p style="font-size:7.5pt;color:#4b5563;line-height:1.65;margin-bottom:12px">Je soussigné(e) certifie être présent(e) à l'élevage le jour et à l'heure indiqués pour une visite.</p>
+      <div style="margin-bottom:9px">
+        <span style="font-size:7.5pt;color:#374151">Nom &amp; Prénom : </span>
+        <span style="display:inline-block;width:130px;border-bottom:0.8px solid #9ca3af"></span>
       </div>
-      <div style="display:flex;gap:10px;margin-bottom:10px">
-        <span style="font-size:7pt;color:#374151">Date : ......../......../2025</span>
-        <span style="font-size:7pt;color:#374151">Heure : ............</span>
+      <div style="display:flex;gap:12px;margin-bottom:12px">
+        <span style="font-size:7.5pt;color:#374151">Date : ....../....../ 2026</span>
+        <span style="font-size:7.5pt;color:#374151">Heure : ............</span>
       </div>
       <div style="flex:1;border:1px solid #e5e7eb;border-radius:6px;background:#f9fafb;display:flex;align-items:center;justify-content:center">
-        <span style="font-size:7pt;color:#c4c4c4;font-style:italic">Signature du visiteur</span>
+        <span style="font-size:7.5pt;color:#c4c4c4;font-style:italic">Signature du visiteur</span>
       </div>
-    </div>`;
+    </div>
+  </div>
+  <div style="position:absolute;bottom:0;left:0;right:0;height:38px;background:#1c4a35;display:flex;align-items:center;justify-content:center;z-index:2">
+    <span style="font-size:7pt;color:rgba(255,255,255,0.75);letter-spacing:0.3px">Élevage du Berger Bleu — Les Alpages du Berger Bleu, 74470 Bellevaux, France — Tél. 07 57 81 72 02</span>
+  </div>
+</div>`;
 
-    const versoHtml = cardFrame(versoContent,
-      `<span style="font-size:6.5pt;color:rgba(255,255,255,0.75);letter-spacing:0.3px">Élevage du Berger Bleu — Les Alpages du Berger Bleu, 74470 Bellevaux, France — Tél. 07 57 81 72 02</span>`
-    );
-
-    // ── Render ────────────────────────────────────────────────────
-    const fontStyle = `<style>@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');</style>`;
-    const makeContainer = (html: string) => {
+    // ── Render with html2canvas ───────────────────────────────────
+    const makeEl = (html: string) => {
       const el = document.createElement("div");
-      el.style.cssText = "position:fixed;left:-9999px;top:0;width:800px;height:462px;background:#faf8f0;box-sizing:border-box;overflow:hidden;";
-      el.innerHTML = fontStyle + html;
+      el.style.cssText = "position:fixed;top:0;left:0;width:800px;height:462px;background:#faf8f0;z-index:-9999;visibility:hidden;pointer-events:none;";
+      el.innerHTML = html;
       return el;
     };
-
-    const rectoEl = makeContainer(rectoHtml);
-    const versoEl = makeContainer(versoHtml);
+    const rectoEl = makeEl(rectoHtml);
+    const versoEl = makeEl(versoHtml);
     document.body.appendChild(rectoEl);
     document.body.appendChild(versoEl);
-
     try {
-      await new Promise<void>((r) => setTimeout(r, 1800));
+      await new Promise<void>((r) => setTimeout(r, 2500));
       const html2canvas = (await import("html2canvas")).default;
       const jsPDF = (await import("jspdf")).default;
-
+      const opts = { scale: 3, allowTaint: true, useCORS: true, backgroundColor: "#faf8f0", logging: false, width: 800, height: 462, windowWidth: 800, windowHeight: 462 };
       const [rectoCanvas, versoCanvas] = await Promise.all([
-        html2canvas(rectoEl, { scale: 3, useCORS: false, allowTaint: true, backgroundColor: "#faf8f0", logging: false, width: 800, height: 462, windowWidth: 800, windowHeight: 462 }),
-        html2canvas(versoEl, { scale: 3, useCORS: false, allowTaint: true, backgroundColor: "#faf8f0", logging: false, width: 800, height: 462, windowWidth: 800, windowHeight: 462 }),
+        html2canvas(rectoEl, opts),
+        html2canvas(versoEl, opts),
       ]);
-
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [212, 122.5] });
       pdf.addImage(rectoCanvas.toDataURL("image/jpeg", 0.93), "JPEG", 0, 0, 212, 122.5);
       pdf.addPage([212, 122.5], "landscape");
