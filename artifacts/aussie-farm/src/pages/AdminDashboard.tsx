@@ -508,7 +508,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
       <div style="flex:1;border:1px dashed #d1d5db;border-radius:8px;padding:12px 16px;background:#fafafa">
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">L'acquéreur</div>
         <div style="font-size:8pt;color:#111827;margin-bottom:1px">${b.firstName || ""} ${b.lastName || ""}</div>
-        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:16px">Fait à ________, le ${dateStr}</div>
+        <div style="font-size:6.5pt;color:#6b7280;margin-bottom:16px">Fait à <span style="display:inline-block;width:100px;border-bottom:0.8px solid #9ca3af"></span> le <span style="display:inline-block;width:80px;border-bottom:0.8px solid #9ca3af"></span> 2026.</div>
         <div style="height:58px;border-bottom:1px solid #9ca3af"></div>
         <div style="font-size:6.5pt;color:#9ca3af;font-style:italic;margin-top:4px">Précédée de « Lu et approuvé »</div>
       </div>
@@ -810,8 +810,9 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
         <span style="font-size:7.5pt;color:#374151">Nom &amp; Prénom : </span>
         <span style="display:inline-block;width:130px;border-bottom:0.8px solid #9ca3af"></span>
       </div>
-      <div style="margin-bottom:12px">
-        <span style="font-size:7.5pt;color:#374151">Fait à ............. le .......... 2026.</span>
+      <div style="display:flex;gap:12px;margin-bottom:12px">
+        <span style="font-size:7.5pt;color:#374151">Date : ....../....../ 2026</span>
+        <span style="font-size:7.5pt;color:#374151">Heure : ............</span>
       </div>
       <div style="flex:1;border:1px solid #e5e7eb;border-radius:6px;background:#f9fafb;display:flex;align-items:center;justify-content:center">
         <span style="font-size:7.5pt;color:#c4c4c4;font-style:italic">Signature du visiteur</span>
