@@ -5,7 +5,7 @@ import path from "path";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const port = isProduction ? 3000 : Number(process.env.PORT ?? "3000");
+const port = isProduction ? 3000 : Number(process.env.VITE_PORT ?? "5000");
 const basePath = process.env.BASE_PATH ?? "/";
 
 export default defineConfig({
