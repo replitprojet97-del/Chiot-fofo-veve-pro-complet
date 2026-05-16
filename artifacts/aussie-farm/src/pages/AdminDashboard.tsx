@@ -77,6 +77,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   // Contract state
   const [contractPuppy, setContractPuppy] = useState<Puppy | null>(null);
   const [contractBuyer, setContractBuyer] = useState({ firstName: "", lastName: "", address: "", city: "", zip: "", phone: "", email: "" });
+  const [contractSellerName, setContractSellerName] = useState("MR JESSE BOUCHAND");
   const [contractDeposit, setContractDeposit] = useState(300);
   const [contractSecondPayment, setContractSecondPayment] = useState(0);
   const [contractDate, setContractDate] = useState(() => new Date().toISOString().split("T")[0]);
@@ -411,7 +412,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           <div style="width:16px;height:16px;background:#2d6a4f;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:white;flex-shrink:0">V</div>
           <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2d6a4f">Vendeur</div>
         </div>
-        <div style="font-size:8.5pt;font-weight:700;color:#111827;line-height:1.4">MR JESSE BOUCHAND</div>
+        <div style="font-size:8.5pt;font-weight:700;color:#111827;line-height:1.4">${contractSellerName.toUpperCase()}</div>
         <div style="font-size:7.5pt;color:#4b5563;line-height:1.5;margin-top:1px">Élevage du Berger Bleu<br>Les Alpages du Berger Bleu, 74470 Bellevaux<br>Tél. : 07 57 81 72 02 · DDPP déclaré</div>
       </div>
       <div style="flex:1.4;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px">
@@ -501,7 +502,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     <div style="display:flex;gap:16px;margin-bottom:12px">
       <div style="flex:1;border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;background:#fff">
         <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-bottom:4px">Le vendeur</div>
-        <div style="font-size:8pt;font-weight:600;color:#111827;margin-bottom:1px">MR JESSE BOUCHAND</div>
+        <div style="font-size:8pt;font-weight:600;color:#111827;margin-bottom:1px">${contractSellerName.toUpperCase()}</div>
         <div style="font-size:6.5pt;color:#6b7280;margin-bottom:8px">Fait à Bellevaux, le ${dateStr}</div>
         ${sigBase64 ? `<img src="${sigBase64}" alt="Signature vendeur" style="height:90px;width:auto;display:block;object-fit:contain;max-width:220px" />` : `<div style="height:90px;border-bottom:1px solid #d1d5db;width:220px"></div>`}
       </div>
@@ -1933,6 +1934,10 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
                 <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">Chiot concerné</p>
                 <p className="font-semibold">{contractPuppy.name} — {contractPuppy.color} · {contractPuppy.sex}</p>
                 <p className="text-sm text-muted-foreground">{contractPuppy.ageWeeks} semaines · Prix de vente : {contractPuppy.price.toLocaleString("fr-FR")} €</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Nom du vendeur</label>
+                <Input value={contractSellerName} onChange={(e) => setContractSellerName(e.target.value)} placeholder="MR JESSE BOUCHAND" className="bg-background" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
