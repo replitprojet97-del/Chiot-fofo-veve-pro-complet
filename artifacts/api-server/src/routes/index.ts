@@ -4,6 +4,7 @@ import puppiesRouter from "./puppies.js";
 import contactRouter from "./contact.js";
 import adminRouter from "./admin.js";
 import reviewsRouter from "./reviews.js";
+import siteSettingsRouter from "./site-settings.js";
 
 const router: IRouter = Router();
 
@@ -12,5 +13,6 @@ router.use(puppiesRouter);
 router.use(contactRouter);
 router.use(adminRouter);
 router.use(reviewsRouter);
+router.use(siteSettingsRouter);
 
 export default router;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSEO } from "@/hooks/useSEO";
+import { useSitePhone } from "@/hooks/useSitePhone";
 import { Link } from "wouter";
 import {
   CheckCircle2, Heart, Shield, Award, ArrowRight,
@@ -179,6 +180,7 @@ function ParentCard({ parent, reverse = false }: { parent: typeof MALE | (typeof
 }
 
 export default function Reproducteurs() {
+  const { whatsappNumber } = useSitePhone();
   useSEO({
     title: "Nos Reproducteurs — Mâles & Femelles LOF | Élevage du Berger Bleu",
     description: "Découvrez nos reproducteurs Berger Australien : Ulysse et César (noir tricolore), Alaska (bleu merle) et Cassandra (rouge merle). Tous testés génétiquement, LOF confirmés. Deux portées disponibles, 13 chiots.",
@@ -191,7 +193,7 @@ export default function Reproducteurs() {
 
       {/* WhatsApp flottant */}
       <a
-        href="https://wa.me/33757817202?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20reproducteurs%20et%20vos%20chiots."
+        href={`https://wa.me/${whatsappNumber}?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20reproducteurs%20et%20vos%20chiots.`}
         target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110"
         title="WhatsApp"
@@ -326,7 +328,7 @@ export default function Reproducteurs() {
                         </Button>
                       </Link>
                       <a
-                        href="https://wa.me/33757817202?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20la%20port%C3%A9e%20de%20vos%20chiots."
+                        href={`https://wa.me/${whatsappNumber}?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20la%20port%C3%A9e%20de%20vos%20chiots.`}
                         target="_blank" rel="noopener noreferrer"
                       >
                         <Button variant="outline" className="rounded-xl h-11 px-4 border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10">

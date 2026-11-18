@@ -4,10 +4,11 @@ import bcrypt from "bcryptjs";
 import speakeasy from "speakeasy";
 import QRCode from "qrcode";
 import { db } from "@workspace/db";
-import { puppiesTable, adminUsersTable, contactMessagesTable } from "@workspace/db/schema";
+import { puppiesTable, adminUsersTable, contactMessagesTable, siteSettingsTable } from "@workspace/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 import { requireAdmin, signToken, signPendingToken, verifyPendingToken, setAuthCookie, clearAuthCookie } from "../lib/auth.js";
 import { uploadImageBuffer } from "../lib/cloudinary.js";
+import { getContactPhone } from "../lib/site-settings.js";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
@@ -91,6 +92,38 @@ router.post("/admin/logout", (_req, res) => {
 
 router.get("/admin/me", requireAdmin, (req, res) => {
   res.json({ admin: req.admin });
+});
+
+router.get("/admin/settings/phone", requireAdmin, async (_req, res) => {
+  try {
+    res.json({ phone: await getContactPhone() });
+  } catch (err) {
+    console.error("[admin/settings/phone]", err);
+    res.status(500).json({ error: "Impossible de charger le numéro de téléphone" });
+  }
+});
+
+router.put("/admin/settings/phone", requireAdmin, async (req, res) => {
+  const phone = typeof req.body?.phone === "string" ? req.body.phone.trim() : "";
+  const digits = phone.replace(/\D/g, "");
+  if (phone.length > 30 || digits.length < 7 || digits.length > 15 || !/^[+0-9 ()/.-]+$/.test(phone)) {
+    res.status(400).json({ error: "Saisissez un numéro valide, avec son indicatif si nécessaire." });
+    return;
+  }
+
+  try {
+    await db
+      .insert(siteSettingsTable)
+      .values({ key: "contact_phone", value: phone })
+      .onConflictDoUpdate({
+        target: siteSettingsTable.key,
+        set: { value: phone, updatedAt: new Date() },
+      });
+    res.json({ phone });
+  } catch (err) {
+    console.error("[admin/settings/phone]", err);
+    res.status(500).json({ error: "Impossible d'enregistrer le numéro de téléphone" });
+  }
 });
 
 router.get("/admin/seed", async (_req, res) => {

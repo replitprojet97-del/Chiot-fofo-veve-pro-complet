@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus, LogOut, Pencil, Trash2, UploadCloud, X, Loader2,
@@ -15,6 +15,7 @@ import {
   type Puppy, type PuppyPayload, type PuppyStatus, type PuppyColor, type PuppySex,
   type ReviewFromDB, type ReviewSubmitPayload, type ContactMessage,
 } from "@/lib/api";
+import { DEFAULT_CONTACT_PHONE, SITE_PHONE_QUERY_KEY, useSitePhone } from "@/hooks/useSitePhone";
 
 const COLORS: PuppyColor[] = ["bleu merle", "rouge merle", "noir tricolore", "rouge tricolore"];
 const SEXES: PuppySex[] = ["Mâle", "Femelle"];
@@ -72,7 +73,30 @@ function formatDate(iso: string) {
 
 export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardProps) {
   const qc = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"guide" | "chiots" | "avis" | "messages">("guide");
+  const { phone: sitePhone } = useSitePhone();
+  const [activeTab, setActiveTab] = useState<"guide" | "chiots" | "avis" | "messages" | "telephone">("guide");
+  const [phoneDraft, setPhoneDraft] = useState(DEFAULT_CONTACT_PHONE);
+  const [phoneSaved, setPhoneSaved] = useState(false);
+
+  const { data: savedPhone, isLoading: phoneLoading, isError: phoneLoadError, refetch: reloadPhone } = useQuery({
+    queryKey: ["admin-site-phone"],
+    queryFn: adminApi.getPhone,
+  });
+  useEffect(() => {
+    if (savedPhone?.phone) setPhoneDraft(savedPhone.phone);
+  }, [savedPhone?.phone]);
+
+  const phoneMutation = useMutation({
+    mutationFn: adminApi.updatePhone,
+    onSuccess: ({ phone }) => {
+      setPhoneDraft(phone);
+      setPhoneSaved(true);
+      qc.setQueryData(["admin-site-phone"], { phone });
+      qc.setQueryData(SITE_PHONE_QUERY_KEY, phone);
+      qc.invalidateQueries({ queryKey: ["admin-site-phone"] });
+      window.setTimeout(() => setPhoneSaved(false), 3000);
+    },
+  });
 
   // Contract state
   const [contractPuppy, setContractPuppy] = useState<Puppy | null>(null);
@@ -413,7 +437,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           <div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2d6a4f">Vendeur</div>
         </div>
         <div style="font-size:8.5pt;font-weight:700;color:#111827;line-height:1.4">${contractSellerName.toUpperCase()}</div>
-        <div style="font-size:7.5pt;color:#4b5563;line-height:1.5;margin-top:1px">Élevage du Berger Bleu<br>Les Alpages du Berger Bleu, 74470 Bellevaux<br>Tél. : 07 57 81 72 02 · DDPP déclaré</div>
+        <div style="font-size:7.5pt;color:#4b5563;line-height:1.5;margin-top:1px">Élevage du Berger Bleu<br>Les Alpages du Berger Bleu, 74470 Bellevaux<br>Tél. : ${sitePhone} · DDPP déclaré</div>
       </div>
       <div style="flex:1.4;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px">
         <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
@@ -520,7 +544,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
   <!-- FOOTER -->
   <div style="background:#1c4a35;padding:8px 44px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
     <div style="font-size:6.5pt;color:rgba(255,255,255,0.6)">Élevage du Berger Bleu · Les Alpages du Berger Bleu, 74470 Bellevaux, Haute-Savoie</div>
-    <div style="font-size:6.5pt;color:rgba(255,255,255,0.6)">07 57 81 72 02 · contact@berger-bleu.com · Particulier déclaré DDPP</div>
+    <div style="font-size:6.5pt;color:rgba(255,255,255,0.6)">${sitePhone} · contact@berger-bleu.com · Particulier déclaré DDPP</div>
   </div>
 
 </div>`;
@@ -797,7 +821,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1c4a35" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 2.98 1.28l3-.04a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.17 8.84a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.26 16h.66z"/></svg>
           <div style="font-size:7pt;font-weight:900;color:#1c4a35;text-transform:uppercase;letter-spacing:0.5px">Contact élevage</div>
         </div>
-        <div style="font-size:11pt;font-weight:800;color:#1c4a35;margin-bottom:3px">07 57 81 72 02</div>
+        <div style="font-size:11pt;font-weight:800;color:#1c4a35;margin-bottom:3px">${sitePhone}</div>
         <div style="font-size:6.5pt;color:#4b5563">contact@berger-bleu.com</div>
       </div>
     </div>
@@ -821,7 +845,7 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
     </div>
   </div>
   <div style="position:absolute;bottom:0;left:0;right:0;height:38px;background:#1c4a35;display:flex;align-items:center;justify-content:center;z-index:2">
-    <span style="font-size:7pt;color:rgba(255,255,255,0.75);letter-spacing:0.3px">Élevage du Berger Bleu — Les Alpages du Berger Bleu, 74470 Bellevaux, France — Tél. 07 57 81 72 02</span>
+    <span style="font-size:7pt;color:rgba(255,255,255,0.75);letter-spacing:0.3px">Élevage du Berger Bleu — Les Alpages du Berger Bleu, 74470 Bellevaux, France — Tél. ${sitePhone}</span>
   </div>
 </div>`;
 
@@ -913,6 +937,14 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
             <BookOpen className="w-4 h-4" /> Guide d'utilisation
           </button>
           <button
+            onClick={() => setActiveTab("telephone")}
+            className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px whitespace-nowrap ${
+              activeTab === "telephone" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Phone className="w-4 h-4" /> Téléphone
+          </button>
+          <button
             onClick={() => setActiveTab("chiots")}
             className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px ${
               activeTab === "chiots" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
@@ -949,6 +981,60 @@ export default function AdminDashboard({ onLogout, adminEmail }: AdminDashboardP
             )}
           </button>
         </div>
+
+        {activeTab === "telephone" && (
+          <section className="max-w-2xl mx-auto space-y-6">
+            <div>
+              <h1 className="font-serif text-2xl font-bold">Numéro de téléphone du site</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Ce numéro est utilisé sur le site, pour les appels et WhatsApp, dans les emails automatiques et dans les PDF générés.
+              </p>
+            </div>
+            <form
+              className="bg-card border border-border rounded-2xl p-6 space-y-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                phoneMutation.mutate(phoneDraft);
+              }}
+            >
+              <label htmlFor="site-phone" className="text-sm font-medium block">Téléphone de contact</label>
+              <Input
+                id="site-phone"
+                type="tel"
+                autoComplete="tel"
+                value={phoneDraft}
+                onChange={(event) => setPhoneDraft(event.target.value)}
+                placeholder="+33 7 57 81 72 02"
+                maxLength={30}
+                required
+                disabled={phoneLoading || phoneLoadError}
+              />
+              <p className="text-xs text-muted-foreground">
+                Pour WhatsApp et les appels internationaux, indiquez l’indicatif du pays, par exemple +33.
+              </p>
+              {phoneMutation.isError && (
+                <p role="alert" className="text-sm text-destructive">{phoneMutation.error.message}</p>
+              )}
+              {phoneLoading && (
+                <p role="status" className="text-sm text-muted-foreground">Chargement du numéro enregistré…</p>
+              )}
+              {phoneLoadError && (
+                <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-destructive">
+                  <span>Impossible de charger le numéro enregistré.</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => reloadPhone()}>Réessayer</Button>
+                </div>
+              )}
+              {phoneSaved && (
+                <p role="status" className="flex items-center gap-2 text-sm text-green-700">
+                  <CheckCircle2 className="w-4 h-4" /> Numéro enregistré et appliqué au site.
+                </p>
+              )}
+              <Button type="submit" disabled={phoneLoading || phoneLoadError || phoneMutation.isPending || !phoneDraft.trim()} className="rounded-xl">
+                {phoneMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Enregistrement…</> : "Enregistrer le numéro"}
+              </Button>
+            </form>
+          </section>
+        )}
 
         {/* ─── TAB: GUIDE ─── */}
         {activeTab === "guide" && (

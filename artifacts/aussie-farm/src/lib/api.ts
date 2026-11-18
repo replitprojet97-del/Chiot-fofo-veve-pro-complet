@@ -34,6 +34,10 @@ export const puppiesApi = {
   get: (id: number) => apiFetch<Puppy>(`/api/puppies/${id}`),
 };
 
+export const siteSettingsApi = {
+  getPhone: () => apiFetch<{ phone: string }>("/api/settings/phone", { cache: "no-store" }),
+};
+
 export const reviewsApi = {
   listApproved: () => apiFetch<ReviewFromDB[]>("/api/reviews"),
   submit: (data: ReviewSubmitPayload) =>
@@ -66,6 +70,9 @@ export const adminApi = {
     apiFetch<{ success: boolean }>("/api/admin/2fa/disable", { method: "POST", body: JSON.stringify({ password }) }),
   logout: () => apiFetch<{ success: boolean }>("/api/admin/logout", { method: "POST" }),
   me: () => apiFetch<{ admin: { adminId: number; email: string } }>("/api/admin/me"),
+  getPhone: () => apiFetch<{ phone: string }>("/api/admin/settings/phone"),
+  updatePhone: (phone: string) =>
+    apiFetch<{ phone: string }>("/api/admin/settings/phone", { method: "PUT", body: JSON.stringify({ phone }) }),
   listPuppies: () => apiFetch<Puppy[]>("/api/admin/puppies"),
   createPuppy: (data: PuppyPayload) =>
     apiFetch<Puppy>("/api/admin/puppies", { method: "POST", body: JSON.stringify(data) }),

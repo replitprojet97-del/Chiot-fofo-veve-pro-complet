@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSEO } from "@/hooks/useSEO";
+import { useSitePhone } from "@/hooks/useSitePhone";
 import {
   Star, X, CheckCircle2, Info, Loader2, PawPrint as Paw, Sparkles,
 } from "lucide-react";
@@ -134,6 +135,7 @@ function PuppyCard({ puppy, onClick }: { puppy: Puppy; onClick: () => void }) {
 }
 
 export default function Chiots() {
+  const { whatsappNumber } = useSitePhone();
   useSEO({
     title: "Nos Chiots Berger Australien à Vendre — LOF, Bleu Merle, Rouge Merle | Élevage du Berger Bleu",
     description: "Découvrez nos chiots Berger Australien disponibles : bleu merle, rouge merle, noir tricolore, rouge tricolore. Tous LOF avec pedigree, vaccinés et vérifiés par vétérinaire. Réservez votre chiot Aussie.",
@@ -166,7 +168,7 @@ export default function Chiots() {
 
       {/* WhatsApp */}
       <a
-        href="https://wa.me/33757817202?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20chiots."
+        href={`https://wa.me/${whatsappNumber}?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20chiots.`}
         target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110"
       >

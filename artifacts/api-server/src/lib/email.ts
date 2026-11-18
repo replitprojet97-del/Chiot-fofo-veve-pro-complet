@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { DEFAULT_CONTACT_PHONE } from "./site-settings.js";
 
 function escapeHtml(str: string): string {
   return str
@@ -41,6 +42,7 @@ export async function sendContactEmail(data: {
   lastName: string;
   email: string;
   phone?: string;
+  contactPhone?: string;
   message: string;
 }): Promise<void> {
   if (!isConfigured()) {
@@ -88,7 +90,7 @@ export async function sendContactEmail(data: {
               <p style="margin:0 0 8px;font-size:13px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px">Votre message</p>
               <p style="margin:0;white-space:pre-wrap;font-size:14px;color:#374151">${escapeHtml(data.message)}</p>
             </div>
-            <p>En attendant, n'hésitez pas à nous contacter directement par téléphone ou WhatsApp au <strong>07 57 81 72 02</strong>.</p>
+            <p>En attendant, n'hésitez pas à nous contacter directement par téléphone ou WhatsApp au <strong>${escapeHtml(data.contactPhone ?? DEFAULT_CONTACT_PHONE)}</strong>.</p>
             <p style="margin-bottom:0">Bien cordialement,<br><strong>L'équipe de l'Élevage du Berger Bleu</strong></p>
           </div>
           <p style="text-align:center;font-size:11px;color:#9ca3af;margin-top:16px">Les Alpages du Berger Bleu · 74470 Bellevaux, Haute-Savoie</p>
@@ -103,6 +105,7 @@ export async function sendReservationEmail(data: {
   lastName: string;
   email: string;
   phone?: string;
+  contactPhone?: string;
   message: string;
   puppyName: string;
   puppyColor: string;
@@ -163,7 +166,7 @@ export async function sendReservationEmail(data: {
               <p style="margin:0;color:#4b5563">${escapeHtml(data.puppyColor)} · ${escapeHtml(data.puppySex)} · ${data.puppyPrice.toLocaleString("fr-FR")} €</p>
             </div>
             <p>Nous allons étudier votre demande et vous contacterons très prochainement — généralement sous <strong>24 à 48 heures</strong> — pour convenir des prochaines étapes (acompte, visite, remise du chiot).</p>
-            <p>Pour toute question urgente, vous pouvez nous joindre directement au <strong>07 57 81 72 02</strong> (téléphone ou WhatsApp).</p>
+            <p>Pour toute question urgente, vous pouvez nous joindre directement au <strong>${escapeHtml(data.contactPhone ?? DEFAULT_CONTACT_PHONE)}</strong> (téléphone ou WhatsApp).</p>
             <div style="background:#fefce8;border:1px solid #fde68a;border-radius:6px;padding:12px 16px;margin:20px 0">
               <p style="margin:0;font-size:13px;color:#92400e">⚠️ Cette demande ne constitue pas encore une réservation ferme. Elle sera confirmée lors du versement de l'acompte convenu avec l'élevage.</p>
             </div>

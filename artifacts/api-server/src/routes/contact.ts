@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { contactMessagesTable } from "@workspace/db/schema";
 import { sendContactEmail, sendReservationEmail } from "../lib/email.js";
+import { getContactPhone } from "../lib/site-settings.js";
 
 const router = Router();
 
@@ -23,7 +24,7 @@ router.post("/contact", async (req, res) => {
       type: "contact",
     });
 
-    await sendContactEmail({ firstName, lastName, email, phone, message });
+    await sendContactEmail({ firstName, lastName, email, phone, message, contactPhone: await getContactPhone() });
 
     res.json({ success: true });
   } catch (err) {
@@ -41,6 +42,7 @@ router.post("/reserve", async (req, res) => {
       return;
     }
 
+    const contactPhone = await getContactPhone();
     await db.insert(contactMessagesTable).values({
       puppyId: parseInt(puppyId, 10),
       puppyName: puppyName ?? "",
@@ -63,6 +65,7 @@ router.post("/reserve", async (req, res) => {
       puppySex,
       puppyPrice: parseInt(puppyPrice, 10),
       puppyId: parseInt(puppyId, 10),
+      contactPhone,
     });
 
     res.json({ success: true });

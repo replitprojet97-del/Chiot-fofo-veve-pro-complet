@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePuppies } from "@/hooks/usePuppies";
 import { useSEO } from "@/hooks/useSEO";
+import { useSitePhone } from "@/hooks/useSitePhone";
 import { type Puppy } from "@/lib/api";
 import ReservationModal from "@/components/ReservationModal";
 import ImageGallery from "@/components/ImageGallery";
@@ -255,6 +256,7 @@ function InfoTicker() {
 }
 
 export default function Home() {
+  const { whatsappNumber } = useSitePhone();
   useSEO({
     title: "Élevage du Berger Bleu — Chiots Berger Australien LOF | Bleu Merle, Rouge Merle",
     description: "Élevage familial de Bergers Australiens. Chiots LOF bleu merle, rouge merle, noir tricolore. Pedigree officiel, suivi éleveur à vie. Depuis 2009, France.",
@@ -293,7 +295,7 @@ export default function Home() {
 
       {/* WhatsApp flottant */}
       <a
-        href="https://wa.me/33757817202?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20chiots."
+        href={`https://wa.me/${whatsappNumber}?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9(e)%20par%20vos%20chiots.`}
         target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110"
         title="WhatsApp"

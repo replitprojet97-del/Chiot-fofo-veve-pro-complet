@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "wouter";
 import { PawPrint as Paw, Phone, Mail, MapPin } from "lucide-react";
+import { useSitePhone } from "@/hooks/useSitePhone";
 
 export default function Footer() {
+  const { phone, telHref } = useSitePhone();
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-12">
@@ -45,7 +47,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                <a href="tel:+33757817202" className="hover:text-primary transition-colors">07 57 81 72 02</a>
+                <a href={telHref} className="hover:text-primary transition-colors">{phone}</a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary flex-shrink-0" />
